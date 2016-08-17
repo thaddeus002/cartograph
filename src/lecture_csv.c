@@ -1,0 +1,136 @@
+/* lecture_cvs.c */
+/* fonctions pour la lecture des fichiers postes au format texte CVS postes */
+/* lambx, lamby, prefecture, numero_departement */
+
+#include "lecture_csv.h"
+#include "outils.h"
+#include <string.h>
+
+
+poste *lit_enregistrement_cvs(FILE *fd, poste *enregistrement){
+	char buf_read[300]; // buffer de lecture
+	int i,j; // nb de donnees lues, compteurs
+	char com[250]; // nom de la commune
+	//int d; // numero du departement
+	int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
+
+	fgets(buf_read, 255, fd);
+ 
+	i=sscanf(buf_read, "%f,%f,%[a-zA-Z- \"\'],%d\n",&(enregistrement->X),&(enregistrement->Y), com, &(enregistrement->departement)); 
+
+	//traitement du nom de la commune
+	//pas de guillemets et majuscules seulement en début de noms propres
+	MAJ=1; //majuscule requise pour le premier caractère
+	j=0;
+	for(i=0;i+j<=strlen(com)-1;i++){
+		if(com[i+j]=='"') { j++; i--; continue; }  // suppression des guillemets
+		enregistrement->commune[i]=com[i+j];
+		if(MAJ){
+			if((enregistrement->commune[i]>='a')&&(enregistrement->commune[i]<='z')) enregistrement->commune[i]+='A'-'a';
+			MAJ=0;
+		}
+		else {
+			if((enregistrement->commune[i]>='A')&&(enregistrement->commune[i]<='Z')) enregistrement->commune[i]+='a'-'A';
+		}
+		if((enregistrement->commune[i]=='-')||(enregistrement->commune[i]=='\'')||(enregistrement->commune[i]==' ')) MAJ=1;
+	}
+	enregistrement->commune[i]='\0';
+
+	// fin de traitement
+
+	printf("%f - %f - %s\n", enregistrement->X,enregistrement->Y,enregistrement->commune);
+
+	return(enregistrement);
+}
+
+
+
+
+
+/**/
+
+//typedef enum{VILLE=0, POSTE, CDM} type;
+/* fct interne */
+int pointe_ville(fenetre fen, poste *ville, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
+	int p; //réussite du pointage
+
+	p=pointe(fen, ville->X, ville->Y, largeur, cpoint, pointage);
+
+	//if(p==0) display_text(fen, transforme_xLambert(ville->X, fen.w, fen.x1, fen.x2)+9, transforme_yLambert(ville->Y, fen.h, fen.y1, fen.y2), ville->commune, ctexte);
+	//printf("Pointage de %s\n",ville->commune);
+	if(p==0) display_text(fen, transforme_x(ville->X, fen.w, fen.x1, fen.x2)+9, transforme_y(ville->Y, fen.h, fen.y1, fen.y2), ville->commune, ctexte);
+
+	return(p);
+}
+
+
+
+int traite_csv(fenetre fen, char *fichier_csv, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
+	FILE *fd;
+	char buf_read[300];
+	int i,j; // nb de donnees lues, compteurs
+	char com[250]; // nom de la commune
+	//int d; // numero du departement
+	int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
+	poste *enregistrement;
+
+	enregistrement=malloc(sizeof(poste));
+
+
+	//ouverture du fichier
+	fd=fopen(fichier_csv, "r");
+	if(!fd) {
+		fprintf(stderr, "Ouverture impossible : %s\n", fichier_csv);
+		return(1);
+	}
+
+	// on passe la premiere ligne
+	if(fgets(buf_read, 255, fd)==NULL) {
+		fprintf(stderr, "Fichier vide : %s\n", fichier_csv);
+		fclose(fd);
+		return(1); 
+	}
+
+	//lecture des données
+
+
+	while(fgets(buf_read, 255, fd)!=NULL){
+ 
+		//printf("Ligne : %s", buf_read);
+		i=sscanf(buf_read, "%f,%f,%[a-zA-Z- \"\'],%d\n", &(enregistrement->X),&(enregistrement->Y), com, &(enregistrement->departement)); 
+
+		if(i<3){
+			fprintf(stderr,"\n%s : ligne incorrecte :\n%s\n\n", fichier_csv, buf_read);
+			return(2);
+		}
+		//printf("X=%f; Y=%f; NOM=%s\n",enregistrement->X,enregistrement->Y,com);
+
+		//traitement du nom de la commune
+		//pas de guillemets et majuscules seulement en début de noms propres
+		MAJ=1; //majuscule requise pour le premier caractère
+		j=0;
+		//printf("Nom de la commune : %s\n",enregistrement->commune);
+		for(i=0;i+j<=strlen(com)-1;i++){
+			if(com[i+j]=='"') { j++; i--; continue; }  // suppression des guillemets
+			enregistrement->commune[i]=com[i+j];
+			if(MAJ){
+				if((enregistrement->commune[i]>='a')&&(enregistrement->commune[i]<='z')) enregistrement->commune[i]+='A'-'a';
+				MAJ=0;
+			}
+			else {
+				if((enregistrement->commune[i]>='A')&&(enregistrement->commune[i]<='Z')) enregistrement->commune[i]+='a'-'A';
+			}
+			if((enregistrement->commune[i]=='-')||(enregistrement->commune[i]=='\'')||(enregistrement->commune[i]==' ')) MAJ=1;
+		}
+		enregistrement->commune[i]='\0';
+		// fin de traitement
+
+		pointe_ville(fen, enregistrement, pointage, largeur, cpoint, ctexte);
+	}
+
+
+	free(enregistrement);
+	// fermeture du fichier
+	fclose(fd);
+	return(0);
+}
