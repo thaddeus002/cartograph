@@ -1,5 +1,7 @@
-/* fenetre.h */
-/* gestion de la fenetre et des principales fcts de la xlib */
+/**
+ * \file fenetre.h
+ * Gestion de la fenetre et des principales fcts de la xlib
+ */
 
 
 #ifndef __FENETRE_H__
@@ -24,7 +26,7 @@
 
 /* variables du XSystem */
 Pixel *pix; // tous les pixels avec les couleurs utiles - utilisation de pix pour la grille de relief :
-//affichage.c:82:					pointe_pixel(f, xlamb, ylamb, /*0*/largeur, pix[n+12000], CARRE);
+//affichage.c:82:                   pointe_pixel(f, xlamb, ylamb, /*0*/largeur, pix[n+12000], CARRE);
 
 #define PLAGE 12000 /* nb max de pixels dans le tableau pix */
 
@@ -34,13 +36,13 @@ Pixel pix_colore[10];
 
 
 typedef struct {
-	Display *dpy;
-	Window win;
-	GC gc;
-	Visual *visual;
+    Display *dpy;
+    Window win;
+    GC gc;
+    Visual *visual;
 
-	float x1, x2, y1, y2; /* les coordonnées planes (Lambert ou autres) correspondant aux bornes de la fenetre */
-	int w, h; /* taille de la fenetre en pixels */
+    float x1, x2, y1, y2; /* les coordonnées planes (Lambert ou autres) correspondant aux bornes de la fenetre */
+    int w, h; /* taille de la fenetre en pixels */
 } fenetre;
 
 

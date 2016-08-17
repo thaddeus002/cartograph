@@ -1,7 +1,8 @@
-/* coordonnees.c
-** transformations de coordonnées geographiques en Lambert
-** 11/04/2007
-*/
+/**
+ * \file coordonnees.c
+ * \brief transformations de coordonnées geographiques en Lambert
+ * \since 11/04/2007
+ */
 
 #include "coordonnees.h"
 
@@ -29,28 +30,28 @@ float radians(float degres){ return (degres*M_PI/180); }
 
 /* le calcul des coordonnées Lambert */
 coord_lamb calcule_Lambert(coord_geo coord) {
-	coord_lamb retour; /* la valeur de retour */
-	
-	/* calculs intermédiaires */
-	float S=sinf(radians(coord.phi));
-	float L=0.5*logf( (1+S)/(1-S) ) - 0.5*C_E*logf( (1+C_E*S)/(1-C_E*S) );
-	float R=C_C*expf(-C_N*L);
-	float gamma=C_N*(coord.lambda-C_L0);
+    coord_lamb retour; /* la valeur de retour */
 
-	/* Calcul du resultat */
-	retour.X=C_XS+R*sinf(radians(gamma));
-	retour.Y=C_YS-R*cosf(radians(gamma));
-	
-	return(retour);	
+    /* calculs intermédiaires */
+    float S=sinf(radians(coord.phi));
+    float L=0.5*logf( (1+S)/(1-S) ) - 0.5*C_E*logf( (1+C_E*S)/(1-C_E*S) );
+    float R=C_C*expf(-C_N*L);
+    float gamma=C_N*(coord.lambda-C_L0);
+
+    /* Calcul du resultat */
+    retour.X=C_XS+R*sinf(radians(gamma));
+    retour.Y=C_YS-R*cosf(radians(gamma));
+
+    return(retour);
 }
 
 
 /* correction de passage entre les systèmes internationnal et francais */
 coord_lamb correction_WGS84(coord_lamb brut){
-	coord_lamb corrige; // valeur de retour
-	
-	corrige.X=brut.X+5000;
-	corrige.Y=brut.Y-7000;
-	
-	return(corrige);
+    coord_lamb corrige; // valeur de retour
+
+    corrige.X=brut.X+5000;
+    corrige.Y=brut.Y-7000;
+
+    return(corrige);
 }

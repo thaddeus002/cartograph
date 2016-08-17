@@ -1,4 +1,4 @@
-/* lecture_grille.h */
+/** \file lecture_grille.h */
 
 #ifndef __GRILLE_H__
 #define __GRILLE_H__ 1
@@ -14,7 +14,7 @@ typedef enum{INCONNU=0, GRD, GRI, GR2, ALT, AZ2} format_t;
    GR2 : La même en binaire (entiers sur 2 octects) = Grill2
    GRI : binaire avec des entiers sur 4 octects = Grille
    ALT : binaire (2 octets inversés)
-   AZ2 : 
+   AZ2 :
 */
 
 /* type de coordonnées */
@@ -22,14 +22,14 @@ typedef enum{INDEFINI=0, LATLON, LAMBERT2E, LAMBERT93} type_coordonnees;
 
 /* Le contenu du fichier grille */
 typedef struct grille_ {
-	/* ENTETE */
-	int longueur; /* longueur de l'entete en octets */
-	format_t format; /* format du fichier de donnnées */
-	int width, height; /* largeur et hauteur de la grille */
-	float x1,x2,y1,y2,hmin,hmax; /* bornes de la zone concernée */
-	/* DONNEES */
-	int *data; /* tableau double dimensions traité linéairement (1 dim) pour simplifier l'alloc dyn */
-	type_coordonnees type; /* à quoi correspondent les coordonnées i,j du fichier? */
+    /* ENTETE */
+    int longueur; /* longueur de l'entete en octets */
+    format_t format; /* format du fichier de donnnées */
+    int width, height; /* largeur et hauteur de la grille */
+    float x1,x2,y1,y2,hmin,hmax; /* bornes de la zone concernée */
+    /* DONNEES */
+    int *data; /* tableau double dimensions traité linéairement (1 dim) pour simplifier l'alloc dyn */
+    type_coordonnees type; /* à quoi correspondent les coordonnées i,j du fichier? */
 } grille_t;
 
 void info_grille(grille_t *grille);
@@ -55,7 +55,7 @@ grille_t *lit_grille_entiere(char *fichier);
 /* Met la valeur n, en position i,j dans les données */
 int setdata(grille_t *grille, int i, int j, int n);
 
-/* récupère la valeur en position i,j dans les données 
+/* récupère la valeur en position i,j dans les données
 ** renvoie zéro si la position n'existe pas */
 int getdata(grille_t *grille, int i, int j);
 

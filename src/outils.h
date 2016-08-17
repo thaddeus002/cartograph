@@ -1,4 +1,4 @@
-/* outils.h */
+/** \file outils.h */
 
 #ifndef __OUTILS_H__
 #define __OUTILS_H__ 1
@@ -7,9 +7,9 @@
 /* formes pour le pointage */
 typedef enum
 {
-	CARRE=0,
-	TRIANGLE,
-	ROND
+    CARRE=0,
+    TRIANGLE,
+    ROND
 } forme_t;
 
 

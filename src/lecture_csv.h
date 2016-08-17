@@ -1,5 +1,9 @@
-/* fonctions pour la lecture des fichiers postes au format texte CVS postes */
-/* lambx, lamby, prefecture (ou nom de la ville ou du lieu ou de l'objet pointé), numero_departement ou autre info facultative */
+/**
+ * \file lecture_csv.h
+ * fonctions pour la lecture des fichiers postes au format texte CVS postes
+ * lambx, lamby, prefecture (ou nom de la ville ou du lieu ou de l'objet pointé),
+ * numero_departement ou autre info facultative
+ */
 
 #ifndef __CSV_H__
 #define __CSV_H__ 1
@@ -9,13 +13,13 @@
 #include "fenetre.h"
 
 typedef struct {
-	char commune[250];
+    char commune[250];
 /*
-	int xLamb, yLamb; // l'int est plus pratique, mais...
-	float lon, lat; // ...l'utilisation du float est plus rigoureuse
+    int xLamb, yLamb; // l'int est plus pratique, mais...
+    float lon, lat; // ...l'utilisation du float est plus rigoureuse
 */
-	float X, Y;
-	int departement;
+    float X, Y;
+    int departement;
 } poste;
 
 

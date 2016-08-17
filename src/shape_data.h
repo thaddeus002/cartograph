@@ -1,6 +1,9 @@
-/* lecture de données dans un fichier shp */
-/* auteur : Yannick */
-/* date : 26 juin 2008 */
+/**
+ * \file shape_data.h
+ * lecture de données dans un fichier shp
+ * auteur : Yannick
+ * date : 26 juin 2008
+ */
 
 
 #ifndef SHAPE_DATA
@@ -35,17 +38,17 @@ int detruit_entete(shape_header *sh);
 
 /* liste chainée dont les  maillons contiennent des formes génériques */
 typedef struct  Enregistrement_ {
-	int numero;
-	int longueur; /* en demi octets de la partie contenu de l'enregistrement */
-	
-	/* liste de structures ? */
-	/* mais lesquelles ? */
-	//Polygon *sh;
-	GenericShape *sh;
-	
-	struct Enregistrement_ *prev;
-	struct Enregistrement_ *next;
-	
+    int numero;
+    int longueur; /* en demi octets de la partie contenu de l'enregistrement */
+
+    /* liste de structures ? */
+    /* mais lesquelles ? */
+    //Polygon *sh;
+    GenericShape *sh;
+
+    struct Enregistrement_ *prev;
+    struct Enregistrement_ *next;
+
 } Enregistrement;
 
 /* decripte les infos concernant la forme générique fournie en argument */

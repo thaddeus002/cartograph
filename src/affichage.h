@@ -1,4 +1,4 @@
-/* affichage.h */
+/** \file affichage.h */
 
 #ifndef __AFFICHAGE_H__
 #define __AFFICHAGE_H__ 1
@@ -17,8 +17,8 @@ int affiche_grille_(fenetre f, grille_t *grille, char *palette);
 
 /*
 *
-*	lecture en une seule fct
-*	et affichage dans la fenetre f
+*   lecture en une seule fct
+*   et affichage dans la fenetre f
 *
 */
 int affiche_grille(fenetre f, char *fichier, char *palette);

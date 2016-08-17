@@ -1,7 +1,8 @@
-/* coordonnees.h
-** transformations de coordonnées geographiques en Lambert II étendu
-** 11/04/2007
-*/
+/**
+ * \file coordonnees.h
+ * \brief transformations de coordonnées geographiques en Lambert II étendu
+ * \since 11/04/2007
+ **/
 
 #ifndef __COORD_H__
 #define __COORD_H__ 1
@@ -11,13 +12,13 @@
 
 
 typedef struct {
-	float lambda; // longitude en degrés
-	float phi; // latitude en degrés
+    float lambda; // longitude en degrés
+    float phi; // latitude en degrés
 } coord_geo;
 
 typedef struct {
-	float X; // en mètres
-	float Y; // en mètres
+    float X; // en mètres
+    float Y; // en mètres
 } coord_lamb;
 
 /* fonction de convertion */
