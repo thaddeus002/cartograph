@@ -54,9 +54,18 @@ typedef struct {
 void init_palette(yColorPalette_t palette, const uint8_t *pal);
 
 /**
- * create an yImage without transparency
+ * Create an yImage without transparency.
+ * \param rbg_data the background image. Background will be black if NULL
  */
 yImage *create_yImage(int *err, const unsigned char *rgb_data, int width, int height);
+
+
+/**
+ * create an yImage with an uniform background color
+ */
+yImage *create_uniform_yImage(int *err, yColor background, int width, int height);
+
+
 
 /**
  * free memory
