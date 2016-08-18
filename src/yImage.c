@@ -80,18 +80,18 @@ yImage *create_yImage(int *err, const unsigned char *rgbData, int width, int hei
 }
 
 
-yImage *create_uniform_yImage(int *err, yColor background, int width, int height){
+yImage *create_uniform_yImage(int *err, yColor *background, int width, int height){
 
-    yImage *img = create_uniform_yImage(int *err, NULL, int width, int height);
+    yImage *img = create_yImage(err, NULL, width, height);
     int pix;
 
     for(pix=0; pix<width*height; pix++) {
-        img->rgbData[0]=color->r;
-        img->rgbData[1]=color->g;
-        img->rgbData[2]=color->b;
+        img->rgbData[0]=background->r;
+        img->rgbData[1]=background->g;
+        img->rgbData[2]=background->b;
     }
 
-    memset(img->alphaChanel, color->alpha, width*height);
+    memset(img->alphaChanel, background->alpha, width*height);
 
     return img;
 }

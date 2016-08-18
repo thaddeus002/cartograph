@@ -63,7 +63,7 @@ yImage *create_yImage(int *err, const unsigned char *rgb_data, int width, int he
 /**
  * create an yImage with an uniform background color
  */
-yImage *create_uniform_yImage(int *err, yColor background, int width, int height);
+yImage *create_uniform_yImage(int *err, yColor *background, int width, int height);
 
 
 
