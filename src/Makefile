@@ -6,7 +6,7 @@ DESTDIR=/usr/local
 BINDIR=$(DESTDIR)/bin
 #DATADIR=$(DESTDIR)/share/yannview
 
-OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o
+OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o map.o
 
 all: carte trace pointe
 

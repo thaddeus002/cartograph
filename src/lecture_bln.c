@@ -58,7 +58,6 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
         fprintf(stderr, "Impossible d'ouvrir le fichier %s\n", fichier);
         return(1);
     }
-    //else fprintf(stderr, "Fichier ouvert : %s\n", fichier);
 
     /* ajustement */
     if(largeur>10) largeur=10;
@@ -66,7 +65,6 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
     /* initialisations */
     a=0; b=0;
     i=0;
-    //buf_read=fgets(buf_read, 250, fd);
 
 
     /* Lecture ligne par ligne */
@@ -139,7 +137,9 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
         /* evolution des compteurs */
         if(i==N) {
             if(ligne!=0) {
-                if((remplir)&&(points[0].x==points[N-1].x)&&(points[0].y==points[N-1].y)) remplit(f, points, N, remplissage);
+                if((remplir)&&(points[0].x==points[N-1].x)&&(points[0].y==points[N-1].y)) {
+                    remplit(f, points, N, remplissage);
+                }
                 trace_lignes(f, points, N, c, largeur);
             }
             free(points);
