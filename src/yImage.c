@@ -235,7 +235,7 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
     int i;
 
     if( abs(y2-y1) > abs(x2-x1) ) {
-        horizontal = 1;
+        horizontal = 0;
         begin = y1;
         end = y2;
         bottom = x1;
