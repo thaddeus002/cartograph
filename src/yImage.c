@@ -7,7 +7,7 @@
 
 #include "yImage.h"
 #include <stdio.h>
-#include <stdlib.h> // abs()
+#include <stdlib.h>
 #include <math.h> // round()
 #include <ctype.h>
 #include <string.h> //memset()
@@ -160,6 +160,23 @@ int transp(yImage *im){
 }
 
 
+/**
+ *
+ * \return 0 if the colors are identical
+ */
+static int compare_colors(yColor *c1, yColor *c2) {
+
+    int comp=0;
+
+    if(c1->r != c2->r) comp++;
+    if(c1->g != c2->g) comp++;
+    if(c1->b != c2->b) comp++;
+    if(c1->alpha != c2->alpha) comp++;
+
+    return comp;
+}
+
+
 
 void superpose_images(yImage *back, yImage *fore, int x, int y){
 
@@ -184,13 +201,18 @@ void superpose_images(yImage *back, yImage *fore, int x, int y){
         int gf= fore->rgbData[3*(i+j*fore->rgbWidth)+1];
         int bf= fore->rgbData[3*(i+j*fore->rgbWidth)+2];
 
-        /* TODO vraie superposition de couleurs */
-        composition.r=((255-af)*rb + af*rf)/255;
-        composition.b=((255-af)*bb + af*bf)/255;//af>0?bf:bb;
-        composition.g=((255-af)*gb + af*gf)/255;//af>0?gf:gb;
-        composition.alpha=ab+((255-ab)*af/255);
+        yColor foreColor;
+        y_set_color(&foreColor, rf, gf, bf, af);
 
-        yImage_set_pixel(back, &composition, xb, yb);
+        if(!fore->presShapeColor || compare_colors(&(fore->shapeColor), &foreColor)) {
+            /* TODO vraie superposition de couleurs */
+            composition.r=((255-af)*rb + af*rf)/255;
+            composition.b=((255-af)*bb + af*bf)/255;//af>0?bf:bb;
+            composition.g=((255-af)*gb + af*gf)/255;//af>0?gf:gb;
+            composition.alpha=ab+((255-ab)*af/255);
+
+            yImage_set_pixel(back, &composition, xb, yb);
+        }
       }
   }
 }
@@ -254,6 +276,7 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
         increase = 1;
     }
 
+    // Cross from point1 to point2
     for(i=begin;i<=end;) {
 
         int x, y;
@@ -262,7 +285,7 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
 
         // calculate x and y
 
-        tmp = (double)bottom + ((double)(top - bottom))*(double)(abs(i-begin))/(double)(abs(end - begin));
+        tmp = (double)bottom + ((double)(top - bottom))*(double)(i-begin)/(double)(end - begin);
         pos = (int) round(tmp);
 
         if(horizontal) {
