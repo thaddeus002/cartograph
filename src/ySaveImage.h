@@ -71,14 +71,14 @@ int sauve_jpeg(yImage *im, const char *file);
  */
 int sauve_png(yImage *im, const char *file);
 
-#ifdef HAVE_LIBPNG
+//#ifdef HAVE_LIBPNG
 /**
  * \brief Load a yImage from a png file
  * \param f file descriptor of the png image
  * \return the yImage contained in f
  */
 yImage *LoadPNG(FILE * f);
-#endif
+//#endif
 
 
 

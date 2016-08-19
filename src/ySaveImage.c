@@ -730,7 +730,7 @@ unsigned char *_LoadPPM(FILE * f, int *w, int *h)
 
 
 
-#ifdef HAVE_LIBPNG
+//#ifdef HAVE_LIBPNG
 yImage *LoadPNG(FILE *f)
 {
     png_structp png_ptr;
@@ -932,7 +932,7 @@ yImage *LoadPNG(FILE *f)
     /* End */
     return im;
 }
-#endif /* HAVE_LIBPNG */
+//#endif /* HAVE_LIBPNG */
 
 
 

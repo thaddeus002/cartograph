@@ -163,8 +163,9 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
             a=atof(X);
             b=atof(Y);
 
+            #ifdef DEBUG
             fprintf(stdout, "Point %d : %f, %f\n", i, a, b);
-
+            #endif
 
             if(i==1){
                 /* sur un tracé fermé, le premier point est répété une fois */
@@ -186,7 +187,9 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
         /* evolution des compteurs */
         if(i==N) {
 
+            #ifdef DEBUG
             fprintf(stdout, "tracé pour %d points\n", N);
+            #endif
             y_draw_lines(map->image, color, points, N);
 
 
