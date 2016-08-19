@@ -7,7 +7,8 @@
 
 #include "yImage.h"
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> // abs()
+#include <math.h> // round()
 #include <ctype.h>
 #include <string.h> //memset()
 
@@ -159,26 +160,7 @@ int transp(yImage *im){
 }
 
 
-void yImage_set_pixel(yImage *im, yColor *color, int x, int y){
-    int pos; /* position of the pixel (x,y) in the data array */
 
-    if(im==NULL) return;
-    if(color==NULL) return;
-    if((x<0) || (y<0)) return;
-    if((x>=im->rgbWidth) || (y>=im->rgbHeight) )return;
-
-    pos = 3*y*im->rgbWidth + 3*x;
-
-    im->rgbData[pos]=color->r;
-    im->rgbData[pos+1]=color->g;
-    im->rgbData[pos+2]=color->b;
-
-    im->alphaChanel[y*im->rgbWidth + x]=color->alpha;
-}
-
-
-
-/* */
 void superpose_images(yImage *back, yImage *fore, int x, int y){
 
   yColor composition;
@@ -212,4 +194,112 @@ void superpose_images(yImage *back, yImage *fore, int x, int y){
       }
   }
 }
+
+
+/************************************************************/
+/*                   DRAWING FUNCTIONS                      */
+/************************************************************/
+
+
+
+void yImage_set_pixel(yImage *im, yColor *color, int x, int y){
+    int pos; /* position of the pixel (x,y) in the data array */
+
+    if(im==NULL) return;
+    if(color==NULL) return;
+    if((x<0) || (y<0)) return;
+    if((x>=im->rgbWidth) || (y>=im->rgbHeight) )return;
+
+    pos = 3*y*im->rgbWidth + 3*x;
+
+    im->rgbData[pos]=color->r;
+    im->rgbData[pos+1]=color->g;
+    im->rgbData[pos+2]=color->b;
+
+    im->alphaChanel[y*im->rgbWidth + x]=color->alpha;
+}
+
+
+
+void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
+
+    // cross differently if deltaX > deltaY or not
+    int horizontal;
+    // where start and stop the line
+    int begin, end;
+    // direction to cross
+    int increase;
+    // range in the direction we are not crossing
+    int bottom, top;
+    // counter
+    int i;
+
+    if( abs(y2-y1) > abs(x2-x1) ) {
+        horizontal = 1;
+        begin = y1;
+        end = y2;
+        bottom = x1;
+        top = x2;
+    } else {
+        horizontal = 1;
+        begin = x1;
+        end = x2;
+        bottom = y1;
+        top = y2;
+    }
+
+    if(begin > end) {
+        increase = 1;
+    } else {
+        increase = 0;
+    }
+
+    for(i=begin;i<=end;) {
+
+        int x, y;
+        double tmp;
+        int pos;
+
+        // calculate x and y
+
+        tmp = bottom + (top - bottom)*abs(end - begin)/i;
+        pos = (int) round(tmp);
+
+        if(horizontal) {
+            x = i;
+            y = pos;
+        } else {
+            y = i;
+            x=pos;
+        }
+
+        // draw point
+        yImage_set_pixel(im, color, x, y);
+
+        // next turn
+        if(increase) i++;
+        else i--;
+    }
+}
+
+
+
+void y_draw_lines(yImage *im, yColor *color, yPoint *points, int nbPoints){
+
+    int i;
+
+    if(nbPoints == 0) return;
+
+    if(nbPoints == 1) {
+        yImage_set_pixel(im, color, points->x, points->y);
+        return;
+    }
+
+    for(i=0; i<nbPoints-1; i++) {
+
+        y_draw_line(im, color, points[i].x, points[i].y,points[i+1].x, points[i+1].y);
+    }
+}
+
+
 

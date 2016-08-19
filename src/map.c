@@ -4,17 +4,10 @@
  */
 
 #include "map.h"
+#include "yImage.h"
 #include "outils.h"
 #include <stdlib.h>
 #include <string.h> // temporary for strlen()
-
-
-// point X,Y (temporaire)
-typedef struct {
-    int x;
-    int y;
-} Point;
-
 
 
 
@@ -130,8 +123,8 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
     float Xm,Ym; //calcul de la position moyenne du tracé
     float Xmax,Xmin,Ymax,Ymin; // même but mais autre méthode
 
-    Point *points; /* liste des points à relier */
-    Point coordonnees; /* lu sur une ligne */
+    yPoint *points; /* liste des points à relier */
+    yPoint coordonnees; /* lu sur une ligne */
 
 
     /* ouverture du fichier en lecture */
@@ -157,7 +150,7 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
         else { /* ligne de donnée : coordonnée d'un point */
 
             if(i==1){
-                points=malloc(N*sizeof(Point));
+                points=malloc(N*sizeof(yPoint));
                 if(points==NULL){
                     fprintf(stderr, "Allocation mémoire impossible\n");
                     return(3);
@@ -194,6 +187,8 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 
             //TODO Make the equivalent of trace_lignes
             //trace_lignes(f, points, N, c, largeur);
+            y_draw_lines(map->image, color, points, N);
+
 
             free(points);
 

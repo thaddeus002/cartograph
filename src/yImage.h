@@ -34,6 +34,15 @@ typedef struct _yColor {
 typedef /*unsigned char*/uint8_t yColorPalette_t[256*3];
 
 
+/**
+ * \brief A point define a pixel position in the image
+ */
+typedef struct {
+    int x;
+    int y;
+} yPoint;
+
+
 
 /** \brief A raster image */
 typedef struct {
@@ -87,10 +96,47 @@ void y_init_color(yColor *color, unsigned int rgba);
 int transp(yImage *im);
 
 
+void superpose_images(yImage *back, yImage *fore, int x, int y);
+
+
+
+/************************************************************/
+/*                   DRAWING FUNCTIONS                      */
+/************************************************************/
+
+/**
+ * \brief Set a color on a pixel of the image.
+ * \param im the image to modify
+ * \param color the color for the pixel
+ * \param x x coordinate of pixel : 0 is left border
+ * \param y y coordinate of pixel : 0 is top border
+ */
 void yImage_set_pixel(yImage *im, yColor *color, int x, int y);
 
 
-void superpose_images(yImage *back, yImage *fore, int x, int y);
+/**
+ * \brief Draw a line between two pixels on the image.
+ * \param im the image where to draw
+ * \param color the color for the line
+ * \param x1 x coordinate of first pixel : 0 is left border
+ * \param y1 y coordinate of first pixel : 0 is top border
+ * \param x2 x coordinate of second pixel
+ * \param y2 y coordinate of second pixel
+ */
+void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2);
+
+
+/**
+ * \brief draw some lines by linking points.
+ * \param im the image where to draw
+ * \param color the color for the lines
+ * \param points a points table
+ * \param nbPoints size of the points table
+ */
+void y_draw_lines(yImage *im, yColor *color, yPoint *points, int nbPoints);
+
+
+
 
 
 #endif
