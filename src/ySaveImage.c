@@ -11,6 +11,8 @@
 #include <ctype.h>
 #include <string.h> //memset()
 
+#define HAVE_LIBPNG
+
 #ifdef HAVE_LIBPNG
 #include "png.h"
 #endif
@@ -335,7 +337,7 @@ int sauve_jpeg(yImage *im, const char *file)
 
 
 /* sauvegarde "im" dans "file" au format PNG */
-/* retourne 1 en cas de succes */
+/* retourne 0 en cas de succes */
 /* nécessite la bibliothèque libpng */
 int sauve_png(yImage *im, const char *file)
 {
@@ -355,21 +357,24 @@ int sauve_png(yImage *im, const char *file)
         if (!png_ptr)
         {
             fclose(f);
-            return 0;
+            fprintf(stderr, "Fail create png file %s\n", file);
+            return 1;
         }
         info_ptr = png_create_info_struct(png_ptr);
         if (info_ptr == NULL)
         {
             fclose(f);
             png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
-            return 0;
+            fprintf(stderr, "Fail create png file %s\n", file);
+            return 2;
         }
         //if (setjmp(png_ptr->jmpbuf))
         if (setjmp(png_jmpbuf(png_ptr)))
         {
             fclose(f);
             png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
-            return 0;
+            fprintf(stderr, "Fail create png file %s\n", file);
+            return 3;
         }
         png_init_io(png_ptr, f);
         png_set_IHDR(png_ptr, info_ptr, im->rgbWidth, im->rgbHeight, 8,
@@ -388,7 +393,8 @@ int sauve_png(yImage *im, const char *file)
         {
             fclose(f);
             png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
-            return 0;
+            fprintf(stderr, "Fail create png file %s : no data\n", file);
+            return 4;
         }
         for (y = 0; y < im->rgbHeight; y++)
         {
@@ -418,10 +424,10 @@ int sauve_png(yImage *im, const char *file)
         png_destroy_write_struct(&png_ptr, (png_infopp) NULL);
 
         fclose(f);
-        return 1;
+        return 0;
     }
     #endif
-    return(0);
+    return 5;
 }
 
 

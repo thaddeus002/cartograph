@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#ifndef Y_IMAGE_H_
-#define Y_IMAGE_H_
+#ifndef __Y_IMAGE_H_
+#define __Y_IMAGE_H_
 
 
 /* error code */

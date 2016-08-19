@@ -6,12 +6,15 @@
  * => yImage est sous licence GPL (GNU GENERAL PUBLIC LICENSE)
  */
 
+
+#ifndef Y_SAVE_IMAGE_H_
+#define Y_SAVE_IMAGE_H_
+
+
 #include <stdint.h>
 #include <stdio.h>
 #include "yImage.h"
 
-#ifndef Y_SAVE_IMAGE_H_
-#define Y_SAVE_IMAGE_H_
 
 /** default quality for JPEG compression : 80% (208/255) */
 #define DEFAULT_JPEG_QUALITY 208
@@ -63,7 +66,7 @@ int sauve_jpeg(yImage *im, const char *file);
 
 /**
  * \brief sauvegarde "im" dans "file" au format PNG
- * \return 1 en cas de succes
+ * \return 0 en cas de succes
  * nécessite la bibliothèque libpng
  */
 int sauve_png(yImage *im, const char *file);

@@ -87,9 +87,9 @@ yImage *create_uniform_yImage(int *err, yColor *background, int width, int heigh
     int pix;
 
     for(pix=0; pix<width*height; pix++) {
-        img->rgbData[0]=background->r;
-        img->rgbData[1]=background->g;
-        img->rgbData[2]=background->b;
+        img->rgbData[3*pix+0]=background->r;
+        img->rgbData[3*pix+1]=background->g;
+        img->rgbData[3*pix+2]=background->b;
     }
 
     memset(img->alphaChanel, background->alpha, width*height);
@@ -249,9 +249,9 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
     }
 
     if(begin > end) {
-        increase = 1;
-    } else {
         increase = 0;
+    } else {
+        increase = 1;
     }
 
     for(i=begin;i<=end;) {
@@ -262,7 +262,7 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
 
         // calculate x and y
 
-        tmp = bottom + (top - bottom)*abs(end - begin)/i;
+        tmp = (double)bottom + ((double)(top - bottom))*(double)(abs(i-begin))/(double)(abs(end - begin));
         pos = (int) round(tmp);
 
         if(horizontal) {
@@ -270,7 +270,7 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
             y = pos;
         } else {
             y = i;
-            x=pos;
+            x = pos;
         }
 
         // draw point
@@ -296,7 +296,6 @@ void y_draw_lines(yImage *im, yColor *color, yPoint *points, int nbPoints){
     }
 
     for(i=0; i<nbPoints-1; i++) {
-
         y_draw_line(im, color, points[i].x, points[i].y,points[i+1].x, points[i+1].y);
     }
 }
