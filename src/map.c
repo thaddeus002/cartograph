@@ -111,7 +111,6 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
     char buf_read[250]; /* lecture d'une ligne */
     int N; /* nb de valeurs (de lignes) pour un trait */
     int i; /* numéro de ligne de coordonnées */
-    int j; /* compteur de boucle */
 
     char X[20], Y[20]; //lecture d'entier ou de reel selon les cas
     float a, b; // coordonnées d'un point
@@ -119,9 +118,6 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 
     int k; char pays[100], region[100]; // infos facultatives
     pays[0]='\0';
-
-    float Xm,Ym; //calcul de la position moyenne du tracé
-    float Xmax,Xmin,Ymax,Ymin; // même but mais autre méthode
 
     yPoint *points; /* liste des points à relier */
     yPoint coordonnees; /* lu sur une ligne */
@@ -167,21 +163,11 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
             fprintf(stdout, "Point %d : %f, %f\n", i, a, b);
             #endif
 
-            if(i==1){
-                /* sur un tracé fermé, le premier point est répété une fois */
-                Xmin=a; Xmax=a;
-                Ymin=b; Ymax=b;
-            }
-
             x=transforme_x(a, map->image->rgbWidth, map->boundaries.lonMin, map->boundaries.lonMax);
             y=transforme_y(b, map->image->rgbHeight, map->boundaries.latMin, map->boundaries.latMax);
 
             coordonnees.x=x; coordonnees.y=y;
             points[i-1]=coordonnees;
-
-            Xm+=a; Ym+=b;
-            if(a<Xmin) Xmin=a; else if(a>Xmax) Xmax=a;
-            if(b<Ymin) Ymin=b; else if(b>Ymax) Ymax=b;
         }
 
         /* evolution des compteurs */
@@ -190,27 +176,11 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
             #ifdef DEBUG
             fprintf(stdout, "tracé pour %d points\n", N);
             #endif
+
             y_draw_lines(map->image, color, points, N);
-
-
             free(points);
 
-            Xm=Xm/N; Ym=Ym/N;
-            /*suppression des guillemets*/
-            if(pays[0]=='"') {
-                if (pays[1]=='"') pays[0]='\0';
-                else {
-                    j=0;
-                    while((pays[j+1]!='"')&&(j+1<strlen(pays))) {
-                        pays[j]=pays[j+1];
-                        j++;
-                    }
-                    pays[j]='\0';
-                }
-            }
-
             i=0;
-            pays[0]='\0';
         }
         else i++;
 
