@@ -242,6 +242,21 @@ void yImage_set_pixel(yImage *im, yColor *color, int x, int y){
 }
 
 
+/** \return 0 if x is not between a and b */
+static int entre(int x, int a, int b) {
+
+    if(a<=b && x>=a && x<=b) {
+        return 1;
+    }
+
+    if(a>b && x>=b && x<=a) {
+        return 1;
+    }
+
+    return 0;
+}
+
+
 
 void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
 
@@ -270,6 +285,24 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
         top = y2;
     }
 
+    if(end == begin) {
+        // only one point to draw
+
+        int x, y;
+
+        if(horizontal) {
+            x = begin;
+            y = bottom;
+        } else {
+            y = begin;
+            x = bottom;
+        }
+
+        yImage_set_pixel(im, color, x, y);
+        return;
+    }
+
+
     if(begin > end) {
         increase = 0;
     } else {
@@ -295,6 +328,12 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
             y = i;
             x = pos;
         }
+
+
+        if( !entre(x, x1,x2)  || !entre(y, y1, y2)) {
+            fprintf(stderr, "bad point calculation : (%d,%d) not between (%d,%d) and (%d,%d)\n", x, y, x1,y1,x2,y2);
+        }
+
 
         // draw point
         yImage_set_pixel(im, color, x, y);
