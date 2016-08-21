@@ -264,8 +264,6 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
     int horizontal;
     // where start and stop the line
     int begin, end;
-    // direction to cross
-    int increase;
     // range in the direction we are not crossing
     int bottom, top;
     // counter
@@ -304,13 +302,14 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
 
 
     if(begin > end) {
-        increase = 0;
-    } else {
-        increase = 1;
+        int tmp;
+        tmp=end;
+        end=begin; begin=tmp;
+        tmp=top; top=bottom; bottom=tmp;
     }
 
     // Cross from point1 to point2
-    for(i=begin;i<=end;) {
+    for(i=begin;i<=end;i++) {
 
         int x, y;
         double tmp;
@@ -334,13 +333,8 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2) {
             fprintf(stderr, "bad point calculation : (%d,%d) not between (%d,%d) and (%d,%d)\n", x, y, x1,y1,x2,y2);
         }
 
-
         // draw point
         yImage_set_pixel(im, color, x, y);
-
-        // next turn
-        if(increase) i++;
-        else i--;
     }
 }
 
@@ -358,6 +352,7 @@ void y_draw_lines(yImage *im, yColor *color, yPoint *points, int nbPoints){
     }
 
     for(i=0; i<nbPoints-1; i++) {
+
         y_draw_line(im, color, points[i].x, points[i].y,points[i+1].x, points[i+1].y);
     }
 }

@@ -24,6 +24,7 @@
 
 #define BOUNDARIES_BLN "../data/europe.bln"
 
+
 #define LAYER_PNG "../data/pointage_temperatures_fr.png"
 
 int main(int argc, char **argv) {
@@ -56,8 +57,6 @@ int main(int argc, char **argv) {
     }
 
     err = sauve_png(map->image, "test_mf.png");
-    //sauve_ppm(map->image, "test_mf.ppm");
-
 
 
     map_destroy(map);

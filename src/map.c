@@ -8,7 +8,7 @@
 #include "outils.h"
 #include <stdlib.h>
 #include <string.h> // temporary for strlen()
-
+#include <math.h>
 
 
 int map_intercept(bbox_t *b1, bbox_t *b2){
@@ -120,7 +120,6 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
     pays[0]='\0';
 
     yPoint *points; /* liste des points à relier */
-    yPoint coordonnees; /* lu sur une ligne */
 
 
     /* ouverture du fichier en lecture */
@@ -145,6 +144,8 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 
         else { /* ligne de donnée : coordonnée d'un point */
 
+            double inter;
+
             if(i==1){
                 points=malloc(N*sizeof(yPoint));
                 if(points==NULL){
@@ -166,8 +167,13 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
             x=transforme_x(a, map->image->rgbWidth, map->boundaries.lonMin, map->boundaries.lonMax);
             y=transforme_y(b, map->image->rgbHeight, map->boundaries.latMin, map->boundaries.latMax);
 
-            coordonnees.x=x; coordonnees.y=y;
-            points[i-1]=coordonnees;
+            inter = (map->boundaries.lonMax-map->boundaries.lonMin)/(map->image->rgbWidth - 1);
+            x = round((a-map->boundaries.lonMin)/inter);
+            inter = (map->boundaries.latMax-map->boundaries.latMin)/(map->image->rgbHeight - 1);
+            y = round((map->boundaries.latMax-b)/inter);
+
+
+            points[i-1].x=x; points[i-1].y=y;
         }
 
         /* evolution des compteurs */
