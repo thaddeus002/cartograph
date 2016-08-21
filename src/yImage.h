@@ -92,11 +92,28 @@ int y_get_color_index(yColor *color, yColorPalette_t palette, int index);
 void y_set_color(yColor *color, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 void y_init_color(yColor *color, unsigned int rgba);
 
+/**
+ * \brief retrive the color of a pixel in the image
+ * \param im the image
+ * \param x x coordinate of the pixel
+ * \param y y coordinate of the pixel
+ * \return a newly allocated yColor or NULL in case of fail
+ */
+yColor *y_get_color(yImage *im, int x, int y);
+
+
 /** rend l'image transparente */
 int transp(yImage *im);
 
 
 void superpose_images(yImage *back, yImage *fore, int x, int y);
+
+/**
+ * \brief Each pixel of the image will become white with alpha=max(r,g,b).
+ *
+ * So, black will become full transparency, white will remain white.
+ */
+void y_grey_level_to_alpha(yImage *im);
 
 
 

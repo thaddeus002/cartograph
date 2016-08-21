@@ -145,21 +145,6 @@ void y_init_color(yColor *color, unsigned int rgba){
 
 
 
-
-/* rend l'image transparente */
-int transp(yImage *im){
-    if(im==NULL) return -1;
-
-    if(im->alphaChanel==NULL) im->alphaChanel=(unsigned char *)malloc(im->rgbWidth*im->rgbHeight);
-    if(im->alphaChanel==NULL) return ERR_ALLOCATE_FAIL;
-
-    memset(im->alphaChanel, 0, im->rgbWidth*im->rgbHeight);
-    im->presShapeColor=0;
-
-    return 0;
-}
-
-
 /**
  *
  * \return 0 if the colors are identical
@@ -177,45 +162,122 @@ static int compare_colors(yColor *c1, yColor *c2) {
 }
 
 
+yColor *y_get_color(yImage *im, int x, int y){
+
+    yColor *value = NULL;
+    int pos;
+
+    pos = x + y*im->rgbWidth;
+
+    if(pos < im->rgbWidth*im->rgbHeight) {
+
+        value = malloc(sizeof(yColor));
+        if(value==NULL) return NULL;
+
+        value->r = im->rgbData[3*pos];
+        value->g = im->rgbData[3*pos+1];
+        value->b = im->rgbData[3*pos+2];
+        value->alpha = im->alphaChanel[pos];
+    }
+
+    return value;
+}
+
+
+
+
+
+/* rend l'image transparente */
+int transp(yImage *im){
+    if(im==NULL) return -1;
+
+    if(im->alphaChanel==NULL) im->alphaChanel=(unsigned char *)malloc(im->rgbWidth*im->rgbHeight);
+    if(im->alphaChanel==NULL) return ERR_ALLOCATE_FAIL;
+
+    memset(im->alphaChanel, 0, im->rgbWidth*im->rgbHeight);
+    im->presShapeColor=0;
+
+    return 0;
+}
+
+
+
 
 void superpose_images(yImage *back, yImage *fore, int x, int y){
 
-  yColor composition;
-  int i, j;
+    yColor composition;
+    int i, j;
 
-  for(i=0; i<fore->rgbWidth; i++)
-    for(j=0; j<fore->rgbHeight; j++){
+    for(i=0; i<fore->rgbWidth; i++)
+        for(j=0; j<fore->rgbHeight; j++){
 
-      int xb, yb;
-      xb=i+x; yb=j+y;
+        int xb, yb;
+        xb=i+x; yb=j+y;
 
-      if((xb>=0) && (xb<back->rgbWidth) && (y>=0) && (yb<back->rgbHeight)){
+        if((xb>=0) && (xb<back->rgbWidth) && (y>=0) && (yb<back->rgbHeight)){
 
-        int ab= back->alphaChanel[xb+yb*back->rgbWidth];
-        int rb= back->rgbData[3*(xb+yb*back->rgbWidth)];
-        int gb= back->rgbData[3*(xb+yb*back->rgbWidth)+1];
-        int bb= back->rgbData[3*(xb+yb*back->rgbWidth)+2];
+            int ab= back->alphaChanel[xb+yb*back->rgbWidth];
+            int rb= back->rgbData[3*(xb+yb*back->rgbWidth)];
+            int gb= back->rgbData[3*(xb+yb*back->rgbWidth)+1];
+            int bb= back->rgbData[3*(xb+yb*back->rgbWidth)+2];
 
-        int af= fore->alphaChanel[i+j*fore->rgbWidth];
-        int rf= fore->rgbData[3*(i+j*fore->rgbWidth)];
-        int gf= fore->rgbData[3*(i+j*fore->rgbWidth)+1];
-        int bf= fore->rgbData[3*(i+j*fore->rgbWidth)+2];
+            int af= fore->alphaChanel[i+j*fore->rgbWidth];
+            int rf= fore->rgbData[3*(i+j*fore->rgbWidth)];
+            int gf= fore->rgbData[3*(i+j*fore->rgbWidth)+1];
+            int bf= fore->rgbData[3*(i+j*fore->rgbWidth)+2];
 
-        yColor foreColor;
-        y_set_color(&foreColor, rf, gf, bf, af);
+            yColor foreColor;
+            y_set_color(&foreColor, rf, gf, bf, af);
 
-        if(!fore->presShapeColor || compare_colors(&(fore->shapeColor), &foreColor)) {
-            /* TODO vraie superposition de couleurs */
-            composition.r=((255-af)*rb + af*rf)/255;
-            composition.b=((255-af)*bb + af*bf)/255;//af>0?bf:bb;
-            composition.g=((255-af)*gb + af*gf)/255;//af>0?gf:gb;
-            composition.alpha=ab+((255-ab)*af/255);
+            if(!fore->presShapeColor || compare_colors(&(fore->shapeColor), &foreColor)) {
+                /* TODO vraie superposition de couleurs */
+                composition.r=((255-af)*rb + af*rf)/255;
+                composition.b=((255-af)*bb + af*bf)/255;//af>0?bf:bb;
+                composition.g=((255-af)*gb + af*gf)/255;//af>0?gf:gb;
+                composition.alpha=ab+((255-ab)*af/255);
 
-            yImage_set_pixel(back, &composition, xb, yb);
+                yImage_set_pixel(back, &composition, xb, yb);
+            }
         }
-      }
-  }
+    }
 }
+
+
+
+void y_grey_level_to_alpha(yImage *im){
+
+    int i, j;
+    yColor *color;
+
+
+    for(i=0; i<im->rgbWidth; i++) {
+        for(j=0; j<im->rgbHeight; j++) {
+
+            color = y_get_color(im, i, j);
+
+            if(color!=NULL) {
+
+                int m = color->r;
+                if(color->g>m) m=color->g;
+                if(color->b>m) m=color->b;
+
+                if(m>0) {
+
+                    color->r=255;
+                    color->g=255;
+                    color->b=255;
+                }
+                color->alpha=m;
+                yImage_set_pixel(im, color, i, j);
+
+                free(color);
+            }
+        }
+    }
+}
+
+
+
 
 
 /************************************************************/

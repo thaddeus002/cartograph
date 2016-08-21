@@ -50,8 +50,9 @@ int main(int argc, char **argv) {
         fclose(fd);
 
         // replace black by transparency
-        pointage->presShapeColor=1;
-        y_set_color(&(pointage->shapeColor), 0, 0, 0, 255);
+        //pointage->presShapeColor=1;
+        //y_set_color(&(pointage->shapeColor), 0, 0, 0, 255);
+        y_grey_level_to_alpha(pointage);
 
         superpose_images(map->image, pointage, 0, 0);
     }
