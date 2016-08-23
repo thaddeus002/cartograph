@@ -9,29 +9,11 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "yColor.h"
+
 
 #ifndef __Y_IMAGE_H_
 #define __Y_IMAGE_H_
-
-
-/* error code */
-#define ERR_NULL_PALETTE -1
-#define ERR_NULL_COLOR -2
-#define ERR_BAD_INDEX -3
-#define ERR_ALLOCATE_FAIL -4
-
-
-
-
-/** \brief Represents a color */
-typedef struct _yColor {
-    unsigned char r, g, b; /**< Red, green and blue levels, between 0 and 255 */
-    unsigned char alpha; /**< alpha 0 => transparency ; 255 => opacity */
-} yColor;
-
-
-/** \brief a colors palete for 8 bits color images */
-typedef /*unsigned char*/uint8_t yColorPalette_t[256*3];
 
 
 /**
@@ -60,8 +42,6 @@ typedef struct {
 /*               CREATION / DESTRUCTION DES IMAGES          */
 /************************************************************/
 
-void init_palette(yColorPalette_t palette, const uint8_t *pal);
-
 /**
  * Create an yImage without transparency.
  * \param rbg_data the background image. Background will be black if NULL
@@ -75,7 +55,6 @@ yImage *create_yImage(int *err, const unsigned char *rgb_data, int width, int he
 yImage *create_uniform_yImage(int *err, yColor *background, int width, int height);
 
 
-
 /**
  * free memory
  */
@@ -85,12 +64,6 @@ void destroy_yImage(yImage *im);
 /*               MANIPULATION DES IMAGES                    */
 /************************************************************/
 
-/** recupere une couleur sur la palette */
-int y_get_color_index(yColor *color, yColorPalette_t palette, int index);
-
-/** create a color */
-void y_set_color(yColor *color, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-void y_init_color(yColor *color, unsigned int rgba);
 
 /**
  * \brief retrive the color of a pixel in the image
