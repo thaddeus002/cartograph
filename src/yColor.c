@@ -1,4 +1,7 @@
-/** \file yColor.c */
+/**
+ * \file yColor.c
+ * \brief Implementation of four channels color representation.
+ */
 
 
 
@@ -6,23 +9,20 @@
 
 
 
-void init_palette(yColorPalette_t palette, const /*unsigned char*/uint8_t *pal){
+void init_palette(yColorPalette_t palette, const uint8_t *pal){
     int i, j; /* compteur */
 
     if(pal==NULL) return;
 
     for(i=0; i<=255; i++){
-
-        for(j=0; j<=2; j++)
+        for(j=0; j<=2; j++) {
             palette[3*i+j]=pal[3*i+j]*4;
-
-        //printf("%d : %d,%d,%d\n", i, palette[3*i], palette[3*i+1], palette[3*i+2]);
+        }
     }
-    //memcpy(palette, pal, 256*3);
 }
 
 
-/* recupere une couleur sur la palette */
+
 int y_get_color_index(yColor *color, yColorPalette_t palette, int index){
     if(color==NULL) return(ERR_NULL_COLOR);
     if(palette==NULL) return(ERR_NULL_PALETTE);
@@ -39,7 +39,6 @@ int y_get_color_index(yColor *color, yColorPalette_t palette, int index){
 
 
 
-/* create a color */
 void y_set_color(yColor *color, unsigned char r, unsigned char g, unsigned char b, unsigned char a){
     color->r=r;
     color->g=g;
@@ -47,13 +46,14 @@ void y_set_color(yColor *color, unsigned char r, unsigned char g, unsigned char 
     color->alpha=a;
 }
 
+
+
 void y_init_color(yColor *color, unsigned int rgba){
     color->r=rgba/(256*256*256);
     color->g=(rgba/(256*256))%256;
     color->b=(rgba/256)%(256*256);
     color->alpha=rgba%(256*256*256);
 }
-
 
 
 
@@ -72,6 +72,4 @@ int compare_colors(yColor *c1, yColor *c2) {
 
     return comp;
 }
-
-
 

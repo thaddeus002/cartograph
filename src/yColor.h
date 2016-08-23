@@ -11,13 +11,11 @@
 
 
 
-
 /* error code */
 #define ERR_NULL_PALETTE -1
 #define ERR_NULL_COLOR -2
 #define ERR_BAD_INDEX -3
 #define ERR_ALLOCATE_FAIL -4
-
 
 
 
@@ -32,27 +30,42 @@ typedef struct _yColor {
 typedef /*unsigned char*/uint8_t yColorPalette_t[256*3];
 
 
-
+/**
+ * \brief Init a yColorPalette with the data read.
+ *
+ * Values in palette are four time the values in pal.
+ * \param palette the objet to init
+ * \param pal the source data
+ */
 void init_palette(yColorPalette_t palette, const uint8_t *pal);
 
 
-
-
-/** recupere une couleur sur la palette */
+/**
+ * Get a color on the palette.
+ * \param color a allocated struct to get the result
+ * \param palette the palette
+ * \param index the index of the color we want
+ */
 int y_get_color_index(yColor *color, yColorPalette_t palette, int index);
 
-/** create a color */
+
+/**
+ * \brief Init the data of a yColor struct
+ */
 void y_set_color(yColor *color, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
+
+/**
+ * \brief Init the data of a yColor struct
+ */
 void y_init_color(yColor *color, unsigned int rgba);
 
 
 /**
- *
+ * \brief Compare two colors.
  * \return 0 if the colors are identical
  */
 int compare_colors(yColor *c1, yColor *c2);
-
-
 
 
 
