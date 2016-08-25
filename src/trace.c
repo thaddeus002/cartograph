@@ -1,4 +1,7 @@
-/** \file trace.c */
+/**
+ * \file trace.c
+ * Draw a map using the content of a bln file.
+ */
 
 
 #include "lecture_bln.h"
@@ -11,14 +14,18 @@
 #define LARGEUR_MAX 1400
 #define HAUTEUR_MAX 800
 
-/* La fonction usage */
-void usage(char *prog){
-    fprintf(stderr,"Tracé de lignes décrites dans un fichier au format BLN.\n");
-    fprintf(stderr,"Usage : %s <fichier.bln> [<pointage.csv>]\n", prog);
+/**
+ * The usage function
+ */
+static void usage(char *prog){
+    fprintf(stderr,"Draws the lines listed in a BLN file.\n");
+    fprintf(stderr,"Usage : %s <file.bln> [<pointage.csv>]\n", prog);
     exit(1);
 }
 
-/* Programme principal */
+/**
+ * Main program
+ */
 int main(int argc, char **argv){
 
     bornes_bln bornes; // bornes du fichier à lire
@@ -30,6 +37,7 @@ int main(int argc, char **argv){
     int i; //numero d'evenement clavier
     float r; //ratio pour l'agrandissement
     //char leg[20]; // legende des meridiens
+    int err; // error code
 
 
     if(argc<2) usage(argv[0]);
@@ -114,9 +122,9 @@ int main(int argc, char **argv){
     }
 
     /* fermeture des display */
-    sauve_fenetre_jpeg(&f, "output_trace.jpg");
+    //sauve_fenetre_jpeg(&f, "output_trace.jpg");
     sauve_fenetre_png(&f, "output_trace.png");
-    sauve_fenetre_tiff(&f, "output_trace.tiff");
+    //sauve_fenetre_tiff(&f, "output_trace.tiff");
     fermeture(f);
     return 0;
 }

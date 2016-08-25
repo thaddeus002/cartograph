@@ -356,4 +356,3 @@ void y_draw_lines(yImage *im, yColor *color, yPoint *points, int nbPoints){
 }
 
 
-
