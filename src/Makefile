@@ -8,7 +8,9 @@ BINDIR=$(DESTDIR)/bin
 
 OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o map.o yColor.o
 
-all: carte trace pointe
+PROG=carte trace pointe
+
+all: $(PROG)
 
 
 carte: carte.c $(OBJS)
@@ -37,6 +39,8 @@ install:
 clean:
 	rm -f core *~ *.o
 
+mrproper: clean
+	rm -rf $(PROG)
 
 # ajout des shapes - en test
 lit: lit.c shape_data.o  shape_types.o outils.o fenetre.o
