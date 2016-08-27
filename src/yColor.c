@@ -6,7 +6,7 @@
 
 
 #include "yColor.h"
-
+#include <stdlib.h>
 
 
 void init_palette(yColorPalette_t palette, const uint8_t *pal){
@@ -35,6 +35,44 @@ int y_get_color_index(yColor *color, yColorPalette_t palette, int index){
     color->alpha=255;
 
     return(0);
+}
+
+
+// yColor functions
+
+yColor *y_color(ySimpleColor color){
+
+    int r,g,b;
+    yColor *result;
+
+    result = malloc(sizeof(yColor));
+    if(result == NULL) return NULL;
+
+    switch(color) {
+    case BLACK:
+        r=0; g=0; b=0; break;
+    case WHITE:
+        r=255; g=255; b=255; break;
+    case RED:
+        r=255; g=0; b=0; break;
+    case GREEN:
+        r=0; g=255; b=0; break;
+    case BLUE:
+        r=0; g=0; b=255; break;
+    case ORANGE_:
+        r=255; g=160; b=0; break;
+    case YELLOW:
+        r=0; g=255; b=255; break;
+    case CYAN_:
+        r=255; g=0; b=255; break;
+    case MAGENTA_:
+        r=255; g=255; b=0; break;
+    case MARRON_:
+        r=112; g=80; b=0;
+    }
+
+    y_set_color(result, r, g, b, 255);
+    return result;
 }
 
 

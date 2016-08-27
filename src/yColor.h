@@ -29,6 +29,14 @@ typedef struct _yColor {
 /** \brief a colors palete for 8 bits color images */
 typedef /*unsigned char*/uint8_t yColorPalette_t[256*3];
 
+/** \brief enumeration of basics color to direct access */
+typedef enum{BLACK=0, WHITE, RED, GREEN, BLUE, ORANGE_, YELLOW, CYAN_, MAGENTA_, MARRON_} ySimpleColor;
+
+
+
+/* FUNCTIONS */
+
+// Palette functions
 
 /**
  * \brief Init a yColorPalette with the data read.
@@ -47,6 +55,16 @@ void init_palette(yColorPalette_t palette, const uint8_t *pal);
  * \param index the index of the color we want
  */
 int y_get_color_index(yColor *color, yColorPalette_t palette, int index);
+
+// yColor functions
+
+
+/**
+ * \brief Init a color.
+ * \param color
+ * \return a newly allocated struct
+ */
+yColor *y_color(ySimpleColor color);
 
 
 /**
