@@ -6,8 +6,9 @@
 #include "map.h"
 #include "yImage.h"
 #include "outils.h"
+#include "bln.h"
 #include <stdlib.h>
-#include <string.h> // temporary for strlen()
+//#include <string.h> // temporary for strlen()
 #include <math.h>
 
 
@@ -106,95 +107,17 @@ yImage *map_set_background(map_t *map, yColor *color){
  */
 int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 
-    /* variables */
-    FILE *fd; /* Descripteur pour l'ouverture du fichier */
-    char buf_read[250]; /* lecture d'une ligne */
-    int N; /* nb de valeurs (de lignes) pour un trait */
-    int i; /* numéro de ligne de coordonnées */
+    bln_data_t *data = bln_read_file(blnFile);
+    int err = 0;
 
-    char X[20], Y[20]; //lecture d'entier ou de reel selon les cas
-    float a, b; // coordonnées d'un point
-    int x, y; // transformés en coordonnées fenetres
-
-    int k; char pays[100], region[100]; // infos facultatives
-    pays[0]='\0';
-
-    yPoint *points; /* liste des points à relier */
-
-
-    /* ouverture du fichier en lecture */
-    fd=fopen(blnFile, "r");
-    if(fd==NULL) {
-        fprintf(stderr, "Impossible d'ouvrir le fichier %s\n", blnFile);
-        return(1);
+    if(data != NULL) {
+        map_trace_bln_data(map,data,color);
+        bln_destroy(data);
+    } else {
+        err = 1;
     }
 
-    /* initialisations */
-    a=0; b=0;
-    i=0;
-
-
-    /* Lecture ligne par ligne */
-    while(fgets(buf_read, 250, fd)!=NULL){
-
-        if(i==0) { /* ligne d'entete */
-            sscanf(buf_read, "%d,%d,%[a-zA-Z'\" -],%s", &N, &k, pays, region);
-            if (N==0) continue; /* i reste à 0 pour la lecture de la prochaine ligne */
-        }
-
-        else { /* ligne de donnée : coordonnée d'un point */
-
-            double inter;
-
-            if(i==1){
-                points=malloc(N*sizeof(yPoint));
-                if(points==NULL){
-                    fprintf(stderr, "Allocation mémoire impossible\n");
-                    return(3);
-                }
-            }
-
-
-            /* lecture d'un enregistrement */
-            if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) return(2);
-            a=atof(X);
-            b=atof(Y);
-
-            #ifdef DEBUG
-            fprintf(stdout, "Point %d : %f, %f\n", i, a, b);
-            #endif
-
-            x=transforme_x(a, map->image->rgbWidth, map->boundaries.lonMin, map->boundaries.lonMax);
-            y=transforme_y(b, map->image->rgbHeight, map->boundaries.latMin, map->boundaries.latMax);
-
-            inter = (map->boundaries.lonMax-map->boundaries.lonMin)/(map->image->rgbWidth - 1);
-            x = round((a-map->boundaries.lonMin)/inter);
-            inter = (map->boundaries.latMax-map->boundaries.latMin)/(map->image->rgbHeight - 1);
-            y = round((map->boundaries.latMax-b)/inter);
-
-
-            points[i-1].x=x; points[i-1].y=y;
-        }
-
-        /* evolution des compteurs */
-        if(i==N) {
-
-            #ifdef DEBUG
-            fprintf(stdout, "tracé pour %d points\n", N);
-            #endif
-
-            y_draw_lines(map->image, color, points, N);
-            free(points);
-
-            i=0;
-        }
-        else i++;
-
-    } /* Arrivée à la fin du fichier */
-
-    fclose(fd);
-    //if (points!=NULL) free(points);
-    return(0);
+    return err;
 }
 
 

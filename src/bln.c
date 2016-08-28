@@ -120,8 +120,6 @@ void bln_destroy(bln_data_t *data){
 
     while(current != NULL) {
 
-        //fprintf(stderr, "free du %s pour %d points\n", current->name, current->nbPoints);
-
         bln_data_t *next;
 
         if(current->name != NULL) free(current->name);
@@ -176,6 +174,4 @@ int bln_write_file(bln_data_t *data, char *filename){
     fclose(fd);
     return 0;
 }
-
-
 
