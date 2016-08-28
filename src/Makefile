@@ -6,7 +6,7 @@ DESTDIR=/usr/local
 BINDIR=$(DESTDIR)/bin
 #DATADIR=$(DESTDIR)/share/yannview
 
-OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o map.o yColor.o
+OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o map.o yColor.o
 
 PROG=carte trace pointe
 
@@ -51,5 +51,5 @@ trace_fond_mf: trace_fond_mf.c bln.o map.o yImage.o yColor.o ySaveImage.o outils
 
 
 trace_and: trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o
-	gcc -o trace_and trace_and.c map.o yImage.o ySaveImage.o outils.o -lm -lz -lpng
+	gcc -o trace_and trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o -lm -lz -lpng
 
