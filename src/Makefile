@@ -46,8 +46,8 @@ mrproper: clean
 lit: lit.c shape_data.o  shape_types.o outils.o fenetre.o
 	gcc -o lit lit.c shape_data.o shape_types.o fenetre.o outils.o -L/usr/X11R6/lib -lX11 -lm
 
-trace_fond_mf: trace_fond_mf.c map.o yImage.o yColor.o ySaveImage.o outils.o
-	gcc -o trace_fond_mf trace_fond_mf.c map.o yImage.o ySaveImage.o outils.o -lm -lz -lpng
+trace_fond_mf: trace_fond_mf.c bln.o map.o yImage.o yColor.o ySaveImage.o outils.o
+	gcc -o trace_fond_mf trace_fond_mf.c bln.o map.o yImage.o yColor.o ySaveImage.o outils.o -lm -lz -lpng
 
 
 trace_and: trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o

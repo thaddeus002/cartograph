@@ -12,6 +12,7 @@
 
 
 #include "yImage.h"
+#include "bln.h"
 
 
 #ifndef __Y_MAP_H__
@@ -87,6 +88,12 @@ yImage *map_set_background(map_t *map, yColor *color);
  * Add lines or polygons to the map.
  */
 int map_trace_bln(map_t *map, char *blnFile, yColor *color);
+
+/**
+ * Add lines or polygons to the map.
+ */
+int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color);
+
 
 
 

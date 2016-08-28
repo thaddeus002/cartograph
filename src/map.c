@@ -106,7 +106,7 @@ yImage *map_set_background(map_t *map, yColor *color){
  */
 int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 
-   /* variables */
+    /* variables */
     FILE *fd; /* Descripteur pour l'ouverture du fichier */
     char buf_read[250]; /* lecture d'une ligne */
     int N; /* nb de valeurs (de lignes) pour un trait */
@@ -195,10 +195,45 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
     fclose(fd);
     //if (points!=NULL) free(points);
     return(0);
-
-
-
 }
 
 
+
+/**
+ * Add lines or polygons to the map.
+ */
+int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
+
+    /* variables */
+    int i; /* numéro de ligne de coordonnées */
+    yPoint *points; /* liste des points à relier */
+    bln_data_t *current; /* to cross the data */
+
+    /* initialisations */
+    i=0;
+    current=blnData;
+
+    while(current!=NULL){
+
+        points=malloc(current->nbPoints*sizeof(yPoint));
+
+        for(i=0; i<current->nbPoints; i++) {
+
+            points[i].x=transforme_x(current->x[i], map->image->rgbWidth, map->boundaries.lonMin, map->boundaries.lonMax);
+            points[i].y=transforme_y(current->y[i], map->image->rgbHeight, map->boundaries.latMin, map->boundaries.latMax);
+
+        }
+
+        #ifdef DEBUG
+        fprintf(stdout, "tracé pour %d points\n", current->nbPoints);
+        #endif
+
+        y_draw_lines(map->image, color, points, current->nbPoints);
+        free(points);
+
+        current = current->next;
+    }
+
+    return(0);
+}
 
