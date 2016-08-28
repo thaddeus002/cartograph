@@ -43,10 +43,9 @@ int main(int argc, char **argv) {
     map = map_init(EPSG_4326, LATMIN, LONMIN, LATMAX, LONMAX, WIDTH, HEIGHT);
     map_set_background(map, &backColor);
 
-    //map_trace_bln(map, BOUNDARIES_BLN, &countriesColor);
     boundaries = bln_read_file(BOUNDARIES_BLN);
     if(boundaries != NULL) {
-        //map_trace_bln_data(map, boundaries, &countriesColor);
+        map_trace_bln_data(map, boundaries, &countriesColor);
         bln_destroy(boundaries);
     }
 

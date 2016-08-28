@@ -17,7 +17,7 @@
  */
 bln_data_t *bln_read_file(char *filename){
 
-    bln_data_t *result;
+    bln_data_t *result = NULL;
     FILE *fd;
     int i=0; // line number
     char buf_read[LINE_LENGHT]; /* one file's line */
@@ -33,43 +33,47 @@ bln_data_t *bln_read_file(char *filename){
 
 
 
-
-
-
-
-
-
-
-
-
     /* Lecture ligne par ligne */
     while(fgets(buf_read, LINE_LENGHT, fd)!=NULL){
 
         char X[20], Y[20]; // to read integers or floats
 
-        if(i==0) { /* ligne d'entete */
+        //fprintf(stdout, "lecture : %s", buf_read);
+
+        if(i==0 || current == NULL) { /* ligne d'entete */
 
             char pays[LINE_LENGHT];
             char region[LINE_LENGHT];
 
             current = malloc(sizeof(bln_data_t));
+            if(current == NULL) {
+                fprintf(stderr, "Failed allocating memory\n");
+                continue;
+            }
 
             sscanf(buf_read, "%d,%d,%[a-zA-Z'\" -],%s", &(current->nbPoints), &(current->closed), pays, region);
             if (current->nbPoints<=0) {
                 free(current);
+                current=NULL;
                 continue; /* i reste à 0 pour la lecture de la prochaine ligne */
             } else {
                 current->name = malloc(sizeof(char) * (strlen(pays)+1));
-                strcpy(current->name, pays);
                 current->description = malloc(sizeof(char) * (strlen(region)+1));
-                strcpy(current->description, region);
                 current->x = malloc(sizeof(float)*current->nbPoints);
                 current->y = malloc(sizeof(float)*current->nbPoints);
                 current->next = NULL;
-            }
-        }
 
-        else { /* ligne de donnée : coordonnée d'un point */
+                if(current->name == NULL || current->description == NULL || current->x == NULL || current->y == NULL) {
+                    fprintf(stderr, "Failed allocating memory for %s\n", pays);
+                    bln_destroy(current);
+                    continue;
+                }
+
+                strcpy(current->name, pays);
+                strcpy(current->description, region);
+            }
+
+        } else { /* ligne de donnée : coordonnée d'un point */
 
             /* lecture d'un enregistrement */
             if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) {
@@ -81,28 +85,27 @@ bln_data_t *bln_read_file(char *filename){
             }
             current->x[i-1]=atof(X);
             current->y[i-1]=atof(Y);
-
         }
-
 
 
         i++;
 
         // Validate data
+        //fprintf(stdout, "%d points OK\n", current->nbPoints);
         if(i>current->nbPoints) {
-
-            if(result == NULL) result = current;
-            else {
+            if(result == NULL) {
+                result = current;
+            } else {
                 bln_data_t *last = result;
                 while (last->next != NULL) last = last->next;
                 last->next = current;
             }
 
-            i=0;
+            i=0; current=NULL;
         }
     } //reached end of file
 
-    if(i<=current->nbPoints) bln_destroy(current);
+    if(current!=NULL) bln_destroy(current);
 
     return result;
 }
@@ -116,6 +119,8 @@ void bln_destroy(bln_data_t *data){
     bln_data_t *current = data;
 
     while(current != NULL) {
+
+        //fprintf(stderr, "free du %s pour %d points\n", current->name, current->nbPoints);
 
         bln_data_t *next;
 
