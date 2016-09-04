@@ -94,7 +94,10 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color);
  */
 int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color);
 
-
+/**
+ * \brief Create a new map with the drawing of bln.
+ */
+map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yProjection proj, int width, int height);
 
 
 #endif

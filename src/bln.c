@@ -31,16 +31,12 @@ bln_data_t *bln_read_file(char *filename){
     }
 
 
-
-
-    /* Lecture ligne par ligne */
+    /* reading line by line */
     while(fgets(buf_read, LINE_LENGHT, fd)!=NULL){
 
         char X[20], Y[20]; // to read integers or floats
 
-        //fprintf(stdout, "lecture : %s", buf_read);
-
-        if(i==0 || current == NULL) { /* ligne d'entete */
+        if(i==0 || current == NULL) { /* header line */
 
             char pays[LINE_LENGHT];
             char region[LINE_LENGHT];
@@ -73,9 +69,9 @@ bln_data_t *bln_read_file(char *filename){
                 strcpy(current->description, region);
             }
 
-        } else { /* ligne de donnée : coordonnée d'un point */
+        } else { /* data line containing a point's coordinates */
 
-            /* lecture d'un enregistrement */
+            /* reading data */
             if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) {
                 bln_destroy(current);
                 bln_destroy(result);
@@ -85,6 +81,17 @@ bln_data_t *bln_read_file(char *filename){
             }
             current->x[i-1]=atof(X);
             current->y[i-1]=atof(Y);
+            if(i==1){
+                current->xmin=current->x[i-1];
+                current->xmax=current->x[i-1];
+                current->ymin=current->y[i-1];
+                current->ymax=current->y[i-1];
+            } else {
+                if(current->x[i-1]<current->xmin) current->xmin = current->x[i-1];
+                if(current->x[i-1]>current->xmax) current->xmax = current->x[i-1];
+                if(current->y[i-1]<current->ymin) current->ymin = current->y[i-1];
+                if(current->y[i-1]>current->ymax) current->ymax = current->y[i-1];
+            }
         }
 
 

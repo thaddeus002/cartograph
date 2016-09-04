@@ -159,3 +159,19 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
     return(0);
 }
 
+
+map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yProjection proj, int width, int height){
+
+    bln_data_t *data = bln_read_file(blnFile);
+    map_t *map = NULL;
+
+    if(data != NULL) {
+        map = map_init(proj, data->ymin, data->xmin, data->ymax, data->xmax, width, height);
+        map_set_background(map, background);
+        map_trace_bln_data(map,data,color);
+        bln_destroy(data);
+    }
+
+    return map;
+}
+

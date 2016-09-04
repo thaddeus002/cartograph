@@ -28,14 +28,17 @@ typedef struct bln_data_t_ {
     int closed; /**< \brief not NULL if the line is closed */
     char *name; /**< \brief line name, can be a country name */
     char *description; /**< \brief complementary description, may be a region */
-    /** tables of coordinates */
+    /* tables of coordinates */
     float *x, *y;
+    /* boundaries' coordinates */
+    float xmin, xmax, ymin, ymax;
     struct bln_data_t_ *next; /**< \brief link to the next structur */
 } bln_data_t;
 
 
 /**
  * \brief The boundaries of a struct bln_data_t_
+ * \deprecated this type may be remove in the future
  */
 typedef struct {
     float xmin, xmax, ymin, ymax;
@@ -45,6 +48,7 @@ typedef struct {
 
 /* functions */
 
+/** \deprecated */
 bln_boundaries_t *bln_find_boundaries(char *file);
 
 
