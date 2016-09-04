@@ -3,6 +3,8 @@
  * \brief Un fichier bln est un fichier texte contenant les informations pour faire un tracé.
  * Chaque ligne du fichier contient les coordonnées d'un point. En reliant les points
  * on obtient un tracé : fleuve, côte, frontière, route, ...
+ *
+ * \deprecated this file is for use with xlib only. If possible use bln.h instead.
  */
 
 #ifndef __BLN_H__

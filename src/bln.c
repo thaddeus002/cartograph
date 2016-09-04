@@ -111,6 +111,48 @@ bln_data_t *bln_read_file(char *filename){
 }
 
 
+
+
+bln_boundaries_t *bln_find_boundaries(char *file){
+
+    bln_data_t *data;
+    bln_boundaries_t *bound = malloc(sizeof(bln_boundaries_t));
+    bln_data_t *cur;
+
+    if(bound == NULL) return bound;
+
+    bound->xmin=9999;
+    bound->xmax=-9999;
+    bound->ymin=9999;
+    bound->ymax=-9999;
+    bound->result=1;
+    data = bln_read_file(file);
+
+    if(data == NULL) return bound;
+
+    cur = data;
+    while(cur != NULL) {
+        int i;
+
+        for(i = 0; i < cur->nbPoints; i++) {
+            if(cur->x[i]<bound->xmin) bound->xmin = cur->x[i];
+            if(cur->x[i]>bound->xmax) bound->xmax = cur->x[i];
+            if(cur->y[i]<bound->ymin) bound->ymin = cur->y[i];
+            if(cur->y[i]>bound->ymax) bound->ymax = cur->y[i];
+        }
+
+        cur = cur->next;
+    }
+
+    bound->result=0;
+    return bound;
+}
+
+
+
+
+
+
 /**
  * \brief free the memory used by the bln data.
  */

@@ -34,6 +34,20 @@ typedef struct bln_data_t_ {
 } bln_data_t;
 
 
+/**
+ * \brief The boundaries of a struct bln_data_t_
+ */
+typedef struct {
+    float xmin, xmax, ymin, ymax;
+    int result; // err code
+} bln_boundaries_t;
+
+
+/* functions */
+
+bln_boundaries_t *bln_find_boundaries(char *file);
+
+
 
 /**
  * \brief Read a bln file.

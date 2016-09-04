@@ -5,7 +5,6 @@
 
 
 #include "lecture_csv.h"
-#include "lecture_bln.h"
 #include "outils.h"
 #include "map.h"
 #include "ySaveImage.h"
@@ -30,7 +29,7 @@ static void usage(char *prog){
  */
 int main(int argc, char **argv){
 
-    bornes_bln bornes; // boundaries of data
+    bln_boundaries_t *bornes;
     int width, height; // image size
     float r; //zoom ratio
 
@@ -41,20 +40,19 @@ int main(int argc, char **argv){
 
 
 
-
-
     if(argc<2) usage(argv[0]);
     printf("Fichier à afficher : %s\n", argv[1]);
 
-    bornes=cherche_bornes_bln(argv[1]);
-    if(bornes.resultat!=0) {
+    bornes=bln_find_boundaries(argv[1]);
+    if(bornes->result!=0) {
         fprintf(stderr,"Pb de format du fichier %s\n", argv[1]);
-        exit(bornes.resultat);
+        exit(bornes->result);
     }
 
-    printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.resultat);
-    width=(bornes.xmax-bornes.xmin)*10;
-    height=(bornes.ymax-bornes.ymin)*10;
+    printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
+    width=(bornes->xmax-bornes->xmin)*10;
+    height=(bornes->ymax-bornes->ymin)*10;
+    free(bornes);
 
     if((width<0)|| (height<0)) {
         printf("Erreur dans les bornes... Arrêt du programme\n");
@@ -91,7 +89,7 @@ int main(int argc, char **argv){
 
     backColor = y_color(BLUE);
     countriesColor= y_color(WHITE);
-    map = map_init(EPSG_4326, bornes.ymin, bornes.xmin, bornes.ymax, bornes.xmax, width, height);
+    map = map_init(EPSG_4326, bornes->ymin, bornes->xmin, bornes->ymax, bornes->xmax, width, height);
     map_set_background(map, backColor);
     map_trace_bln(map, argv[1], countriesColor);
     free(backColor);
