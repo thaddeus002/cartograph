@@ -1,6 +1,7 @@
 /**
- * \file trace.c
+ * \file trace_x.c
  * Draw a map using the content of a bln file.
+ * This is the same goal than trace.c but using the xlib.
  */
 
 

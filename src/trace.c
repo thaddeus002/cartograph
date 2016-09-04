@@ -5,6 +5,7 @@
 
 
 #include "lecture_csv.h"
+#include "lecture_bln.h"
 #include "outils.h"
 #include "map.h"
 #include "ySaveImage.h"
@@ -29,16 +30,10 @@ static void usage(char *prog){
  */
 int main(int argc, char **argv){
 
-    bornes_bln bornes; // bornes du fichier à lire
-    int width, height; // taille de la fenetre
-    float temp;//aide au calcul
-    fenetre f; // fenetre d'affichage du tracé
-    int depth; // nb de couleurs?
-    XEvent event; //evenement clavier ou souris
-    int i; //numero d'evenement clavier
-    float r; //ratio pour l'agrandissement
-    //char leg[20]; // legende des meridiens
-    int err; // error code
+    bornes_bln bornes; // boundaries of data
+    int width, height; // image size
+    float r; //zoom ratio
+
 
 
     map_t *map;
@@ -60,7 +55,6 @@ int main(int argc, char **argv){
     printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.resultat);
     width=(bornes.xmax-bornes.xmin)*10;
     height=(bornes.ymax-bornes.ymin)*10;
-    temp=bornes.xmax-bornes.xmin;
 
     if((width<0)|| (height<0)) {
         printf("Erreur dans les bornes... Arrêt du programme\n");
