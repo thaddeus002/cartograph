@@ -8,7 +8,6 @@
 #include "outils.h"
 #include "bln.h"
 #include <stdlib.h>
-//#include <string.h> // temporary for strlen()
 #include <math.h>
 
 

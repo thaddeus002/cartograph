@@ -4,10 +4,9 @@
  */
 
 
+#include "lecture_bln.h"
 #include "lecture_csv.h"
 #include "outils.h"
-#include "map.h"
-#include "ySaveImage.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -39,13 +38,6 @@ int main(int argc, char **argv){
     float r; //ratio pour l'agrandissement
     //char leg[20]; // legende des meridiens
     int err; // error code
-
-
-    map_t *map;
-    yColor *backColor, *countriesColor;
-
-
-
 
 
     if(argc<2) usage(argv[0]);
@@ -93,18 +85,11 @@ int main(int argc, char **argv){
     printf("largeur : %d - hauteur : %d \n", width, height);
 
 
-    /* Création de l'image */
+    /* Création de la fenêtre */
+    init_Xvariable();
+    f=cree_fenetre_coloree(width, height, &depth, bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, BLEU);
 
-    backColor = y_color(BLUE);
-    countriesColor= y_color(WHITE);
-    map = map_init(EPSG_4326, bornes.ymin, bornes.xmin, bornes.ymax, bornes.xmax, width, height);
-    map_set_background(map, backColor);
-    map_trace_bln(map, argv[1], countriesColor);
-    free(backColor);
-    free(countriesColor);
-
-
-
+    trace_bln_lignes(argv[1], f, 0, BLANC, 1, VERT);
 
 
     /* marquage de l'équateur, des tropiques, et cercles polaires */
@@ -127,13 +112,19 @@ int main(int argc, char **argv){
     }
 */
 
-    // POINTAGE
-    //if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);
+    if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);
 
+    /* Boucle principale*/
+    while(1) {
+        XNextEvent(f.dpy, &event);
+        i = manage_event(f, event);
+        if (i==2) break;
+    }
 
-    // END
-    sauve_png(map->image, "output_trace_y.png");
-    map_destroy(map);
-
+    /* fermeture des display */
+    //sauve_fenetre_jpeg(&f, "output_trace.jpg");
+    sauve_fenetre_png(&f, "output_trace.png");
+    //sauve_fenetre_tiff(&f, "output_trace.tiff");
+    fermeture(f);
     return 0;
 }
