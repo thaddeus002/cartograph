@@ -52,7 +52,6 @@ int main(int argc, char **argv){
     printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
     width=(bornes->xmax-bornes->xmin)*10;
     height=(bornes->ymax-bornes->ymin)*10;
-    free(bornes);
 
     if((width<0)|| (height<0)) {
         printf("Erreur dans les bornes... Arrêt du programme\n");
@@ -90,6 +89,7 @@ int main(int argc, char **argv){
     backColor = y_color(BLUE);
     countriesColor= y_color(WHITE);
     map = map_init(EPSG_4326, bornes->ymin, bornes->xmin, bornes->ymax, bornes->xmax, width, height);
+    free(bornes);
     map_set_background(map, backColor);
     map_trace_bln(map, argv[1], countriesColor);
     free(backColor);

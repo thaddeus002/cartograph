@@ -121,10 +121,10 @@ bln_boundaries_t *bln_find_boundaries(char *file){
 
     if(bound == NULL) return bound;
 
-    bound->xmin=9999;
-    bound->xmax=-9999;
-    bound->ymin=9999;
-    bound->ymax=-9999;
+    bound->xmin=9999.;
+    bound->xmax=-9999.;
+    bound->ymin=9999.;
+    bound->ymax=-9999.;
     bound->result=1;
     data = bln_read_file(file);
 
