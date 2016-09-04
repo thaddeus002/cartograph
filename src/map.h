@@ -96,6 +96,13 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color);
 
 /**
  * \brief Create a new map with the drawing of bln.
+ * \param blnFile data file's name
+ * \param background the color for the background of the map
+ * \param color the color for the data drawing
+ * \param proj the geographic projection to use
+ * \param width the map's width
+ * \param height the map's height
+ * \return the created map
  */
 map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yProjection proj, int width, int height);
 
