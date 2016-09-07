@@ -1,0 +1,3 @@
+[submodule "lib/yder"]
+	path = lib/yder
+	url = https://github.com/babelouest/yder.git
