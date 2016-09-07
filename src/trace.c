@@ -41,21 +41,21 @@ int main(int argc, char **argv){
 
 
     if(argc<2) usage(argv[0]);
-    printf("Fichier à afficher : %s\n", argv[1]);
+    printf("File to draw : %s\n", argv[1]);
 
     bornes=bln_find_boundaries(argv[1]);
     if(bornes->result!=0) {
-        fprintf(stderr,"Pb de format du fichier %s\n", argv[1]);
+        fprintf(stderr,"Error in format of file %s\n", argv[1]);
         exit(bornes->result);
     }
 
-    printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
+    printf("Found BLN boundaries : %f,%f - %f,%f : %d\n", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
     width=(bornes->xmax-bornes->xmin)*10;
     height=(bornes->ymax-bornes->ymin)*10;
     free(bornes);
 
     if((width<0)|| (height<0)) {
-        printf("Erreur dans les bornes... Arrêt du programme\n");
+        printf("Error in boundaries... Stopping program\n");
         exit(1);
     }
 
@@ -68,7 +68,7 @@ int main(int argc, char **argv){
         width=width*HAUTEUR_MAX/height; //conservation du ratio
         height=HAUTEUR_MAX;
     }
-    //taille max
+    // max size
     if((width<LARGEUR_MAX)&&(height<HAUTEUR_MAX)){
         if((float)width/LARGEUR_MAX>(float)height/HAUTEUR_MAX){
             r=(float)width/LARGEUR_MAX;
@@ -82,10 +82,10 @@ int main(int argc, char **argv){
         }
     }
 
-    printf("largeur : %d - hauteur : %d \n", width, height);
+    printf("width : %d - height : %d \n", width, height);
 
 
-    /* Création de l'image */
+    /* Create image */
 
     backColor = y_color(BLUE);
     countriesColor= y_color(WHITE);
