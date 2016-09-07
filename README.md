@@ -3,6 +3,16 @@ Command line tools to play with geographic data.
 
 This project is still experimental.
 
+##Dependencies
+
+This project use [yder](https://github.com/babelouest/yder) as logger module. Use
+
+```shell
+$ git clone --recurse-submodules https://github.com/thaddeus002/cartograph.git
+```
+
+to clone the repository.
+
 ##Examples
 
 ###Use bln for image background
