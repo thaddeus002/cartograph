@@ -8,6 +8,7 @@
 #include "outils.h"
 #include "map.h"
 #include "ySaveImage.h"
+#include "yder.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -38,24 +39,24 @@ int main(int argc, char **argv){
     map_t *map;
     yColor *backColor, *countriesColor;
 
-
+    y_init_logs(argv[0], Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, NULL);
 
     if(argc<2) usage(argv[0]);
-    printf("File to draw : %s\n", argv[1]);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "File to draw : %s", argv[1]);
 
     bornes=bln_find_boundaries(argv[1]);
     if(bornes->result!=0) {
-        fprintf(stderr,"Error in format of file %s\n", argv[1]);
+        y_log_message(Y_LOG_LEVEL_ERROR, "Error in format of file %s", argv[1]);
         exit(bornes->result);
     }
 
-    printf("Found BLN boundaries : %f,%f - %f,%f : %d\n", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
     width=(bornes->xmax-bornes->xmin)*10;
     height=(bornes->ymax-bornes->ymin)*10;
     free(bornes);
 
     if((width<0)|| (height<0)) {
-        printf("Error in boundaries... Stopping program\n");
+        y_log_message(Y_LOG_LEVEL_ERROR, "Error in boundaries... Stopping program");
         exit(1);
     }
 
@@ -82,7 +83,7 @@ int main(int argc, char **argv){
         }
     }
 
-    printf("width : %d - height : %d \n", width, height);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "width : %d - height : %d", width, height);
 
 
     /* Create image */
@@ -120,8 +121,10 @@ int main(int argc, char **argv){
 
 
     // END
+    y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace_y.png");
     sauve_png(map->image, "output_trace_y.png");
     map_destroy(map);
 
+    y_close_logs();
     return 0;
 }

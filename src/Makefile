@@ -6,20 +6,28 @@ DESTDIR=/usr/local
 BINDIR=$(DESTDIR)/bin
 #DATADIR=$(DESTDIR)/share/yannview
 
+YDER_LOCATION=../lib/yder/src
+YDER_FLAGS=-I$(YDER_LOCATION) -L$(YDER_LOCATION)
+
 OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o map.o yColor.o
 
 PROG=carte trace pointe
 
+
+
 all: $(PROG)
+
+libyder:
+	make -C $(YDER_LOCATION)
 
 
 carte: carte.c $(OBJS)
 	@echo "liaison en" $@
 	gcc -Wall carte.c $(OBJS) -o $@ -L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff
 
-trace: trace.c $(OBJS)
+trace: trace.c libyder $(OBJS)
 	@echo "liaison en" $@
-	gcc -Wall trace.c $(OBJS) -o $@ -L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff
+	gcc -Wall trace.c $(OBJS) -o $@ -L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YDER_FLAGS) -lyder
 
 pointe: pointe.c $(OBJS)
 	@echo "liaison en" $@
