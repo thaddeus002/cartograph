@@ -166,7 +166,10 @@ map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yPr
     map_t *map = NULL;
 
     if(data != NULL) {
-        map = map_init(proj, data->ymin, data->xmin, data->ymax, data->xmax, width, height);
+        bln_boundaries_t bound;
+        bln_find_data_boundaries(data, &bound);
+        fprintf(stdout, "Map's Boundaries : %f,%f - %f,%f\n", bound.xmin, bound.xmax, bound.ymin, bound.ymax);
+        map = map_init(proj, bound.ymin, bound.xmin, bound.ymax, bound.xmax, width, height);
         map_set_background(map, background);
         map_trace_bln_data(map,data,color);
         bln_destroy(data);

@@ -71,6 +71,7 @@ bln_data_t *bln_read_file(char *filename){
 
         } else { /* data line containing a point's coordinates */
 
+            //fprintf("%s\n", buf_read);
             /* reading data */
             if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) {
                 bln_destroy(current);
@@ -86,6 +87,8 @@ bln_data_t *bln_read_file(char *filename){
                 current->xmax=current->x[i-1];
                 current->ymin=current->y[i-1];
                 current->ymax=current->y[i-1];
+                //fprintf(stdout, "Map's Boundaries init : %f,%f - %f,%f\n", current->xmin, current->xmax, current->ymin, current->ymax);
+
             } else {
                 if(current->x[i-1]<current->xmin) current->xmin = current->x[i-1];
                 if(current->x[i-1]>current->xmax) current->xmax = current->x[i-1];
@@ -103,6 +106,7 @@ bln_data_t *bln_read_file(char *filename){
             if(result == NULL) {
                 result = current;
             } else {
+                fprintf(stdout, "Map's Boundaries end : %f,%f - %f,%f\n", current->xmin, current->xmax, current->ymin, current->ymax);
                 bln_data_t *last = result;
                 while (last->next != NULL) last = last->next;
                 last->next = current;
@@ -119,39 +123,49 @@ bln_data_t *bln_read_file(char *filename){
 
 
 
+int bln_find_data_boundaries(bln_data_t *data, bln_boundaries_t *bound){
 
-bln_boundaries_t *bln_find_boundaries(char *file){
-
-    bln_data_t *data;
-    bln_boundaries_t *bound = malloc(sizeof(bln_boundaries_t));
     bln_data_t *cur;
-
-    if(bound == NULL) return bound;
 
     bound->xmin=9999.;
     bound->xmax=-9999.;
     bound->ymin=9999.;
     bound->ymax=-9999.;
     bound->result=1;
-    data = bln_read_file(file);
 
-    if(data == NULL) return bound;
+    if(data == NULL) return -1;
 
     cur = data;
     while(cur != NULL) {
-        int i;
 
-        for(i = 0; i < cur->nbPoints; i++) {
-            if(cur->x[i]<bound->xmin) bound->xmin = cur->x[i];
-            if(cur->x[i]>bound->xmax) bound->xmax = cur->x[i];
-            if(cur->y[i]<bound->ymin) bound->ymin = cur->y[i];
-            if(cur->y[i]>bound->ymax) bound->ymax = cur->y[i];
-        }
+        if(cur->xmin < bound->xmin) bound->xmin = cur->xmin;
+        if(cur->xmax > bound->xmax) bound->xmax = cur->xmax;
+        if(cur->ymin < bound->ymin) bound->ymin = cur->ymin;
+        if(cur->ymax > bound->ymax) bound->ymax = cur->ymax;
 
         cur = cur->next;
     }
 
     bound->result=0;
+    return 0;
+}
+
+
+
+
+
+bln_boundaries_t *bln_find_boundaries(char *file){
+
+    bln_data_t *data;
+    bln_boundaries_t *bound = malloc(sizeof(bln_boundaries_t));
+    int err;
+
+    if(bound == NULL) return bound;
+
+    data = bln_read_file(file);
+
+    err = bln_find_data_boundaries(data, bound);
+
     return bound;
 }
 

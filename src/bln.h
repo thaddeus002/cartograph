@@ -51,6 +51,14 @@ typedef struct {
 /** \deprecated */
 bln_boundaries_t *bln_find_boundaries(char *file);
 
+/**
+ * \brief find the boundaries of a data set.
+ * \param data the dataset
+ * \param bound the address of a result struct. Must be allocated
+ * \return 0 in case of success
+ */
+int bln_find_data_boundaries(bln_data_t *data, bln_boundaries_t *bound);
+
 
 
 /**
