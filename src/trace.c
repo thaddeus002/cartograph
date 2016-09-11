@@ -25,17 +25,69 @@ static void usage(char *prog){
     exit(1);
 }
 
+
+/**
+ * As we don't know what is the data domain, we better choose image's
+ * size at execution time.
+ * \param width must be allocated
+ * \param heigth must be allocated
+ */
+static int choose_image_size(char *blnfile, int *width, int *height) {
+
+    bln_boundaries_t *bornes;
+    float r; //zoom ratio
+
+    bornes=bln_find_boundaries(blnfile);
+    if(bornes->result!=0) {
+        y_log_message(Y_LOG_LEVEL_ERROR, "Error in format of file %s", blnfile);
+        return(bornes->result);
+    }
+
+    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
+    *width=(bornes->xmax-bornes->xmin)*10;
+    *height=(bornes->ymax-bornes->ymin)*10;
+    free(bornes);
+
+    if((*width<0)|| (*height<0)) {
+        y_log_message(Y_LOG_LEVEL_ERROR, "Error in boundaries... Stopping program");
+        return(1);
+    }
+
+    if(*width>LARGEUR_MAX) {
+        *height=*height*LARGEUR_MAX/(*width); // ratio conservation
+        *width=LARGEUR_MAX;
+    }
+    if(*height>HAUTEUR_MAX){
+        *width=*width*HAUTEUR_MAX/(*height); // ratio conservation
+        *height=HAUTEUR_MAX;
+    }
+    // max size
+    if((*width<LARGEUR_MAX)&&(*height<HAUTEUR_MAX)){
+        if((float)(*width)/LARGEUR_MAX>(float)(*height)/HAUTEUR_MAX){
+            r=(float)(*width)/LARGEUR_MAX;
+            *width=LARGEUR_MAX;
+            *height=*height/r;
+        }
+        else {
+            r=(float)(*height)/HAUTEUR_MAX;
+            *height=HAUTEUR_MAX;
+            *width=*width/r;
+        }
+    }
+
+    y_log_message(Y_LOG_LEVEL_DEBUG, "width : %d - height : %d", *width, *height);
+    return 0;
+}
+
+
+
 /**
  * Main program
  */
 int main(int argc, char **argv){
 
-    bln_boundaries_t *bornes;
     int width, height; // image size
-    float r; //zoom ratio
-
-
-
+    int err;
     map_t *map;
     yColor *backColor, *countriesColor;
 
@@ -44,47 +96,11 @@ int main(int argc, char **argv){
     if(argc<2) usage(argv[0]);
     y_log_message(Y_LOG_LEVEL_DEBUG, "File to draw : %s", argv[1]);
 
-    bornes=bln_find_boundaries(argv[1]);
-    if(bornes->result!=0) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Error in format of file %s", argv[1]);
-        exit(bornes->result);
+    err = choose_image_size(argv[1], &width, &height);
+    if(err) {
+        y_log_message(Y_LOG_LEVEL_ERROR, "Exiting program");
+        return err;
     }
-
-    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
-    width=(bornes->xmax-bornes->xmin)*10;
-    height=(bornes->ymax-bornes->ymin)*10;
-    free(bornes);
-
-    if((width<0)|| (height<0)) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Error in boundaries... Stopping program");
-        exit(1);
-    }
-
-
-    if(width>LARGEUR_MAX) {
-        height=height*LARGEUR_MAX/width; //conservation du ratio
-        width=LARGEUR_MAX;
-    }
-    if(height>HAUTEUR_MAX){
-        width=width*HAUTEUR_MAX/height; //conservation du ratio
-        height=HAUTEUR_MAX;
-    }
-    // max size
-    if((width<LARGEUR_MAX)&&(height<HAUTEUR_MAX)){
-        if((float)width/LARGEUR_MAX>(float)height/HAUTEUR_MAX){
-            r=(float)width/LARGEUR_MAX;
-            width=LARGEUR_MAX;
-            height=height/r;
-        }
-        else {
-            r=(float)height/HAUTEUR_MAX;
-            height=HAUTEUR_MAX;
-            width=width/r;
-        }
-    }
-
-    y_log_message(Y_LOG_LEVEL_DEBUG, "width : %d - height : %d", width, height);
-
 
     /* Create image */
 
@@ -93,7 +109,6 @@ int main(int argc, char **argv){
     map = map_create_with_bln(argv[1], backColor, countriesColor, EPSG_4326, width, height);
     free(backColor);
     free(countriesColor);
-
 
 
     /* marquage de l'équateur, des tropiques, et cercles polaires */
