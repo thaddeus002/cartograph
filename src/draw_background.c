@@ -1,9 +1,15 @@
 /**
- * \file trace_fond_mf.c
+ * \file draw_background.c
  *
- * Test for map.c module
+ * Example program using map.c module.
+ * We have a map with some data values pointed on it. But this map's
+ * background is black. This map was retreived on a WMS server in
+ * "meteofrance.com". It represent air temperatures data on some points
+ * in metropolitan France and Corsica. To make this map more usefull, we
+ * need to change the background to one that make understandable where
+ * are the measures from. A "bln" file of Europe will be a good help for
+ * this.
  */
-
 
 
 #include "yImage.h"
@@ -12,7 +18,7 @@
 #include "bln.h"
 
 
-// BBOX
+// BBOX : The same as used for the WMS request
 #define LATMIN 41
 #define LATMAX 52
 #define LONMIN -5
@@ -55,16 +61,12 @@ int main(int argc, char **argv) {
         pointage=LoadPNG(fd);
         fclose(fd);
 
-        // replace black by transparency
-        //pointage->presShapeColor=1;
-        //y_set_color(&(pointage->shapeColor), 0, 0, 0, 255);
         y_grey_level_to_alpha(pointage);
 
         superpose_images(map->image, pointage, 0, 0);
     }
 
     err = sauve_png(map->image, "test_mf.png");
-
 
     map_destroy(map);
     return err;

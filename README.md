@@ -5,17 +5,17 @@ This project is still experimental.
 
 ##Dependencies
 
-This project use [yder](https://github.com/babelouest/yder) as logger module. Use
+This project use [yder](https://github.com/babelouest/yder) as logger module.
+
+So use the following command to clone the repository:
 
 ```shell
 $ git clone --recurse-submodules https://github.com/thaddeus002/cartograph.git
 ```
 
-to clone the repository.
-
 ##Examples
 
-###Use bln for image background
+###Use bln for image background (program draw_background.c)
 
 For this example, data layer is provide as a png image by a WMS server. The temperatures are placed on an image with a black background.
 
@@ -29,7 +29,7 @@ The raw image is :
 
 ![raw_fr](assets/observations.png)
 
-The same with a better background :
+The program output shows the same data with a better background :
 
 ![bln_fr](assets/background_observations.png) 
 
