@@ -60,3 +60,8 @@ draw_background: draw_background.c bln.o map.o yImage.o yColor.o ySaveImage.o ou
 trace_and: trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o
 	gcc -o trace_and trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o -lm -lz -lpng
 
+libmap: map.o yImage.o yColor.o ySaveImage.o outils.o
+	# Static library
+	rm -f libmap.a
+	ar -cvq libmap.a map.o yImage.o yColor.o ySaveImage.o outils.o
+	ranlib libmap.a

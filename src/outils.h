@@ -1,4 +1,7 @@
-/** \file outils.h */
+/**
+ * \file outils.h
+ * \brief coordinates transformations.
+ */
 
 #ifndef __OUTILS_H__
 #define __OUTILS_H__ 1
