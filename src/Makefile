@@ -54,14 +54,14 @@ mrproper: clean
 lit: lit.c shape_data.o  shape_types.o outils.o fenetre.o
 	gcc -o lit lit.c shape_data.o shape_types.o fenetre.o outils.o -L/usr/X11R6/lib -lX11 -lm
 
-draw_background: draw_background.c bln.o map.o yImage.o yColor.o ySaveImage.o outils.o
-	gcc -o $@ $< bln.o map.o yImage.o yColor.o ySaveImage.o outils.o -lm -lz -lpng
+draw_background: draw_background.c libmap.a
+	gcc -o $@ $< -L. -lmap -lm -lz -lpng
 
-trace_and: trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o
-	gcc -o trace_and trace_and.c map.o yImage.o yColor.o ySaveImage.o outils.o -lm -lz -lpng
+trace_and: trace_and.c libmap.a
+	gcc -o trace_and trace_and.c bln.o -L. -lmap -lm -lz -lpng
 
-libmap: map.o yImage.o yColor.o ySaveImage.o outils.o
+libmap.a: map.o yImage.o yColor.o ySaveImage.o bln.o outils.o
 	# Static library
 	rm -f libmap.a
-	ar -cvq libmap.a map.o yImage.o yColor.o ySaveImage.o outils.o
+	ar -cvq libmap.a map.o yImage.o yColor.o ySaveImage.o bln.o outils.o
 	ranlib libmap.a
