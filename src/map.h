@@ -4,7 +4,7 @@
  *
  * Transform an yImage representation in a map representation adding
  *  - projection information : only EPSG:4326 will be first supported.
- *    this projection is also name "platte-carree" and is wery simple.
+ *    this projection is also name "platte-carree" and is very simple.
  *    (x,y) coordinates on the map are linear functions of (lon,lat).
  *  - the bounds coordinates, like in BBOX: LonMin,LatMin,LogMax,LatMax
  */

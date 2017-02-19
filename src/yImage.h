@@ -2,9 +2,10 @@
  * \file yImage.h
  * \brief images representation and basic operations. Plus load or save actions.
  *
- * yImage : sauvegarder des images dans différents formats
- * fonctions inspirées de la bibliothèque Imlib 1.x
- * => yImage est sous licence GPL (GNU GENERAL PUBLIC LICENSE)
+ * Can save images in various formats with functions which are inspired by the
+ * imlib library.
+ *
+ * This file is under GPL license (GNU GENERAL PUBLIC LICENSE).
  */
 
 #include <stdint.h>
@@ -39,7 +40,7 @@ typedef struct {
 
 
 /************************************************************/
-/*               CREATION / DESTRUCTION DES IMAGES          */
+/*                    CREATE / DESTROY IMAGES               */
 /************************************************************/
 
 /**
@@ -61,7 +62,7 @@ yImage *create_uniform_yImage(int *err, yColor *background, int width, int heigh
 void destroy_yImage(yImage *im);
 
 /************************************************************/
-/*               MANIPULATION DES IMAGES                    */
+/*                   HANDLING IMAGES                        */
 /************************************************************/
 
 
@@ -75,11 +76,18 @@ void destroy_yImage(yImage *im);
 yColor *y_get_color(yImage *im, int x, int y);
 
 
-/** rend l'image transparente */
+/**
+ * \brief set the max transparency to the image
+ * \return 0 in case of success, or a negative error code
+ */
 int transp(yImage *im);
 
 
+/**
+ * \brief superimpose two images.
+ */
 void superpose_images(yImage *back, yImage *fore, int x, int y);
+
 
 /**
  * \brief Each pixel of the image will become white with alpha=max(r,g,b).
@@ -124,8 +132,6 @@ void y_draw_line(yImage *im, yColor *color, int x1, int y1, int x2, int y2);
  * \param nbPoints size of the points table
  */
 void y_draw_lines(yImage *im, yColor *color, yPoint *points, int nbPoints);
-
-
 
 
 
