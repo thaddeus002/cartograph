@@ -158,13 +158,12 @@ bln_boundaries_t *bln_find_boundaries(char *file){
 
     bln_data_t *data;
     bln_boundaries_t *bound = malloc(sizeof(bln_boundaries_t));
-    int err;
 
     if(bound == NULL) return bound;
 
     data = bln_read_file(file);
 
-    err = bln_find_data_boundaries(data, bound);
+    bln_find_data_boundaries(data, bound);
 
     return bound;
 }

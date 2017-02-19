@@ -473,20 +473,16 @@ int sauve_tiff(yImage *im, const char *file)
 
 
 
-/* CHARGEMENT DE FICHIERS */
+/* LOADING FILES */
 
 unsigned char *_LoadPPM(FILE * f, int *w, int *h)
 {
-  int                 done;
-  unsigned char      *ptr;
-  unsigned char       chr;
-  char s[256]; /* read line */
-  int                 a, b, i, j;
-  int                 color /* is pixmap */, scale, ascii /* is ascii */, bw /* is bitmap */;
-    //int width, height;
-
-    //yImage *im;
-
+    int                 done;
+    unsigned char      *ptr;
+    unsigned char       chr;
+    char s[256]; /* read line */
+    int                 a, b, i, j;
+    int                 color /* is pixmap */, scale, ascii /* is ascii */, bw /* is bitmap */;
 
     a = b = scale = ascii = bw = color = 0;
 
