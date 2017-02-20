@@ -49,7 +49,7 @@ typedef struct map_ {
 
 
 /**
- * Common boundaries are NOT considered as interception.
+ * Is there an intercetion between two bboxes? Common boundaries are NOT considered as interception.
  * \return 0 if the interception between the 2 bbox is empty.
  */
 int map_intercept(bbox_t *b1, bbox_t *b2);

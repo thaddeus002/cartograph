@@ -58,10 +58,10 @@ draw_background: draw_background.c libmap.a
 	gcc -o $@ $< -L. -lmap -lm -lz -lpng
 
 trace_and: trace_and.c libmap.a
-	gcc -o trace_and trace_and.c bln.o -L. -lmap -lm -lz -lpng
+	gcc -o trace_and trace_and.c -L. -lmap -lm -lz -lpng
 
 libmap.a: map.o yImage.o yColor.o ySaveImage.o bln.o outils.o
 	# Static library
 	rm -f libmap.a
-	ar -cvq libmap.a map.o yImage.o yColor.o ySaveImage.o bln.o outils.o
+	ar -cvq libmap.a map.o yImage.o yColor.o ySaveImage.o bln.o
 	ranlib libmap.a

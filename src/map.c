@@ -1,14 +1,73 @@
 /**
  * \file map.c
- *
  */
 
 #include "map.h"
 #include "yImage.h"
-#include "outils.h"
 #include "bln.h"
 #include <stdlib.h>
 #include <math.h>
+
+
+
+static int linear_transform(int length, float x1, float x2, float x) {
+
+    float d; // Delta x between 2 pixels
+    float e; // erreur entre x réel et x pixel
+    float t; // auxiliaire temporaire
+    int i; // return value
+
+    d=(x2-x1)/(length-1);
+    t=(x-x1)/d;
+    i=1+t;
+    e=x-(x1+(i-1)*d);
+    if(e>d/2) i++; else if(e<-d/2) i--;
+
+    return(i);
+}
+
+
+/**
+ * Give the pixel number for a longitude value in
+ * EPSG4326 proj.
+ * Pixels are numbered from 1 to w (width), left to right.
+ */
+static int transforme_x(map_t *map, float x){
+
+    int w = map->image->rgbWidth;
+    float x1 = map->boundaries.lonMin;
+    float x2 = map->boundaries.lonMax;
+
+    return linear_transform(w, x1, x2, x);
+}
+
+
+/**
+ * Give the pixel number for a latitude value in
+ * EPSG4326 proj.
+ * Pixels are numbered from 1 to h (height), top to bottom.
+ */
+static int transforme_y(map_t *map, float y) {
+
+    int h = map->image->rgbHeight;
+    float y1 = map->boundaries.latMin;
+    float y2 = map->boundaries.latMax;
+
+    // y fenêtre compté à partir du haut
+    return h+1-linear_transform(h,y1,y2,y);
+}
+
+
+
+
+static float transforme_i(int i, int w, float x1, float x2){
+    return(x1+(i-1)*(x2-x1)/(w-1));
+}
+
+static float transforme_j(int j, int h, float y1, float y2){
+    return(y1+(h-j)*(y2-y1)/(h-1));
+}
+
 
 
 int map_intercept(bbox_t *b1, bbox_t *b2){
@@ -127,8 +186,8 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
 
     /* variables */
-    int i; /* numéro de ligne de coordonnées */
-    yPoint *points; /* liste des points à relier */
+    int i; /* number of the current coordinate line */
+    yPoint *points; /* list of points to link */
     bln_data_t *current; /* to cross the data */
 
     /* initialisations */
@@ -141,13 +200,12 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
 
         for(i=0; i<current->nbPoints; i++) {
 
-            points[i].x=transforme_x(current->x[i], map->image->rgbWidth, map->boundaries.lonMin, map->boundaries.lonMax);
-            points[i].y=transforme_y(current->y[i], map->image->rgbHeight, map->boundaries.latMin, map->boundaries.latMax);
-
+            points[i].x=transforme_x(map, current->x[i]);
+            points[i].y=transforme_y(map, current->y[i]);
         }
 
         #ifdef DEBUG
-        fprintf(stdout, "tracé pour %d points\n", current->nbPoints);
+        fprintf(stdout, "drawing for %d points\n", current->nbPoints);
         #endif
 
         y_draw_lines(map->image, color, points, current->nbPoints);

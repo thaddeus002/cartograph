@@ -1,13 +1,16 @@
 /**
  * \file outils.h
  * \brief coordinates transformations.
+ * \deprecated use map functions instead
  */
 
 #ifndef __OUTILS_H__
 #define __OUTILS_H__ 1
 
 
-/* formes pour le pointage */
+/**
+ * shapes for pointing
+ */
 typedef enum
 {
     CARRE=0,
