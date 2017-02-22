@@ -48,7 +48,7 @@ clean:
 	rm -f core *~ *.o
 
 mrproper: clean
-	rm -rf $(PROG)
+	rm -rf $(PROG) *.a
 
 # ajout des shapes - en test
 lit: lit.c shape_data.o  shape_types.o outils.o fenetre.o
