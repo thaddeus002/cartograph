@@ -13,8 +13,8 @@
 static int linear_transform(int length, float x1, float x2, float x) {
 
     float d; // Delta x between 2 pixels
-    float e; // erreur entre x réel et x pixel
-    float t; // auxiliaire temporaire
+    float e; // error between theorical x value (at the center of the pixel) and actual value
+    float t; // temporary calculation value
     int i; // return value
 
     d=(x2-x1)/(length-1);
@@ -53,7 +53,7 @@ static int transforme_y(map_t *map, float y) {
     float y1 = map->boundaries.latMin;
     float y2 = map->boundaries.latMax;
 
-    // y fenêtre compté à partir du haut
+    // y is minimum at the top of the map
     return h+1-linear_transform(h,y1,y2,y);
 }
 
