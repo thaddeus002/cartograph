@@ -3,7 +3,7 @@ Command line tools to play with geographic data.
 
 This project is still experimental.
 
-##Dependencies
+## Dependencies
 
 This project use [yder](https://github.com/babelouest/yder) as logger module.
 
@@ -13,9 +13,9 @@ So use the following command to clone the repository:
 $ git clone --recurse-submodules https://github.com/thaddeus002/cartograph.git
 ```
 
-##Examples
+## Examples
 
-###Use bln for image background (program draw_background.c)
+### Use bln for image background (program draw_background.c)
 
 For this example, data layer is provide as a png image by a WMS server. The temperatures are placed on an image with a black background.
 
