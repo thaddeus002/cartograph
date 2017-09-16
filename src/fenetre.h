@@ -1,6 +1,6 @@
 /**
  * \file fenetre.h
- * Management a window and the main functions of the xlib.
+ * Management of a window and the main functions of the xlib.
  */
 
 
@@ -51,7 +51,7 @@ typedef struct {
 } fenetre;
 
 
-/* */
+/** Initialization of global variables. */
 void init_Xvariable();
 
 /* fct utilisée par "carte.c" */

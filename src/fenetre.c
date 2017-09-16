@@ -1,4 +1,7 @@
-/** \file fenetre.c */
+/**
+ * \file fenetre.c
+ * Management of a window and the main functions of the xlib.
+ */
 
 #include "fenetre.h"
 
@@ -6,7 +9,7 @@
 #include "yXinterface.h"
 #include "yImage.h"
 
-/* variables du XSystem */
+/* XSystem's variables */
 Display * dpy;
 Pixmap pixmap;
 GC gc;
@@ -23,7 +26,7 @@ unsigned char *red, *green, *blue;
 
 
 
-/* Initialisation des variables globales */
+/** Initialization of global variables. */
 void init_Xvariable(){
     red=NULL; green=NULL; blue=NULL;
     dpy=NULL;
@@ -378,14 +381,13 @@ void display_text(fenetre f, int x, int y, char * text, couleur c){
     actualise_fenetre(f);
     }
 }
+/* fin de la fonction display_text */
+
+
 void display_text_blanc(fenetre f, int x, int y, char * text){
     display_text(f,x,y,text, BLANC);
 
 }
-/* fin de la fonction display_text */
-
-
-
 
 
 /*trace un point en coordonnées fenêtre */
@@ -431,6 +433,8 @@ int pointe_pixel(fenetre f, float xLamb, float yLamb, int L, /*couleur c*/Pixel 
     //actualise_fenetre(f); //trop lent si on le fait pour chaque point
     return(0);
 }
+
+
 int pointe(fenetre f, float xLamb, float yLamb, int L, couleur c, forme_t forme) {
     return(pointe_pixel(f, xLamb, yLamb, L, pix_colore[c], forme));
 }

@@ -1,9 +1,7 @@
 /**
  * \file yXinterface.h
- * yXinterface fait partie de yImage
- * creation d'une yImage a partir de Drawable Xlib
- * fonctions inspirées de la bibliothèque Imlib 1.x
- *      => yImage est sous licence GPL (GNU GENERAL PUBLIC LICENSE)
+ * yXinterface is part of yImage under GNU GENERAL PUBLIC LICENSE.
+ * Creating an "yImage" from a Xlib Drawable.
  */
 
 #ifndef YXINTERFACE_H_
@@ -19,11 +17,14 @@
 
 
 /**
- * Création d'une yImage à partir d'un Drawable (Window ou Pixmap) Xlib
- * \param win est le Drawable
- * \param vis et disp sont les paramètres X liés à win
- * \param x et y représentent le point de départ dans win pour l'extration de l'image
- * \param height et width sont la taille désirée pour l'image à créer
+ * Create an "yImage" from a Xlib Drawable (Window ou Pixmap).
+ * \param win the Drawable
+ * \param vis X Visual linked to "win"
+ * \param disp X Display linked to "win"
+ * \param x horizontal coordinate of the beginning point for image extraction
+ * \param y vertical coordinate of the beginning point for image extraction
+ * \param height height of the image to extract
+ * \param width width of the image to extract
  * Cette fonction a été simplifiée et ne prend pas en compte SHM (shm.h)
  * Elle se limite également aux profondeur d'affichage de 24 ou 32 :
  *      Imlib prend également en compte 0 à 8 et 15 et 16

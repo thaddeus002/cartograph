@@ -1,9 +1,7 @@
 /**
  * \file yXinterface.c
- * yXinterface fait partie de yImage
- * creation d'une yImage a partir de Drawable Xlib
- * fonctions inspirées de la bibliothèque Imlib 1.x
- *      => yImage est sous licence GPL (GNU GENERAL PUBLIC LICENSE)
+ * yXinterface is part of yImage under GNU GENERAL PUBLIC LICENSE.
+ * Creating an "yImage" from a Xlib Drawable.
  */
 
 #include "yXinterface.h"
@@ -25,7 +23,8 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
   int                 xx, yy, w, h, inx, iny, clipx, clipy, rx, ry; /* xx et yy sont des compteurs */
   XImage             *xim;
 
-  XWindowAttributes   xatt, ratt; /* attributs de win et de la fenetre racine */
+  /* attributes of "win" and of the root window */
+  XWindowAttributes   xatt, ratt;
   //Colormap            cmap;
   //static char         shm_checked = 0, shm = 1;
   XErrorHandler       erh = NULL;
@@ -39,7 +38,7 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
   w = width;
   h = height;
 
-  XGrabServer(disp); /* "freeze" du serveur X */
+  XGrabServer(disp); /* X server freeze */
   erh = XSetErrorHandler((XErrorHandler) __handle_x_error);
   x_error = 0;
   XGetWindowAttributes(disp, win, &xatt);
@@ -127,7 +126,7 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
       return NULL;
     }
 
-    /* la fct maitresse */
+    /* getting the image */
     xim = XGetImage(disp, win, x, y, width, height, 0xffffffff, ZPixmap);
 
   XUngrabServer(disp);
@@ -171,7 +170,7 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
     }*/
 
 
-  /* copie du contenu */
+  /* copy content */
   data = malloc(width * height * 3);
   if (data)
     {
@@ -195,7 +194,7 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
         }
         }
       break;
-    default: /* cas non supportés */
+    default: /* not supported case */
       /*for (yy = 0; yy < height; yy++)
         {
           for (xx = 0; xx < width; xx++)
