@@ -1,4 +1,4 @@
-/**
+  /**
  * \file yXinterface.c
  * yXinterface is part of yImage under GNU GENERAL PUBLIC LICENSE.
  * Creating an "yImage" from a Xlib Drawable.
@@ -20,18 +20,16 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
 {
   unsigned char      *data = NULL, *ptr, r, g, b;
   unsigned long       pixel;
-  int                 xx, yy, w, h, inx, iny, clipx, clipy, rx, ry; /* xx et yy sont des compteurs */
+  /* xx and yy are counters */
+  int                 xx, yy, w, h, inx, iny, clipx, clipy, rx, ry;
   XImage             *xim;
 
   /* attributes of "win" and of the root window */
   XWindowAttributes   xatt, ratt;
-  //Colormap            cmap;
-  //static char         shm_checked = 0, shm = 1;
   XErrorHandler       erh = NULL;
   Window              chld;
   char                is_pixmap = 0;
   yImage         *im;
- // ImlibColor          ctab[256];
 
   inx = 0;
   iny = 0;
@@ -132,44 +130,6 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
   XUngrabServer(disp);
   XFlush(disp);
 
-  /*if (xatt.depth == 1)
-    {
-      ctab[0].r = 255;
-      ctab[0].g = 255;
-      ctab[0].b = 255;
-      ctab[1].r = 0;
-      ctab[1].g = 0;
-      ctab[1].b = 0;
-    }
-  else if (xatt.depth <= 8)
-    {
-      XColor              cols[256];
-
-      if (!is_pixmap)
-    {
-      cmap = xatt.colormap;
-      if (cmap == None)
-        cmap = id->x.root_cmap;
-    }
-      else
-    cmap = id->x.root_cmap;
-
-      for (i = 0; i < (1 << id->x.depth); i++)
-    {
-      cols[i].pixel = i;
-      cols[i].flags = DoRed | DoGreen | DoBlue;
-    }
-      XQueryColors(disp, cmap, cols, 1 << id->x.depth);
-      for (i = 0; i < (1 << id->x.depth); i++)
-    {
-      ctab[i].r = cols[i].red >> 8;
-      ctab[i].g = cols[i].green >> 8;
-      ctab[i].b = cols[i].blue >> 8;
-      ctab[i].pixel = cols[i].pixel;
-    }
-    }*/
-
-
   /* copy content */
   data = malloc(width * height * 3);
   if (data)
@@ -195,18 +155,6 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
         }
       break;
     default: /* not supported case */
-      /*for (yy = 0; yy < height; yy++)
-        {
-          for (xx = 0; xx < width; xx++)
-        {
-          r = rand();
-          g = rand();
-          b = rand();
-          *ptr++ = r;
-          *ptr++ = g;
-          *ptr++ = b;
-        }
-        }*/
         fprintf(stderr, "Profondeur d'image non supportée :%d\n", xatt.depth);
         free(data);
         XDestroyImage(xim);
@@ -243,4 +191,3 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
         return(NULL);
     }
 }
-
