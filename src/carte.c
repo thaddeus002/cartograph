@@ -1,6 +1,7 @@
-/** \file carte.c */
-/* affichage de données géographiques */
-/* programme principal */
+/**
+ * \file carte.c
+ * Program showing geographic data. */
+ */
 
 
 #include <stdio.h>
@@ -18,9 +19,9 @@
 
 #include "yImage.h"
 
-//Nom des fichiers de données
-#define DATA_DIR "/home/yannick/geographie/donnees_France"
-#define DATA_DIR_MONDE "/home/yannick/geographie/donnees_monde"
+/* Names of datafiles */
+#define DATA_DIR "/usr/local/share/geographie/donnees_France"
+#define DATA_DIR_MONDE "/usr/local/share/geographie/donnees_monde"
 #define RELIEF_GRD_FILE "grilles relief/France - relief 1km.grd"
 #define RELIEF_GRI_FILE "grilles relief/France_1km.gr2"
 #define RELIEF_GRD_FILE_HR "grilles relief/France-250m.grd"
@@ -32,13 +33,14 @@
 #define PAYS_EUROPE "europe.bln"
 
 
-/* variables globales */
+/* global variables */
 
 /* répertoires et noms de fichiers */
 char *data_dir;
 char *data_file;
 
-int verbose; // mode verbeux ou pas
+/* verbose mode */
+int verbose;
 
 
 void usage(char *nom){
@@ -206,7 +208,7 @@ int main(int argc, char **argv){
 
 
 
-    /* pays européens */
+    /* european countries */
     if(!fin){
         sprintf(file, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
         if(trace_bln_geo(file, fen, 1, BLANC, 1, MARRON)!=0) fprintf(stderr, "Problème avec le fichier Europe\n");
