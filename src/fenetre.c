@@ -182,7 +182,7 @@ fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float 
     if (dpy==NULL) {
         dpy = XOpenDisplay(NULL);
         if(dpy==NULL) {
-            fprintf(stderr, "Ouverture du display impossible");
+            fprintf(stderr, "Could not open display");
             exit(1);
         }
         scr = DefaultScreen(dpy);
@@ -202,17 +202,15 @@ fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float 
         pix_colore[MAGENTA] = (250<<16) | (0<<8) | 250;
         pix_colore[MARRON] = (150<<16) | (100<<8) | 50;
 
-        gcv.foreground = pix_colore[c]/*black*/;
+        gcv.foreground = pix_colore[c];
         gc = XCreateGC(dpy, root, GCForeground, &gcv);
-        *depth = DefaultDepth(dpy, scr); //depth = DefaultDepth(dpy, scr);
+        *depth = DefaultDepth(dpy, scr);
 
         if (*depth<=8) {
             fprintf(stderr, "Can't use X Window output in depth <= 8. Aborting!!\n");
             retour.w=0;
             return(retour);
         }
-        /*else
-            cmap = DefaultColormap(dpy, scr);*/
 
         win = XCreateSimpleWindow(dpy, root, 10, 10, width, height, 0, pix_colore[BLANC]/*white*/, pix_colore[c]);
         pixmap = XCreatePixmap(dpy, win, width, height, *depth);
