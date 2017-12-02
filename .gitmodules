@@ -1,3 +1,6 @@
 [submodule "lib/yder"]
 	path = lib/yder
 	url = https://github.com/babelouest/yder.git
+[submodule "lib/yImage"]
+	path = lib/yImage
+	url = https://github.com/thaddeus002/yImage.git

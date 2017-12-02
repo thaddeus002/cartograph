@@ -8,35 +8,39 @@ BINDIR=$(DESTDIR)/bin
 
 YDER_LOCATION=../lib/yder/src
 YDER_FLAGS=-I$(YDER_LOCATION) -L$(YDER_LOCATION)
+YIMAGE_LOCATION=../lib/yImage
+YIMAGE_FLAGS=-I$(YIMAGE_LOCATION) -L$(YIMAGE_LOCATION)
 
-OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o bln.o outils.o coordonnees.o yImage.o yXinterface.o ySaveImage.o map.o yColor.o
+OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o bln.o outils.o coordonnees.o yXinterface.o map.o
 
 PROG=carte trace pointe
 
-
+CFLAGS=-L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YIMAGE_FLAGS) -lyImage
 
 all: $(PROG)
 
 libyder:
 	make -C $(YDER_LOCATION)
 
+libyImage:
+	make -C $(YIMAGE_LOCATION)
 
-carte: carte.c $(OBJS)
-	@echo "liaison en" $@
-	gcc -Wall carte.c $(OBJS) -o $@ -L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff
+carte: carte.c libyImage $(OBJS)
+	@echo "linking in" $@
+	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS)
 
-trace: trace.c libyder $(OBJS)
-	@echo "liaison en" $@
-	gcc -Wall trace.c $(OBJS) -o $@ -L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YDER_FLAGS) -lyder
+trace: trace.c libyImage libyder $(OBJS)
+	@echo "linking in" $@
+	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
 
-pointe: pointe.c $(OBJS)
-	@echo "liaison en" $@
-	gcc -Wall pointe.c $(OBJS) -o $@ -L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff
+pointe: pointe.c libyImage $(OBJS)
+	@echo "linking in" $@
+	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS)
 
 
 %.o: %.c %.h
-	@echo "compilation de" $<
-	gcc -Wall -c $<
+	@echo "building of" $<
+	gcc -Wall -I$(YIMAGE_LOCATION) -c $<
 
 
 install:
@@ -63,5 +67,5 @@ trace_and: trace_and.c libmap.a
 libmap.a: map.o yImage.o yColor.o ySaveImage.o bln.o outils.o
 	# Static library
 	rm -f libmap.a
-	ar -cvq libmap.a map.o yImage.o yColor.o ySaveImage.o bln.o
+	ar -cvq libmap.a map.o bln.o yImage.o yColor.o ySaveImage.o
 	ranlib libmap.a

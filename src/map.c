@@ -4,6 +4,7 @@
 
 #include "map.h"
 #include "yImage.h"
+#include "yDraw.h"
 #include "bln.h"
 #include <stdlib.h>
 #include <math.h>
@@ -106,7 +107,7 @@ map_t *map_init(yProjection proj, float latMin, float lonMin, float latMax, floa
     map->boundaries.lonMin = lonMin;
     map->boundaries.lonMax = lonMax;
 
-    map->image=create_yImage(&err, NULL, width, height);
+    map->image=y_create_image(&err, NULL, width, height);
 
     return map;
 }
@@ -117,7 +118,7 @@ map_t *map_init(yProjection proj, float latMin, float lonMin, float latMax, floa
  */
 void map_destroy(map_t *map){
     if(map!=NULL) {
-        destroy_yImage(map->image);
+        y_destroy_image(map->image);
         free(map);
     }
 }
@@ -130,10 +131,10 @@ void map_destroy(map_t *map){
 yImage *map_set_image(map_t *map, yImage *image){
 
     int err;
-    yImage *img = create_yImage(&err, image->rgbData, image->rgbWidth, image->rgbHeight);
+    yImage *img = y_create_image(&err, image->rgbData, image->rgbWidth, image->rgbHeight);
 
     if(map->image!=NULL) {
-        destroy_yImage(map->image);
+        y_destroy_image(map->image);
     }
 
     map->image = img;
@@ -149,9 +150,9 @@ yImage *map_set_image(map_t *map, yImage *image){
 yImage *map_set_background(map_t *map, yColor *color){
 
     int err;
-    yImage *img = create_uniform_yImage(&err, color, map->image->rgbWidth, map->image->rgbHeight);
+    yImage *img = y_create_uniform_image(&err, color, map->image->rgbWidth, map->image->rgbHeight);
 
-    destroy_yImage(map->image);
+    y_destroy_image(map->image);
 
     map->image = img;
 
@@ -200,8 +201,8 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
 
         for(i=0; i<current->nbPoints; i++) {
 
-            points[i].x=transforme_x(map, current->x[i]);
-            points[i].y=transforme_y(map, current->y[i]);
+            points[i].X=transforme_x(map, current->x[i]);
+            points[i].Y=transforme_y(map, current->y[i]);
         }
 
         #ifdef DEBUG

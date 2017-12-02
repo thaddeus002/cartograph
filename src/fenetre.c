@@ -8,6 +8,7 @@
 /* sortie vers un fichier */
 #include "yXinterface.h"
 #include "yImage.h"
+#include "yImage_io.h"
 
 /* XSystem's variables */
 Display * dpy;
@@ -196,11 +197,11 @@ fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float 
         pix_colore[ROUGE] = (250<<16) | (0<<8) | 0;
         pix_colore[VERT] = (0<<16) | (250<<8) | 0;
         pix_colore[BLEU] = (0<<16) | (0<<8) | 250;
-        pix_colore[ORANGE] = (250<<16) | (150<<8) | 0;
+        pix_colore[ORANGE_] = (250<<16) | (150<<8) | 0;
         pix_colore[JAUNE] = (250<<16) | (250<<8) | 0;
-        pix_colore[CYAN] = (0<<16) | (250<<8) | 250;
-        pix_colore[MAGENTA] = (250<<16) | (0<<8) | 250;
-        pix_colore[MARRON] = (150<<16) | (100<<8) | 50;
+        pix_colore[CYAN_] = (0<<16) | (250<<8) | 250;
+        pix_colore[MAGENTA_] = (250<<16) | (0<<8) | 250;
+        pix_colore[MARRON_] = (150<<16) | (100<<8) | 50;
 
         gcv.foreground = pix_colore[c];
         gc = XCreateGC(dpy, root, GCForeground, &gcv);
@@ -556,8 +557,8 @@ void sauve_fenetre_jpeg(fenetre *f, char *filename){
     yImage *im; /* pour sortie dans un fichier */
 
     im=create_yImage_from_drawable(f->win, f->visual, f->dpy, 0, 0, f->w, f->h);
-    sauve_jpeg(im, filename);
-    destroy_yImage(im);
+    y_save_jpeg(im, filename);
+    y_destroy_image(im);
 }
 
 /* enregistre le dessin d'une fenetre dans un fichier */
@@ -565,8 +566,8 @@ void sauve_fenetre_png(fenetre *f, char *filename){
     yImage *im; /* pour sortie dans un fichier */
 
     im=create_yImage_from_drawable(f->win, f->visual, f->dpy, 0, 0, f->w, f->h);
-    sauve_png(im, filename);
-    destroy_yImage(im);
+    y_save_png(im, filename);
+    y_destroy_image(im);
 }
 
 /* enregistre le dessin d'une fenetre dans un fichier */
@@ -574,7 +575,7 @@ void sauve_fenetre_tiff(fenetre *f, char *filename){
     yImage *im; /* pour sortie dans un fichier */
 
     im=create_yImage_from_drawable(f->win, f->visual, f->dpy, 0, 0, f->w, f->h);
-    sauve_tiff(im, filename);
-    destroy_yImage(im);
+    y_save_tiff(im, filename);
+    y_destroy_image(im);
 }
 

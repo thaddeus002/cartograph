@@ -1,6 +1,6 @@
 /**
  * \file carte.c
- * Program showing geographic data. */
+ * Program showing geographic data.
  */
 
 
@@ -249,11 +249,11 @@ int main(int argc, char **argv){
 
     /* pointages */
     sprintf(file, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
-    traite_csv(fen, file, ROND, 4+fin, MARRON, NOIR);
+    traite_csv(fen, file, ROND, 4+fin, MARRON_, NOIR);
 
 
     /* ECHELLE  */
-    trace_echelle(fen, ORANGE, NOIR);
+    trace_echelle(fen, ORANGE_, NOIR);
 
     /* SIGNATURE */
     //display_text(fen, 3, fen.h-35, "Programme d'affichage de données géographiques\nYannick Garcia - 2006", JAUNE);

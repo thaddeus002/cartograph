@@ -32,7 +32,7 @@ Pixel *pix;
 /** Max number of pixels in 'pix' array */
 #define PLAGE 12000
 
-typedef enum {NOIR=0, BLANC, ROUGE, VERT, BLEU, ORANGE, JAUNE, CYAN, MAGENTA, MARRON} couleur;
+typedef enum {NOIR=0, BLANC, ROUGE, VERT, BLEU, ORANGE_, JAUNE, CYAN_, MAGENTA_, MARRON_} couleur;
 
 //Pixel rouge, vert, bleu, orange, jaune, cyan, magenta; // red, green blue deja utilisé
 Pixel pix_colore[10];

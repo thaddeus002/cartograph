@@ -7,7 +7,7 @@
 #include "lecture_csv.h"
 #include "outils.h"
 #include "map.h"
-#include "ySaveImage.h"
+#include "yImage_io.h"
 #include "yder.h"
 #include <stdio.h>
 #include <string.h>
@@ -137,7 +137,7 @@ int main(int argc, char **argv){
 
     // END
     y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace_y.png");
-    sauve_png(map->image, "output_trace_y.png");
+    y_save_png(map->image, "output_trace_y.png");
     map_destroy(map);
 
     y_close_logs();
