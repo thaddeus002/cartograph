@@ -33,9 +33,9 @@ trace: trace.c libyImage libyder bln.o map.o
 	@echo "linking in" $@
 	gcc -Wall $< bln.o map.o -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
 
-pointe: pointe.c libyImage $(OBJS)
+pointe: pointe.c libyImage bln.o map.o
 	@echo "linking in" $@
-	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) -lX11
+	gcc -Wall $< bln.o map.o -o $@ $(CFLAGS) 
 
 
 %.o: %.c %.h

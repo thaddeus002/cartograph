@@ -419,7 +419,7 @@ int pointe_pixel(fenetre f, float xLamb, float yLamb, int L, /*couleur c*/Pixel 
         for(k=-L; k<=L; k++)
             for(l=-L; l<=L; l++)
                 do_output_pixel(f,x+l,y+k, p);
-    else if(forme==TRIANGLE) // triangle
+    else if(forme==TRIANGLE_) // triangle
         for(k=-L; k<=L+1; k++)
             for(l=-(k+L)*2/3; l<=(k+L)*2/3; l++)
                 do_output_pixel(f,x+l,y+k, p);

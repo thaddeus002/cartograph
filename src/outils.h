@@ -14,7 +14,7 @@
 typedef enum
 {
     CARRE=0,
-    TRIANGLE,
+    TRIANGLE_,
     ROND
 } forme_t;
 

@@ -4,8 +4,6 @@
  */
 
 
-#include "lecture_csv.h"
-#include "outils.h"
 #include "map.h"
 #include "yImage_io.h"
 #include "yder.h"

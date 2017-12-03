@@ -26,7 +26,7 @@
 #define RELIEF_GRI_FILE "grilles relief/France_1km.gr2"
 #define RELIEF_GRD_FILE_HR "grilles relief/France-250m.grd"
 #define RELIEF_GRI_FILE_HR "grilles relief/France_250m.gr2"
-#define PREFECTURES_CVS_FILE "fichiers postes/France - préfectures.csv"
+#define PREFECTURES_CVS_FILE "fichiers_postes/France_prefectures.csv"
 #define RIVIERES_BLN_FILE "fonds de cartes/fonds hydro/France - rivières principales.bln"
 #define DEPARTEMENTS_BLN_FILE "fonds de cartes/France_et_departements.bln"
 #define CENTRE_BLN_FILE "fonds de cartes/régions économiques/Centre.bln"

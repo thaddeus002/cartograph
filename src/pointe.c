@@ -1,51 +1,53 @@
 /** \file pointe.c */
 
-#include "lecture_bln.h"
-#include "lecture_csv.h"
-#include "outils.h"
+#include "map.h"
+#include "yImage.h"
+#include "yImage_io.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define LARGEUR_MAX 1400
 #define HAUTEUR_MAX 800
 
-/* La fonction usage */
+/* The usage function */
 void usage(char *prog){
-    fprintf(stderr,"Pointage des lieux d'un fichier au format CSV.\n");
+    fprintf(stderr,"Points some sites, found in a CSV file.\n");
     fprintf(stderr,"Usage : %s <pointage.csv>\n", prog);
     exit(1);
 }
 
-/* Programme principal */
+/* Main program */
 int main(int argc, char **argv){
 
-    bornes_bln bornes; // bornes du fichier à lire
+    bln_boundaries_t bornes; // boundaries of data file
+    bln_data_t *data;
     int width, height; // taille de la fenetre
     float temp;//aide au calcul
-    fenetre f; // fenetre d'affichage du tracé
-    int depth; // nb de couleurs?
-    XEvent event; //evenement clavier ou souris
-    int i; //numero d'evenement clavier
+    map_t *map; // where make the drawing
     float r; //ratio pour l'agrandissement
     char leg[20]; // legende des meridiens
+    yColor *red, *yellow;
 
 
     if(argc<2) usage(argv[0]);
-    printf("Fichier à afficher : %s\n", argv[1]);
+    printf("File to points : %s\n", argv[1]);
 
-    bornes=cherche_bornes_bln(argv[1]);
-    if(bornes.resultat!=0) {
-        fprintf(stderr,"Pb de format du fichier %s\n", argv[1]);
-        exit(bornes.resultat);
+    data=bln_read_file(argv[1]);
+    bln_find_data_boundaries(data, &bornes);
+    bln_destroy(data);
+    if(bornes.result!=0) {
+        fprintf(stderr,"Bad file format : %s\n", argv[1]);
+        exit(bornes.result);
     }
 
-    printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.resultat);
+    printf("found boundaries : %f,%f - %f,%f\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
     width=(bornes.xmax-bornes.xmin)*10;
     height=(bornes.ymax-bornes.ymin)*10;
     temp=bornes.xmax-bornes.xmin;
 
     if((width<0)|| (height<0)) {
-        printf("Erreur dans les bornes... Arrêt du programme\n");
+        printf("Boundaries Error... Exiting program\n");
         exit(1);
     }
 
@@ -75,9 +77,8 @@ int main(int argc, char **argv){
     printf("largeur : %d - hauteur : %d \n", width, height);
 
 
-    /* Création de la fenêtre */
-    init_Xvariable();
-    f=cree_fenetre_coloree(width, height, &depth, bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, BLEU);
+    /* Creating the map */
+    map = map_init(EPSG_4326, bornes.ymin, bornes.xmin, bornes.ymax, bornes.xmax, width, height);
 
 
     /* marquage de l'équateur, des tropiques, et cercles polaires */
@@ -100,16 +101,17 @@ int main(int argc, char **argv){
     }
 */
 
-    traite_csv(f,argv[1],ROND,3,ROUGE,JAUNE);
+    red = y_color(RED);
+    yellow = y_color(YELLOW);
 
-    /* Boucle principale*/
-    while(1) {
-        XNextEvent(f.dpy, &event);
-        i = manage_event(f, event);
-        if (i==2) break;
-    }
+    map_point(map, argv[1], ROUND, 3, red, yellow);
 
-    /* fermeture des display */
-    fermeture(f);
+    free(red);
+    free(yellow);
+
+    y_save_png(map->image, "point_map.png");
+    map_destroy(map);
+
+
     return 0;
 }
