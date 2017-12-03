@@ -15,7 +15,7 @@ OBJS=fenetre.o affichage.o lecture_csv.o lecture_grille.o lecture_bln.o bln.o ou
 
 PROG=carte trace pointe
 
-CFLAGS=-L/usr/X11R6/lib -lX11 -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YIMAGE_FLAGS) -lyImage
+CFLAGS=-L/usr/X11R6/lib -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YIMAGE_FLAGS) -lyImage
 
 all: $(PROG)
 
@@ -27,15 +27,15 @@ libyImage:
 
 carte: carte.c libyImage $(OBJS)
 	@echo "linking in" $@
-	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS)
+	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) -lX11
 
-trace: trace.c libyImage libyder $(OBJS)
+trace: trace.c libyImage libyder bln.o map.o
 	@echo "linking in" $@
-	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
+	gcc -Wall $< bln.o map.o -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
 
 pointe: pointe.c libyImage $(OBJS)
 	@echo "linking in" $@
-	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS)
+	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) -lX11
 
 
 %.o: %.c %.h
