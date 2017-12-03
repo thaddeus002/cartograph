@@ -368,7 +368,7 @@ void display_text(fenetre f, int x, int y, char * text, couleur c){
             line[n] = '\0';
         }
 
-        XDrawString(f.dpy, /*f.win*/pixmap, f.gc, x/*+6*/, y+24*i, line, strlen(line));
+        XDrawString(f.dpy, pixmap, f.gc, x/*+6*/, y+24*i, line, strlen(line));
         ++i;
 
         if (ptr2)

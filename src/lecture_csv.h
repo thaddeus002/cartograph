@@ -1,8 +1,10 @@
 /**
  * \file lecture_csv.h
- * fonctions pour la lecture des fichiers postes au format texte CVS postes
- * lambx, lamby, prefecture (ou nom de la ville ou du lieu ou de l'objet pointé),
- * numero_departement ou autre info facultative
+ * \brief Read functions for "points CSV files".
+ *
+ * These text files contents x, y (may be lambert coordinates or lat lon),
+ * name (of the city or whatever object is pointed), optionnal info
+ * (department number, ...).
  */
 
 #ifndef __CSV_H__
@@ -12,25 +14,18 @@
 #include <stdlib.h>
 #include "fenetre.h"
 
+/**
+ * A pointed objet
+ */
 typedef struct {
-    char commune[250];
-/*
-    int xLamb, yLamb; // l'int est plus pratique, mais...
-    float lon, lat; // ...l'utilisation du float est plus rigoureuse
-*/
-    float X, Y;
-    int departement;
+    char commune[250]; /**< object name */
+    float X, Y; /**< coordinates */
+    int departement; /** department number if it exists */
 } poste;
 
 
+
 /*
-// ouvre le fichier et prépare la lecture : NON
-// renvoie NULL en cas d'échec
-FILE *init_fichier_postes(FILE *fd, char *fichier_cvs);
-
-// ferme le fichier
-void close_fichier_postes(FILE *fd);
-
 // renvoie NULL si pas de lecture
 poste *lit_enregistrement_cvs(FILE *fd, poste *enregistrement);
 */

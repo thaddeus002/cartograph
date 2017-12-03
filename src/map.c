@@ -5,9 +5,20 @@
 #include "map.h"
 #include "yImage.h"
 #include "yDraw.h"
+#include "yText.h"
 #include "bln.h"
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+
+/**
+ * A pointed objet
+ */
+typedef struct {
+    char commune[250]; /**< object name */
+    float X, Y; /**< coordinates */
+    int departement; /** department number if it exists */
+} poste_t;
 
 
 
@@ -237,3 +248,157 @@ map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yPr
     return map;
 }
 
+
+static int pointe(map_t *map, float xLamb, float yLamb, int L, yColor *c, shape_t forme) {
+    int x, y; // coordinates on map
+    int k, l; //compteurs
+    yPoint p;
+
+    /* passage des coordonnées cartes aux coordonnées fenêtre */
+    x=transforme_x(map, xLamb);
+    y=transforme_y(map, yLamb);
+
+    if(x<0) return(1);
+    if(y<0) return(1);
+    if((x>map->image->rgbWidth)||(y>map->image->rgbHeight)) return(2);
+
+    if(L==0) forme=SQUARE;
+
+    if (forme==SQUARE) // carré
+        for(k=-L; k<=L; k++)
+            for(l=-L; l<=L; l++){
+                p.X=x+l;
+                p.Y=y+k;
+                y_draw_point(map->image, p, c);
+            }
+    else if(forme==TRIANGLE) // triangle
+        for(k=-L; k<=L+1; k++)
+            for(l=-(k+L)*2/3; l<=(k+L)*2/3; l++) {
+                p.X=x+l;
+                p.Y=y+k;
+                y_draw_point(map->image, p, c);
+            }
+    else if(forme==ROUND) //rond
+        for(k=-L; k<=L; k++)
+            for(l=-floor(sqrt(L*L*10000-10000*k*k)/100); l<floor(sqrt(10000*L*L-10000*k*k)/100); l++) {
+                p.X=x+l;
+                p.Y=y+k;
+                y_draw_point(map->image, p, c);
+            }
+
+    return(0);
+}
+
+
+
+
+static void display_text(yImage *image, int x, int y, char *text, yColor *c){
+    char line[80]; // chaine à afficher
+    char *ptr1, *ptr2; // sert au découpage de la chaine en lignes
+    int i, n; // i:numero de ligne, n: nb de caractères à afficher sur la ligne i (avant le saut de ligne)
+
+    i = 0;
+
+    ptr1 = text;
+    while (ptr1) {
+        ptr2 = index(ptr1, '\n');
+        if (!ptr2)
+            strcpy(line, ptr1);
+        else {
+            n = ptr2 - ptr1;
+            strncpy(line, ptr1, n);
+            line[n] = '\0';
+        }
+
+        y_display_text_with_color(image, x, y+24*i, line, c);
+
+        ++i;
+
+
+        if (ptr2) {
+            ptr1 = ptr2+1;
+        } else {
+            ptr1 = NULL;
+        }
+    }
+}
+
+
+
+static int pointe_ville(map_t *map, poste_t *ville, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte){
+    int p; // err code
+
+    p=pointe(map, ville->X, ville->Y, largeur, cpoint, pointage);
+
+    if(p==0) display_text(map->image, transforme_x(map, ville->X)+9, transforme_y(map, ville->Y), ville->commune, ctexte);
+
+    return(p);
+}
+
+
+
+int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte){
+
+    FILE *fd;
+    char buf_read[300];
+    int i,j; // nb de donnees lues, compteurs
+    char com[250]; // nom de la commune
+    int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
+    poste_t *enregistrement;
+
+    enregistrement=malloc(sizeof(poste_t));
+
+    //ouverture du fichier
+    fd=fopen(csvDataFile, "r");
+    if(!fd) {
+        fprintf(stderr, "Could not open file : %s\n", csvDataFile);
+        return(1);
+    }
+
+    // on passe la premiere ligne
+    if(fgets(buf_read, 255, fd)==NULL) {
+        fprintf(stderr, "Empty file : %s\n", csvDataFile);
+        fclose(fd);
+        return(1);
+    }
+
+    // reading the data
+
+    while(fgets(buf_read, 255, fd)!=NULL){
+
+        i=sscanf(buf_read, "%f,%f,%[a-zA-Z- \"\'],%d\n", &(enregistrement->X),&(enregistrement->Y), com, &(enregistrement->departement));
+
+        if(i<3){
+            fprintf(stderr,"\n%s : incorrect line :\n%s\n\n", csvDataFile, buf_read);
+            return(2);
+        }
+
+        //traitement du nom de la commune
+        //pas de guillemets et majuscules seulement en début de noms propres
+        MAJ=1; //majuscule requise pour le premier caractère
+        j=0;
+
+        for(i=0;i+j<=strlen(com)-1;i++){
+            if(com[i+j]=='"') { j++; i--; continue; }  // suppression des guillemets
+            enregistrement->commune[i]=com[i+j];
+            if(MAJ){
+                if((enregistrement->commune[i]>='a')&&(enregistrement->commune[i]<='z')) enregistrement->commune[i]+='A'-'a';
+                MAJ=0;
+            }
+            else {
+                if((enregistrement->commune[i]>='A')&&(enregistrement->commune[i]<='Z')) enregistrement->commune[i]+='a'-'A';
+            }
+            if((enregistrement->commune[i]=='-')||(enregistrement->commune[i]=='\'')||(enregistrement->commune[i]==' ')) MAJ=1;
+        }
+        enregistrement->commune[i]='\0';
+        // fin de traitement
+
+        pointe_ville(map, enregistrement, pointage, largeur, cpoint, ctexte);
+    }
+
+
+    free(enregistrement);
+    // close file
+    fclose(fd);
+    return(0);
+}

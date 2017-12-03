@@ -48,6 +48,21 @@ typedef struct map_ {
 } map_t;
 
 
+
+/**
+ * shapes for pointing
+ */
+typedef enum
+{
+    SQUARE=0,
+    TRIANGLE,
+    ROUND
+} shape_t;
+
+
+
+
+
 /**
  * Is there an intercetion between two bboxes? Common boundaries are NOT considered as interception.
  * \return 0 if the interception between the 2 bbox is empty.
@@ -105,6 +120,9 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color);
  * \return the created map
  */
 map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yProjection proj, int width, int height);
+
+
+int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte);
 
 
 #endif
