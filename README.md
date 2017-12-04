@@ -31,5 +31,10 @@ The raw image is :
 
 The program output shows the same data with a better background :
 
-![bln_fr](assets/background_observations.png) 
+![bln_fr](assets/background_observations.png)
 
+### BLN data representation
+
+The program `trace` create a graphic representation of the data of file [world.bln](data/world.bln).
+
+![world](assets/world.png)
