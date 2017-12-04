@@ -90,6 +90,7 @@ int main(int argc, char **argv){
     map_t *map;
     yColor *backColor, *countriesColor, *fillColor;
     yColor *meridian_c; // color for the meridians and parallels
+    yColor *points_c, *text_c;
 
     y_init_logs(argv[0], Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, NULL);
 
@@ -105,7 +106,7 @@ int main(int argc, char **argv){
     /* Create image */
 
     backColor = y_color(BLUE);
-    countriesColor= y_color(WHITE);
+    countriesColor= y_color(MARRON);
     fillColor=y_color(GREEN);
     map = map_create_with_bln(argv[1], backColor, countriesColor, fillColor, EPSG_4326, width, height);
     free(backColor);
@@ -118,8 +119,13 @@ int main(int argc, char **argv){
 
 
     // POINTAGE
-    //if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);
-
+    if(argc==3) {
+        points_c = y_color(RED);
+        text_c = y_color(WHITE);
+        map_point(map, argv[2], ROUND, 3, points_c, text_c);
+        free(points_c);
+        free(text_c);
+    }
 
     // END
     y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace_y.png");

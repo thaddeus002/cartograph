@@ -35,6 +35,6 @@ The program output shows the same data with a better background :
 
 ### BLN data representation
 
-The program `trace` create a graphic representation of the data of file [world.bln](data/world.bln).
+The program `trace` can create a graphic representation of the data of file [world.bln](data/world.bln), and also plot some cities from file [cities.csv](data/cities.csv).
 
 ![world](assets/world.png)
