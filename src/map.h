@@ -100,26 +100,32 @@ yImage *map_set_background(map_t *map, yColor *color);
 
 
 /**
- * Add lines or polygons to the map.
+ * Add lines or polygons to the map without fill the polygons.
  */
 int map_trace_bln(map_t *map, char *blnFile, yColor *color);
 
 /**
  * Add lines or polygons to the map.
+ * \param map where draw the lines
+ * \param blnData the lines
+ * \param color lines' color
+ * \param fillColor color for inside the lines. NULL to not fill the
+ * polygons
  */
-int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color);
+int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color, yColor *fillColor);
 
 /**
  * \brief Create a new map with the drawing of bln.
  * \param blnFile data file's name
  * \param background the color for the background of the map
  * \param color the color for the data drawing
+ * \param fillColor NULL to not fill the polygons
  * \param proj the geographic projection to use
  * \param width the map's width
  * \param height the map's height
  * \return the created map
  */
-map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yProjection proj, int width, int height);
+map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, yProjection proj, int width, int height);
 
 
 int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte);

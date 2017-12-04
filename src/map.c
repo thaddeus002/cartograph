@@ -181,7 +181,7 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
     int err = 0;
 
     if(data != NULL) {
-        map_trace_bln_data(map,data,color);
+        map_trace_bln_data(map,data,color,NULL);
         bln_destroy(data);
     } else {
         err = 1;
@@ -195,8 +195,7 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color){
 /**
  * Add lines or polygons to the map.
  */
-int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
-
+int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color, yColor *fillColor){
     /* variables */
     int i; /* number of the current coordinate line */
     yPoint *points; /* list of points to link */
@@ -220,7 +219,12 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
         fprintf(stdout, "drawing for %d points\n", current->nbPoints);
         #endif
 
+        if(fillColor != NULL) {
+            y_fill_polygon(map->image, fillColor, points, current->nbPoints);
+        }
+
         y_draw_lines(map->image, color, points, current->nbPoints);
+
         free(points);
 
         current = current->next;
@@ -230,7 +234,16 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color){
 }
 
 
-map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yProjection proj, int width, int height){
+/**
+ * Add lines or polygons to the map without fill them.
+ */
+int map_trace_bln_data_empty(map_t *map, bln_data_t *blnData, yColor *color){
+    return map_trace_bln_data(map, blnData, color, NULL);
+}
+
+
+
+map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, yProjection proj, int width, int height){
 
     bln_data_t *data = bln_read_file(blnFile);
     map_t *map = NULL;
@@ -241,7 +254,7 @@ map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yPr
         fprintf(stdout, "Map's Boundaries : %f,%f - %f,%f\n", bound.xmin, bound.xmax, bound.ymin, bound.ymax);
         map = map_init(proj, bound.ymin, bound.xmin, bound.ymax, bound.xmax, width, height);
         map_set_background(map, background);
-        map_trace_bln_data(map,data,color);
+        map_trace_bln_data(map,data,color,fillColor);
         bln_destroy(data);
     }
 
@@ -292,10 +305,11 @@ static int pointe(map_t *map, float xLamb, float yLamb, int L, yColor *c, shape_
 
 
 
-static void display_text(yImage *image, int x, int y, char *text, yColor *c){
+static int display_text(yImage *image, int x, int y, char *text, yColor *c){
     char line[80]; // chaine à afficher
     char *ptr1, *ptr2; // sert au découpage de la chaine en lignes
     int i, n; // i:numero de ligne, n: nb de caractères à afficher sur la ligne i (avant le saut de ligne)
+    int err;
 
     i = 0;
 
@@ -310,7 +324,7 @@ static void display_text(yImage *image, int x, int y, char *text, yColor *c){
             line[n] = '\0';
         }
 
-        y_display_text_with_color(image, x, y+24*i, line, c);
+        err = y_display_text_with_color(image, x, y+24*i, line, c);
 
         ++i;
 
@@ -321,6 +335,8 @@ static void display_text(yImage *image, int x, int y, char *text, yColor *c){
             ptr1 = NULL;
         }
     }
+
+    return err;
 }
 
 
@@ -330,7 +346,9 @@ static int pointe_ville(map_t *map, poste_t *ville, shape_t pointage, int largeu
 
     p=pointe(map, ville->X, ville->Y, largeur, cpoint, pointage);
 
-    if(p==0) display_text(map->image, transforme_x(map, ville->X)+9, transforme_y(map, ville->Y), ville->commune, ctexte);
+    if(p==0) {
+        p=display_text(map->image, transforme_x(map, ville->X)+9, transforme_y(map, ville->Y), ville->commune, ctexte);
+    }
 
     return(p);
 }
@@ -345,6 +363,7 @@ int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yCol
     char com[250]; // nom de la commune
     int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
     poste_t *enregistrement;
+    int err;
 
     enregistrement=malloc(sizeof(poste_t));
 
@@ -393,12 +412,12 @@ int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yCol
         enregistrement->commune[i]='\0';
         // fin de traitement
 
-        pointe_ville(map, enregistrement, pointage, largeur, cpoint, ctexte);
+        err=pointe_ville(map, enregistrement, pointage, largeur, cpoint, ctexte);
     }
 
 
     free(enregistrement);
     // close file
     fclose(fd);
-    return(0);
+    return(err);
 }

@@ -1,6 +1,6 @@
 /**
  * \file trace.c
- * Draw a map using the content of a bln file.
+ * \brief Draw a map using the content of a bln file.
  */
 
 
@@ -9,13 +9,14 @@
 #include "yder.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 #define LARGEUR_MAX 1400
 #define HAUTEUR_MAX 800
 
 /**
- * The usage function
+ * The usage function.
  */
 static void usage(char *prog){
     fprintf(stderr,"Draws the lines listed in a BLN file.\n");
@@ -87,7 +88,7 @@ int main(int argc, char **argv){
     int width, height; // image size
     int err;
     map_t *map;
-    yColor *backColor, *countriesColor;
+    yColor *backColor, *countriesColor, *fillColor;
 
     y_init_logs(argv[0], Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, NULL);
 
@@ -104,9 +105,11 @@ int main(int argc, char **argv){
 
     backColor = y_color(BLUE);
     countriesColor= y_color(WHITE);
-    map = map_create_with_bln(argv[1], backColor, countriesColor, EPSG_4326, width, height);
+    fillColor=y_color(GREEN);
+    map = map_create_with_bln(argv[1], backColor, countriesColor, fillColor, EPSG_4326, width, height);
     free(backColor);
     free(countriesColor);
+    free(fillColor);
 
 
     /* marquage de l'équateur, des tropiques, et cercles polaires */
