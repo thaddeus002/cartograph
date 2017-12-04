@@ -89,6 +89,7 @@ int main(int argc, char **argv){
     int err;
     map_t *map;
     yColor *backColor, *countriesColor, *fillColor;
+    yColor *meridian_c; // color for the meridians and parallels
 
     y_init_logs(argv[0], Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, NULL);
 
@@ -111,26 +112,10 @@ int main(int argc, char **argv){
     free(countriesColor);
     free(fillColor);
 
+    meridian_c = y_color(YELLOW);
+    map_draw_meridians(map, meridian_c);
+    free(meridian_c);
 
-    /* marquage de l'équateur, des tropiques, et cercles polaires */
-/*  trace_ligne(f,bornes.xmin,bornes.xmax,0,0,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(0,height,bornes.ymin,bornes.ymax)-1,"Equateur", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,23.45,23.45,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(23.45,height,bornes.ymin,bornes.ymax)-1,"Tropique du Cancer", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,-23.45,-23.45,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(-23.45,height,bornes.ymin,bornes.ymax)-1,"Tropique du Capricorne", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,66.55,66.55,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(66.55,height,bornes.ymin,bornes.ymax)-1,"Cercle polaire", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,-66.55,-66.55,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(-66.55,height,bornes.ymin,bornes.ymax)-1,"Cercle polaire", JAUNE);
-*/
-    /* marquage de quelques meridiens */
-/*  for(i=-120;i<=180;i=i+60){
-        trace_ligne(f,i,i,bornes.ymin,bornes.ymax,JAUNE,0);
-        sprintf(leg,"%d°",i);
-        display_text(f, transforme_x(i,width,bornes.xmin,bornes.xmax)+4,transforme_y(bornes.ymax,height,bornes.ymin,bornes.ymax)+15,leg, JAUNE);
-    }
-*/
 
     // POINTAGE
     //if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);

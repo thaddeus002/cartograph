@@ -128,6 +128,13 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color, yColor *f
 map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, yProjection proj, int width, int height);
 
 
+/**
+ * Draw meridians and parallels.
+ */
+void map_draw_meridians(map_t *map, yColor *color);
+
+
+
 int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte);
 
 

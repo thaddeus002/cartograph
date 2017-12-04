@@ -262,6 +262,40 @@ map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yCo
 }
 
 
+
+static void map_draw_line(map_t *map, float lon1, float lon2, float lat1, float lat2, yColor *color) {
+
+    yPoint M, N;
+
+    M.X=transforme_x(map, lon1);
+    M.Y=transforme_y(map, lat1);
+    N.X=transforme_x(map, lon2);
+    N.Y=transforme_y(map, lat2);
+
+    y_draw_line(map->image, M, N, color);
+}
+
+
+
+void map_draw_meridians(map_t *map, yColor *color) {
+
+    int i;
+
+    // draw equator, tropics and polar circles
+    map_draw_line(map, map->boundaries.lonMin, map->boundaries.lonMax, 0, 0, color);
+    map_draw_line(map, map->boundaries.lonMin, map->boundaries.lonMax, 23.45, 23.45, color);
+    map_draw_line(map, map->boundaries.lonMin, map->boundaries.lonMax, -23.45, -23.45, color);
+    map_draw_line(map, map->boundaries.lonMin, map->boundaries.lonMax, 66.55, 66.55, color);
+    map_draw_line(map, map->boundaries.lonMin, map->boundaries.lonMax, -66.55, -66.55, color);
+
+    /* draw some meridians */
+    for(i=-120;i<=180;i=i+60){
+        map_draw_line(map, i, i, map->boundaries.latMin, map->boundaries.latMax, color);
+    }
+}
+
+
+
 static int pointe(map_t *map, float xLamb, float yLamb, int L, yColor *c, shape_t forme) {
     int x, y; // coordinates on map
     int k, l; //compteurs
