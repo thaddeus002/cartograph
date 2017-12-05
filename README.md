@@ -11,7 +11,7 @@ This project use
  * [yder](https://github.com/babelouest/yder) as logger module.
  * [yImage](https://github.com/thaddeus002/yImage) for drawing and image superposition.
 
-Theses dependencies are include in the projet as git submodule. So, use the following command to clone the repository, and have all the needed code :
+Theses dependencies are include in the projet as git submodules. So, use the following command to clone the repository, and have all the needed code :
 
 ```shell
 $ git clone --recurse-submodules https://github.com/thaddeus002/cartograph.git
