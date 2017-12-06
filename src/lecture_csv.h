@@ -25,12 +25,6 @@ typedef struct {
 
 
 
-/*
-// renvoie NULL si pas de lecture
-poste *lit_enregistrement_cvs(FILE *fd, poste *enregistrement);
-*/
-
-
 int traite_csv(fenetre fen, char *fichier_cvs, forme_t pointage, int largeur, couleur cpoint, couleur ctexte);
 
 

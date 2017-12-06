@@ -3,12 +3,8 @@
 
 #include "affichage.h"
 #include "lecture_grille.h"
-/*
-*
-*   lecture en une seule fct
-*   et affichage dans la fenetre f
-*
-*/
+
+
 int affiche_grille(fenetre f, char *fichier, char *palette){
 
     grille_t *grille;
@@ -23,8 +19,6 @@ int affiche_grille(fenetre f, char *fichier, char *palette){
 
 
 
-
-/* Affichage des données dans une fenetre */
 int affiche_grille_(fenetre f, grille_t *grille, char *palette){
 
     float x1, x2, y1, y2; //coordonees de la zone utile (données à afficher (intersection avec) zone de la fenetre)

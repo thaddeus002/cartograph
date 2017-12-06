@@ -1,63 +1,21 @@
-/** \file lecture_csv.c */
-/* fonctions pour la lecture des fichiers postes au format texte CVS postes */
-/* lambx, lamby, prefecture, numero_departement */
+/**
+ * \file lecture_csv.c
+ * Functions for reading points files in CSV format.
+ * The columns are : lambx, lamby, prefecture, departement number.
+ */
+
 
 #include "lecture_csv.h"
 #include "outils.h"
 #include <string.h>
 
 
-poste *lit_enregistrement_cvs(FILE *fd, poste *enregistrement){
-    char buf_read[300]; // buffer de lecture
-    int i,j; // nb de donnees lues, compteurs
-    char com[250]; // nom de la commune
-    //int d; // numero du departement
-    int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
 
-    fgets(buf_read, 255, fd);
-
-    i=sscanf(buf_read, "%f,%f,%[a-zA-Z- \"\'],%d\n",&(enregistrement->X),&(enregistrement->Y), com, &(enregistrement->departement));
-
-    //traitement du nom de la commune
-    //pas de guillemets et majuscules seulement en début de noms propres
-    MAJ=1; //majuscule requise pour le premier caractère
-    j=0;
-    for(i=0;i+j<=strlen(com)-1;i++){
-        if(com[i+j]=='"') { j++; i--; continue; }  // suppression des guillemets
-        enregistrement->commune[i]=com[i+j];
-        if(MAJ){
-            if((enregistrement->commune[i]>='a')&&(enregistrement->commune[i]<='z')) enregistrement->commune[i]+='A'-'a';
-            MAJ=0;
-        }
-        else {
-            if((enregistrement->commune[i]>='A')&&(enregistrement->commune[i]<='Z')) enregistrement->commune[i]+='a'-'A';
-        }
-        if((enregistrement->commune[i]=='-')||(enregistrement->commune[i]=='\'')||(enregistrement->commune[i]==' ')) MAJ=1;
-    }
-    enregistrement->commune[i]='\0';
-
-    // fin de traitement
-
-    printf("%f - %f - %s\n", enregistrement->X,enregistrement->Y,enregistrement->commune);
-
-    return(enregistrement);
-}
-
-
-
-
-
-/**/
-
-//typedef enum{VILLE=0, POSTE, CDM} type;
-/* fct interne */
-int pointe_ville(fenetre fen, poste *ville, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
-    int p; //réussite du pointage
+static int pointe_ville(fenetre fen, poste *ville, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
+    int p; // pointing success
 
     p=pointe(fen, ville->X, ville->Y, largeur, cpoint, pointage);
 
-    //if(p==0) display_text(fen, transforme_xLambert(ville->X, fen.w, fen.x1, fen.x2)+9, transforme_yLambert(ville->Y, fen.h, fen.y1, fen.y2), ville->commune, ctexte);
-    //printf("Pointage de %s\n",ville->commune);
     if(p==0) display_text(fen, transforme_x(ville->X, fen.w, fen.x1, fen.x2)+9, transforme_y(ville->Y, fen.h, fen.y1, fen.y2), ville->commune, ctexte);
 
     return(p);
