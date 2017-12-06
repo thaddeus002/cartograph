@@ -4,7 +4,6 @@ DESTDIR=/usr/local
 #fi
 
 BINDIR=$(DESTDIR)/bin
-#DATADIR=$(DESTDIR)/share/yannview
 
 YDER_LOCATION=../lib/yder/src
 YDER_FLAGS=-I$(YDER_LOCATION) -L$(YDER_LOCATION)
@@ -64,8 +63,8 @@ draw_background: draw_background.c libmap.a
 trace_and: trace_and.c libmap.a
 	gcc -o trace_and trace_and.c -L. -lmap -lm -lz -lpng
 
-libmap.a: map.o yImage.o yColor.o ySaveImage.o bln.o outils.o
+libmap.a: map.o bln.o libyImage
 	# Static library
 	rm -f libmap.a
-	ar -cvq libmap.a map.o bln.o yImage.o yColor.o ySaveImage.o
+	ar -cvq libmap.a map.o bln.o $(YIMAGE_LOCATION)/libyImage.a
 	ranlib libmap.a
