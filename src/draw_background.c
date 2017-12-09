@@ -13,7 +13,7 @@
 
 
 #include "yImage.h"
-#include "ySaveImage.h"
+#include "yImage_io.h"
 #include "map.h"
 #include "bln.h"
 
@@ -36,37 +36,33 @@
 int main(int argc, char **argv) {
 
     map_t *map;
-    yColor backColor, countriesColor;
+    yColor backColor, countriesColor, landColor;
     int err = 0;
     yImage *pointage;
-    FILE *fd;
     bln_data_t *boundaries;
 
     y_set_color(&backColor, 100, 100, 240, 255);
     y_set_color(&countriesColor, 240, 240, 100, 255);
-
+    y_set_color(&landColor, 0, 200, 0, 255);
 
     map = map_init(EPSG_4326, LATMIN, LONMIN, LATMAX, LONMAX, WIDTH, HEIGHT);
     map_set_background(map, &backColor);
 
     boundaries = bln_read_file(BOUNDARIES_BLN);
     if(boundaries != NULL) {
-        map_trace_bln_data(map, boundaries, &countriesColor);
+        map_trace_bln_data(map, boundaries, &countriesColor, &landColor);
         bln_destroy(boundaries);
     }
 
 
-    fd=fopen(LAYER_PNG, "r");
-    if(fd!=NULL) {
-        pointage=LoadPNG(fd);
-        fclose(fd);
-
+    pointage=y_load_png(LAYER_PNG);
+    if(pointage != NULL) {
         y_grey_level_to_alpha(pointage);
-
-        superpose_images(map->image, pointage, 0, 0);
+        y_superpose_images(map->image, pointage, 0, 0);
+        y_destroy_image(pointage);
     }
 
-    err = sauve_png(map->image, "test_mf.png");
+    err = y_save_png(map->image, "test_mf.png");
 
     map_destroy(map);
     return err;

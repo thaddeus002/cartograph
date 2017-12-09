@@ -34,7 +34,7 @@ trace: trace.c libyImage libyder bln.o map.o
 
 pointe: pointe.c libyImage bln.o map.o
 	@echo "linking in" $@
-	gcc -Wall $< bln.o map.o -o $@ $(CFLAGS) 
+	gcc -Wall $< bln.o map.o -o $@ $(CFLAGS)
 
 
 %.o: %.c %.h
@@ -58,13 +58,15 @@ lit: lit.c shape_data.o  shape_types.o outils.o fenetre.o
 	gcc -o lit lit.c shape_data.o shape_types.o fenetre.o outils.o -L/usr/X11R6/lib -lX11 -lm
 
 draw_background: draw_background.c libmap.a
-	gcc -o $@ $< -L. -lmap -lm -lz -lpng
+	gcc -o $@ $< -I$(YIMAGE_LOCATION) -L. -lmap 	-lm -lz -lpng
+
 
 trace_and: trace_and.c libmap.a
-	gcc -o trace_and trace_and.c -L. -lmap -lm -lz -lpng
+	gcc -o $@ $< -I$(YIMAGE_LOCATION) -L. -lmap -lm -lz -lpng
 
 libmap.a: map.o bln.o libyImage
 	# Static library
 	rm -f libmap.a
-	ar -cvq libmap.a map.o bln.o $(YIMAGE_LOCATION)/libyImage.a
+	ar -x $(YIMAGE_LOCATION)/libyImage.a
+	ar -cvq libmap.a map.o bln.o y*.o
 	ranlib libmap.a
