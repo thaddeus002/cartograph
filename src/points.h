@@ -22,6 +22,12 @@ typedef struct poste_ {
 } poste_t;
 
 
+/**
+ * boudaries a points list
+ */
+typedef struct {
+    float xmin, xmax, ymin, ymax;
+} data_boundaries_t;
 
 /**
  * \brief Read the next entry in a "points file".
@@ -37,6 +43,14 @@ poste_t *lit_enregistrement_csv(FILE *fd, int *err);
  */
 poste_t *read_points_file(char *csvDataFile);
 
+
+/**
+ * \brief calculate the boundaries of a points list.
+ * \param list the points list
+ * \param bound must be allocated
+ * \return 0 in case of success
+ */
+int find_data_boundaries(poste_t *list, data_boundaries_t *bound);
 
 
 #endif

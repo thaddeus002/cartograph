@@ -26,35 +26,23 @@ static int pointe_ville(fenetre fen, poste_t *ville, forme_t pointage, int large
 int traite_csv(fenetre fen, char *fichier_csv, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
     FILE *fd;
     char buf_read[300];
-    int i,j; // nb de donnees lues, compteurs
-    char com[250]; // nom de la commune
-    //int d; // numero du departement
-    int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
     poste_t *enregistrement;
     int err;
 
-    //ouverture du fichier
+    // open file
     fd=fopen(fichier_csv, "r");
     if(!fd) {
         fprintf(stderr, "Ouverture impossible : %s\n", fichier_csv);
         return(1);
     }
 
-    // on passe la premiere ligne
-    if(fgets(buf_read, 255, fd)==NULL) {
-        fprintf(stderr, "Fichier vide : %s\n", fichier_csv);
-        fclose(fd);
-        return(1);
-    }
-
-    //lecture des données
-
+    // read data
     enregistrement = lit_enregistrement_csv(fd, &err);
     while(!err){
         pointe_ville(fen, enregistrement, pointage, largeur, cpoint, ctexte);
     }
 
-    // fermeture du fichier
+    // close file
     fclose(fd);
     return(0);
 }

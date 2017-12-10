@@ -73,12 +73,6 @@ poste_t *read_points_file(char *csvDataFile){
         return(NULL);
     }
 
-    // don't use first line
-    if(fgets(buf_read, 255, fd)==NULL) {
-        fclose(fd);
-        return(NULL);
-    }
-
     // reading the data
     list = NULL;
     enregistrement=lit_enregistrement_csv(fd, &err);
@@ -99,3 +93,34 @@ poste_t *read_points_file(char *csvDataFile){
     fclose(fd);
     return(list);
 }
+
+
+
+int find_data_boundaries(poste_t *list, data_boundaries_t *bound){
+
+    poste_t *cur;
+    int result = 1;
+
+    bound->xmin=9999.;
+    bound->xmax=-9999.;
+    bound->ymin=9999.;
+    bound->ymax=-9999.;
+
+    cur = list;
+    while(cur != NULL) {
+
+        if(cur->X < bound->xmin) bound->xmin = cur->X;
+        if(cur->X > bound->xmax) bound->xmax = cur->X;
+        if(cur->Y < bound->ymin) bound->ymin = cur->Y;
+        if(cur->Y > bound->ymax) bound->ymax = cur->Y;
+
+        cur = cur->next;
+    }
+
+    if(bound->xmin != 9999.) {
+        result = 0;
+    }
+
+    return result;
+}
+
