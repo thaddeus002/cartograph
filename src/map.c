@@ -7,18 +7,10 @@
 #include "yDraw.h"
 #include "yText.h"
 #include "bln.h"
+#include "points.h"
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-
-/**
- * A pointed objet
- */
-typedef struct {
-    char commune[250]; /**< object name */
-    float X, Y; /**< coordinates */
-    int departement; /** department number if it exists */
-} poste_t;
 
 
 
@@ -67,17 +59,6 @@ static int transforme_y(map_t *map, float y) {
 
     // y is minimum at the top of the map
     return h+1-linear_transform(h,y1,y2,y);
-}
-
-
-
-
-static float transforme_i(int i, int w, float x1, float x2){
-    return(x1+(i-1)*(x2-x1)/(w-1));
-}
-
-static float transforme_j(int j, int h, float y1, float y2){
-    return(y1+(h-j)*(y2-y1)/(h-1));
 }
 
 
@@ -298,10 +279,10 @@ void map_draw_meridians(map_t *map, yColor *color) {
 
 static int pointe(map_t *map, float xLamb, float yLamb, int L, yColor *c, shape_t forme) {
     int x, y; // coordinates on map
-    int k, l; //compteurs
+    int k, l; // counters
     yPoint p;
 
-    /* passage des coordonnées cartes aux coordonnées fenêtre */
+    /* map coordinates to image coordinates */
     x=transforme_x(map, xLamb);
     y=transforme_y(map, yLamb);
 
@@ -311,27 +292,31 @@ static int pointe(map_t *map, float xLamb, float yLamb, int L, yColor *c, shape_
 
     if(L==0) forme=SQUARE;
 
-    if (forme==SQUARE) // carré
-        for(k=-L; k<=L; k++)
+    if (forme==SQUARE) {
+        for(k=-L; k<=L; k++) {
             for(l=-L; l<=L; l++){
                 p.X=x+l;
                 p.Y=y+k;
                 y_draw_point(map->image, p, c);
             }
-    else if(forme==TRIANGLE) // triangle
-        for(k=-L; k<=L+1; k++)
+        }
+    } else if(forme==TRIANGLE) {
+        for(k=-L; k<=L+1; k++) {
             for(l=-(k+L)*2/3; l<=(k+L)*2/3; l++) {
                 p.X=x+l;
                 p.Y=y+k;
                 y_draw_point(map->image, p, c);
             }
-    else if(forme==ROUND) //rond
-        for(k=-L; k<=L; k++)
+        }
+    } else if(forme==ROUND) {
+        for(k=-L; k<=L; k++) {
             for(l=-floor(sqrt(L*L*10000-10000*k*k)/100); l<floor(sqrt(10000*L*L-10000*k*k)/100); l++) {
                 p.X=x+l;
                 p.Y=y+k;
                 y_draw_point(map->image, p, c);
             }
+        }
+    }
 
     return(0);
 }
@@ -391,67 +376,25 @@ static int pointe_ville(map_t *map, poste_t *ville, shape_t pointage, int largeu
 
 int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte){
 
-    FILE *fd;
-    char buf_read[300];
-    int i,j; // nb de donnees lues, compteurs
-    char com[250]; // nom de la commune
-    int MAJ; //majuscule requise (traitement du nom de commune caractère par caractère)
     poste_t *enregistrement;
+    poste_t *courant;
     int err;
 
-    enregistrement=malloc(sizeof(poste_t));
+    enregistrement=read_points_file(csvDataFile);
 
-    //ouverture du fichier
-    fd=fopen(csvDataFile, "r");
-    if(!fd) {
-        fprintf(stderr, "Could not open file : %s\n", csvDataFile);
-        return(1);
+    courant = enregistrement;
+    while(courant != NULL) {
+        err=pointe_ville(map, courant, pointage, largeur, cpoint, ctexte);
+        courant = courant->next;
     }
 
-    // on passe la premiere ligne
-    if(fgets(buf_read, 255, fd)==NULL) {
-        fprintf(stderr, "Empty file : %s\n", csvDataFile);
-        fclose(fd);
-        return(1);
+    // free memory
+    courant = enregistrement;
+    while (courant != NULL) {
+        poste_t *next = courant->next;
+        free(courant);
+        courant = next;
     }
 
-    // reading the data
-
-    while(fgets(buf_read, 255, fd)!=NULL){
-
-        i=sscanf(buf_read, "%f,%f,%[a-zA-Z- \"\'],%d\n", &(enregistrement->X),&(enregistrement->Y), com, &(enregistrement->departement));
-
-        if(i<3){
-            fprintf(stderr,"\n%s : incorrect line :\n%s\n\n", csvDataFile, buf_read);
-            return(2);
-        }
-
-        //traitement du nom de la commune
-        //pas de guillemets et majuscules seulement en début de noms propres
-        MAJ=1; //majuscule requise pour le premier caractère
-        j=0;
-
-        for(i=0;i+j<=strlen(com)-1;i++){
-            if(com[i+j]=='"') { j++; i--; continue; }  // suppression des guillemets
-            enregistrement->commune[i]=com[i+j];
-            if(MAJ){
-                if((enregistrement->commune[i]>='a')&&(enregistrement->commune[i]<='z')) enregistrement->commune[i]+='A'-'a';
-                MAJ=0;
-            }
-            else {
-                if((enregistrement->commune[i]>='A')&&(enregistrement->commune[i]<='Z')) enregistrement->commune[i]+='a'-'A';
-            }
-            if((enregistrement->commune[i]=='-')||(enregistrement->commune[i]=='\'')||(enregistrement->commune[i]==' ')) MAJ=1;
-        }
-        enregistrement->commune[i]='\0';
-        // fin de traitement
-
-        err=pointe_ville(map, enregistrement, pointage, largeur, cpoint, ctexte);
-    }
-
-
-    free(enregistrement);
-    // close file
-    fclose(fd);
     return(err);
 }

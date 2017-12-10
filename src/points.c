@@ -1,0 +1,101 @@
+/**
+ * \file points.c
+ * Functions for reading points files in CSV format.
+ * The columns are : lambx, lamby, prefecture, departement number.
+ */
+
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "points.h"
+
+poste_t *lit_enregistrement_csv(FILE *fd, int *err) {
+    char buf_read[300]; // reading buffer
+    int i,j; // number of read data, counters
+    char com[250]; // city's name
+    int MAJ; // requires upercase (treatment of name character by character)
+    poste_t *read_point;
+
+    if(fgets(buf_read, 255, fd)== NULL) {
+        *err = 1;
+        return(NULL);
+    }
+
+    read_point = malloc(sizeof(poste_t));
+
+    i=sscanf(buf_read, "%f,%f,%[a-zA-Z- \"\'],%d\n",&(read_point->X),&(read_point->Y), com, &(read_point->departement));
+
+    if(i<3){
+        fprintf(stderr,"\nincorrect line :\n%s\n\n", buf_read);
+        *err=2;
+        free(read_point);
+        return(NULL);
+    }
+
+    //traitement du nom de la commune
+    //pas de guillemets et majuscules seulement en début de noms propres
+    MAJ=1; //majuscule requise pour le premier caractère
+    j=0;
+    for(i=0;i+j<=strlen(com)-1;i++){
+        if(com[i+j]=='"') { j++; i--; continue; }  // suppression des guillemets
+        read_point->commune[i]=com[i+j];
+        if(MAJ){
+            if((read_point->commune[i]>='a')&&(read_point->commune[i]<='z')) read_point->commune[i]+='A'-'a';
+            MAJ=0;
+        }
+        else {
+            if((read_point->commune[i]>='A')&&(read_point->commune[i]<='Z')) read_point->commune[i]+='a'-'A';
+        }
+        if((read_point->commune[i]=='-')||(read_point->commune[i]=='\'')||(read_point->commune[i]==' ')) MAJ=1;
+    }
+    read_point->commune[i]='\0';
+
+    read_point->next = NULL;
+
+    *err = 0;
+    return(read_point);
+}
+
+
+
+poste_t *read_points_file(char *csvDataFile){
+    FILE *fd;
+    char buf_read[300];
+    poste_t *enregistrement;
+    poste_t *list, *last;
+    int err;
+
+    // open file
+    fd=fopen(csvDataFile, "r");
+    if(!fd) {
+        fprintf(stderr, "Could not open file : %s\n", csvDataFile);
+        return(NULL);
+    }
+
+    // don't use first line
+    if(fgets(buf_read, 255, fd)==NULL) {
+        fclose(fd);
+        return(NULL);
+    }
+
+    // reading the data
+    list = NULL;
+    enregistrement=lit_enregistrement_csv(fd, &err);
+    while(!err) {
+
+        if(list==NULL) {
+            list = enregistrement;
+        } else {
+            last->next = enregistrement;
+        }
+
+        last=enregistrement;
+
+        enregistrement = lit_enregistrement_csv(fd, &err);
+    }
+
+    // close file
+    fclose(fd);
+    return(list);
+}

@@ -1,6 +1,7 @@
 /**
  * \file lecture_csv.h
- * \brief Read functions for "points CSV files".
+ * \brief Read functions for "points CSV files" and display them in a X11
+ * window.
  *
  * These text files contents x, y (may be lambert coordinates or lat lon),
  * name (of the city or whatever object is pointed), optionnal info
@@ -13,15 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fenetre.h"
-
-/**
- * A pointed objet
- */
-typedef struct {
-    char commune[250]; /**< object name */
-    float X, Y; /**< coordinates */
-    int departement; /** department number if it exists */
-} poste;
+#include "points.h"
 
 
 
