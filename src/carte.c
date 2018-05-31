@@ -47,15 +47,15 @@ void usage(char *nom){
     fprintf(stderr,"\nusage:\n%s [-options]\n\
 \t -help : display this message\n\
 \t -verbose\n\
-\t -w largeur : impose la largeur de la fenêtre\n\
-\t -h hauteur\n\
+\t -w <width> : indicate the window's width\n\
+\t -h <height>\n\
 \t -x1 xlamb_mini\n\
 \t -x2 xlamb_maxi\n\
 \t -y1 ylamb_mini\n\
 \t -y2 ylamb_maxi\n\
-\t -fin : haute résolution \n\
+\t -fin : high resolution \n\
 \t -file fichier -datadir rep\n\
-\t -hmax altitude_maxi : adaptation plage de couleurs pour le relief\n\
+\t -hmax altitude_maxi : adapt the color range for relief\n\
 ", nom);
 
     exit(-1);
@@ -69,13 +69,11 @@ char color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x0000FF,1,0
 
 
 int main(int argc, char **argv){
-    int i/*,j*/; //compteurs
+    int i; // counter
     int width, height, depth; // taille de la fenêtre d'affichage et nb de bits pour les couleurs
     float x1,y1,x2,y2; //coordonnées lambert max et min
     char *file;
-    FILE *fd; //fichier de donnees
-    //FILE *fd_cvs; // fichier de postes
-    //int header_data; // longueur de l'entête ?
+    FILE *fd; // data file
     grille_t *structure; // les valeurs lues dans l'entête
     /*float*//*int n;*/ //valeur lue dans le fichier
     //char lu[10]; // lecture d'une chaine
@@ -162,12 +160,11 @@ int main(int argc, char **argv){
         strcpy(data_file,file);
     }
 
-    /* ouverture du fichier */
+    /* open file */
     if(!(fd=fopen(data_file, "r"))) {
-        printf("Ouverture de %s impossible!\n", data_file);
+        printf("Could not open file %s!\n", data_file);
         exit(-1);
     }
-    else if(verbose) fprintf(stderr, "Fichier %s ouvert!\n", data_file);
 
     if (verbose)
         fprintf(stderr, "\nReading header data from '%s'\n", data_file);
@@ -201,7 +198,6 @@ int main(int argc, char **argv){
 
     /* Ouverture fenêtre */
     init_Xvariable();
-    //fen=cree_fenetre(width, height, &depth, x1, x2, y1, y2);
     fen=cree_fenetre_coloree(width, height, &depth, x1, x2, y1, y2, BLEU);
 
     init_colors(color_scheme,depth,1, hmax);
@@ -211,12 +207,12 @@ int main(int argc, char **argv){
     /* european countries */
     if(!fin){
         sprintf(file, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
-        if(trace_bln_geo(file, fen, 1, BLANC, 1, MARRON)!=0) fprintf(stderr, "Problème avec le fichier Europe\n");
+        if(trace_bln_geo(file, fen, 1, BLANC, 1, MARRON)!=0) fprintf(stderr, "Error dealing with Europe datafile\n");
     }
 
     /* Affichage de la grille de relief */
     if(verbose) fprintf(stderr, "\nReading data from '%s'\n", data_file);
-    if(verbose) fprintf(stderr, "\nCarte %dx%d\n\n",width, height);
+    if(verbose) fprintf(stderr, "\nMap %dx%d\n\n",width, height);
 
     //affiche_grille(fen, "etopo2.gr_1", NULL);
     //affiche_grille(fen, "../etopo5.alt", NULL);
@@ -225,19 +221,17 @@ int main(int argc, char **argv){
     //reliefEurope=lit_grille_entiere("../../donnees_Etopo/etopo1_bed_c_i2.GR2");
     reliefEurope->type=LATLON;
     info_grille(reliefEurope);
-    //reliefZoneII=NULL;
     reliefZoneII=transforme_vers_Lambert(reliefEurope);
     info_grille(reliefZoneII);
-    if(reliefZoneII==NULL) fprintf(stdout, "Relief de zone non disponible\n");
+    if(reliefZoneII==NULL) fprintf(stdout, "Relief not available\n");
     else affiche_grille_(fen, reliefZoneII, NULL);
     destroy_grille(reliefEurope);
     destroy_grille(reliefZoneII);
-    //affiche_grille(fen, data_file, NULL);
 
 
     /* départements */
     sprintf(file, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
-    if(trace_bln_lignes(file, fen, 2, ORANGE, 0, 0)!=0) fprintf(stderr, "Problème avec le fichier départements\n");
+    if(trace_bln_lignes(file, fen, 2, ORANGE, 0, 0)!=0) fprintf(stderr, "Error when dealing with departments' boundaries data\n");
 
     /* centre marqué plus fort */
     /*sprintf(file, "%s/%s", data_dir, CENTRE_BLN_FILE);
@@ -258,12 +252,11 @@ int main(int argc, char **argv){
     /* SIGNATURE */
     //display_text(fen, 3, fen.h-35, "Programme d'affichage de données géographiques\nYannick Garcia - 2006", JAUNE);
 
-    /*boucle principale*/
+    /* main loop */
     /*XSetWindowBackgroundPixmap(fen.dpy, fen.win, pixmap);
     XClearWindow(fen.dpy, fen.win); */
     actualise_fenetre(fen);
 
-    //i=1;
     while(1) {
         XNextEvent(fen.dpy, &event);
         i = manage_event(fen, event);
@@ -275,7 +268,7 @@ int main(int argc, char **argv){
     /* libération de la mémoire et fermeture des display */
     free(file);
     fermeture(fen);
-    printf("Fin du programme\n");
+    printf("End of program\n");
 
     return 0;
 }
