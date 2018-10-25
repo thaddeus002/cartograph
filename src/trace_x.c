@@ -37,7 +37,6 @@ int main(int argc, char **argv){
     XEvent event; //evenement clavier ou souris
     int i; //numero d'evenement clavier
     float r; //ratio pour l'agrandissement
-    //char leg[20]; // legende des meridiens
     int err; // error code
 
 
@@ -93,39 +92,17 @@ int main(int argc, char **argv){
     trace_bln_lignes(argv[1], f, 0, BLANC, 1, VERT);
 
 
-    /* marquage de l'équateur, des tropiques, et cercles polaires */
-/*  trace_ligne(f,bornes.xmin,bornes.xmax,0,0,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(0,height,bornes.ymin,bornes.ymax)-1,"Equateur", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,23.45,23.45,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(23.45,height,bornes.ymin,bornes.ymax)-1,"Tropique du Cancer", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,-23.45,-23.45,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(-23.45,height,bornes.ymin,bornes.ymax)-1,"Tropique du Capricorne", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,66.55,66.55,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(66.55,height,bornes.ymin,bornes.ymax)-1,"Cercle polaire", JAUNE);
-    trace_ligne(f,bornes.xmin,bornes.xmax,-66.55,-66.55,JAUNE,0);
-    display_text(f, transforme_x(bornes.xmin,width,bornes.xmin,bornes.xmax)+10,transforme_y(-66.55,height,bornes.ymin,bornes.ymax)-1,"Cercle polaire", JAUNE);
-*/
-    /* marquage de quelques meridiens */
-/*  for(i=-120;i<=180;i=i+60){
-        trace_ligne(f,i,i,bornes.ymin,bornes.ymax,JAUNE,0);
-        sprintf(leg,"%d°",i);
-        display_text(f, transforme_x(i,width,bornes.xmin,bornes.xmax)+4,transforme_y(bornes.ymax,height,bornes.ymin,bornes.ymax)+15,leg, JAUNE);
-    }
-*/
-
     if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);
 
-    /* Boucle principale*/
+    /* main loop */
     while(1) {
         XNextEvent(f.dpy, &event);
         i = manage_event(f, event);
         if (i==2) break;
     }
 
-    /* fermeture des display */
-    //sauve_fenetre_jpeg(&f, "output_trace.jpg");
+    /* close display */
     sauve_fenetre_png(&f, "output_trace.png");
-    //sauve_fenetre_tiff(&f, "output_trace.tiff");
     fermeture(f);
     return 0;
 }
