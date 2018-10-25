@@ -36,7 +36,6 @@ typedef struct bbox_ {
 } bbox_t;
 
 
-
 /**
  * The map.
  */
@@ -46,7 +45,6 @@ typedef struct map_ {
     yProjection proj; /**< the projection used */
     bbox_t boundaries; /**< the coordinates in the boundaries of the image */
 } map_t;
-
 
 
 /**
@@ -62,13 +60,11 @@ typedef enum
 
 
 
-
 /**
  * Is there an intercetion between two bboxes? Common boundaries are NOT considered as interception.
  * \return 0 if the interception between the 2 bbox is empty.
  */
 int map_intercept(bbox_t *b1, bbox_t *b2);
-
 
 
 /**
@@ -98,11 +94,15 @@ yImage *map_set_image(map_t *map, yImage *image);
 yImage *map_set_background(map_t *map, yColor *color);
 
 
-
 /**
  * Add lines or polygons to the map without fill the polygons.
+ * \param map where draw the lines
+ * \param blnFile the data file
+ * \param color lines' color
+ * \return 0 on success
  */
 int map_trace_bln(map_t *map, char *blnFile, yColor *color);
+
 
 /**
  * Add lines or polygons to the map.
@@ -111,8 +111,10 @@ int map_trace_bln(map_t *map, char *blnFile, yColor *color);
  * \param color lines' color
  * \param fillColor color for inside the lines. NULL to not fill the
  * polygons
+ * \return 0 on success
  */
 int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color, yColor *fillColor);
+
 
 /**
  * \brief Create a new map with the drawing of bln.
@@ -130,11 +132,22 @@ map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yCo
 
 /**
  * Draw meridians and parallels.
+ * \param map where draw
+ * \param color lines' color
  */
 void map_draw_meridians(map_t *map, yColor *color);
 
 
-
+/**
+ * Marks points on the map.
+ * \param map where draw the points
+ * \param csvDataFile datafile
+ * \param pointage shape for the points
+ * \param largeur points' size
+ * \param cpoint points' color
+ * \param ctext legend's color
+ * \return 0 on success
+ */
 int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte);
 
 
