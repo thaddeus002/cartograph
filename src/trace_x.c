@@ -41,7 +41,7 @@ int main(int argc, char **argv){
 
 
     if(argc<2) usage(argv[0]);
-    printf("Fichier à afficher : %s\n", argv[1]);
+    printf("File to show : %s\n", argv[1]);
 
     bornes=cherche_bornes_bln(argv[1]);
     if(bornes.resultat!=0) {

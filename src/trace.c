@@ -33,19 +33,22 @@ static void usage(char *prog){
  */
 static int choose_image_size(char *blnfile, int *width, int *height) {
 
-    bln_boundaries_t *bornes;
+    bln_boundaries_t bornes;
     float r; //zoom ratio
 
-    bornes=bln_find_boundaries(blnfile);
-    if(bornes->result!=0) {
+    bln_data_t *data = bln_read_file(blnfile);
+    bln_find_data_boundaries(data, &bornes);
+    bln_destroy(data);
+
+
+    if(bornes.result!=0) {
         y_log_message(Y_LOG_LEVEL_ERROR, "Error in format of file %s", blnfile);
-        return(bornes->result);
+        return(bornes.result);
     }
 
-    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes->xmin, bornes->xmax, bornes->ymin, bornes->ymax, bornes->result);
-    *width=(bornes->xmax-bornes->xmin)*10;
-    *height=(bornes->ymax-bornes->ymin)*10;
-    free(bornes);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.result);
+    *width=(bornes.xmax-bornes.xmin)*10;
+    *height=(bornes.ymax-bornes.ymin)*10;
 
     if((*width<0)|| (*height<0)) {
         y_log_message(Y_LOG_LEVEL_ERROR, "Error in boundaries... Stopping program");

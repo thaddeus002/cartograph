@@ -3,7 +3,7 @@
  * \brief A BLN file contains informations to draw a line on a map.
  *
  * Each line of file contains the coordinates of a point. Linking the points
- * give à curve : country boundaries, rivers, roads, ...
+ * give a curve : country boundaries, rivers, roads, ...
  */
 
 #ifndef __BLN_FILE_H__
@@ -48,8 +48,6 @@ typedef struct {
 
 /* functions */
 
-/** \deprecated */
-bln_boundaries_t *bln_find_boundaries(char *file);
 
 /**
  * \brief find the boundaries of a data set.

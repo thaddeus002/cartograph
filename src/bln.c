@@ -71,7 +71,6 @@ bln_data_t *bln_read_file(char *filename){
 
         } else { /* data line containing a point's coordinates */
 
-            //fprintf("%s\n", buf_read);
             /* reading data */
             if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) {
                 bln_destroy(current);
@@ -87,8 +86,6 @@ bln_data_t *bln_read_file(char *filename){
                 current->xmax=current->x[i-1];
                 current->ymin=current->y[i-1];
                 current->ymax=current->y[i-1];
-                //fprintf(stdout, "Map's Boundaries init : %f,%f - %f,%f\n", current->xmin, current->xmax, current->ymin, current->ymax);
-
             } else {
                 if(current->x[i-1]<current->xmin) current->xmin = current->x[i-1];
                 if(current->x[i-1]>current->xmax) current->xmax = current->x[i-1];
@@ -149,28 +146,6 @@ int bln_find_data_boundaries(bln_data_t *data, bln_boundaries_t *bound){
     bound->result=0;
     return 0;
 }
-
-
-
-
-
-bln_boundaries_t *bln_find_boundaries(char *file){
-
-    bln_data_t *data;
-    bln_boundaries_t *bound = malloc(sizeof(bln_boundaries_t));
-
-    if(bound == NULL) return bound;
-
-    data = bln_read_file(file);
-
-    bln_find_data_boundaries(data, bound);
-
-    return bound;
-}
-
-
-
-
 
 
 /**
