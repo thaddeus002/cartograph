@@ -1,30 +1,56 @@
 /**
  * \file coordonnees.h
- * \brief transformations de coordonnées geographiques en Lambert II étendu
+ * \brief Extensive Lambert II Geographical Coordinates Transformations
  * \since 11/04/2007
+ *
+ * Lambert's projections are conical projections for metropolitan
+ * France. In these projections, the points are not located by
+ * latitude and longitude coordinates but by plane cartesians (X, Y)
+ * coordinates.
+ * 
+ * Two Lambert's projection can be used for entire metropolitan France
+ * plus Corsica.
+ *
+ * The first one, Extensive Lambert II, is associated with NTF
+ * geodesic system and Clarke's 1880 IGN ellipsoid.
+ *
+ * The second one is the Lambert 93 projection (new french geodesic
+ * system RGF93) which uses the same reference ellipsoid than
+ * internationnal WGS84.
  **/
 
 #ifndef __COORD_H__
 #define __COORD_H__ 1
 
 
-#include <math.h>
-
-
 typedef struct {
-    float lambda; // longitude en degrés
-    float phi; // latitude en degrés
+    float lambda; /**< longitude in degrees */
+    float phi; /**< latitude in degrees */
 } coord_geo;
 
 typedef struct {
-    float X; // en mètres
-    float Y; // en mètres
+    float X; // in meters
+    float Y; // in meters
 } coord_lamb;
 
-/* fonction de convertion */
+
+/**
+ * Lambert II coordinates calculation from lat/lon of the NTF system
+ * (Clarke's geoide).
+ */
 coord_lamb calcule_Lambert(coord_geo coord);
 
-/* correction de passage entre les systèmes internationnal et francais */
+
+/**
+ * Lambert 93 coordinates calculation from lat/lon of the RGF93 system.
+ */
+coord_lamb calcule_Lambert93(coord_geo coord);
+
+
+/**
+ * \brief Coordinate translation form WGS84 internationnal system to
+ * french NTF.
+ */
 coord_lamb correction_WGS84(coord_lamb brut);
 
 

@@ -61,7 +61,6 @@ poste_t *lit_enregistrement_csv(FILE *fd, int *err) {
 
 poste_t *read_points_file(char *csvDataFile){
     FILE *fd;
-    char buf_read[300];
     poste_t *enregistrement;
     poste_t *list, *last;
     int err;
@@ -69,7 +68,7 @@ poste_t *read_points_file(char *csvDataFile){
     // open file
     fd=fopen(csvDataFile, "r");
     if(!fd) {
-        fprintf(stderr, "Could not open file : %s\n", csvDataFile);
+        fprintf(stderr, "Could not open file %s\n", csvDataFile);
         return(NULL);
     }
 

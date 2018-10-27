@@ -25,14 +25,13 @@ static int pointe_ville(fenetre fen, poste_t *ville, forme_t pointage, int large
 
 int traite_csv(fenetre fen, char *fichier_csv, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
     FILE *fd;
-    char buf_read[300];
     poste_t *enregistrement;
     int err;
 
     // open file
     fd=fopen(fichier_csv, "r");
     if(!fd) {
-        fprintf(stderr, "Ouverture impossible : %s\n", fichier_csv);
+        fprintf(stderr, "Could not open file %s\n", fichier_csv);
         return(1);
     }
 

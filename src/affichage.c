@@ -65,17 +65,18 @@ int affiche_grille_(fenetre f, grille_t *grille, char *palette){
             //n=grille->data[i][j];
             n=getdata(grille, i, j);
             //if(n>0) printf("%d,%d -> %d\n",i,j, n);
-            if(n>PLAGE) n=PLAGE; if(n<-PLAGE) n=-PLAGE; //evitons les dépassements de mémoire
-                if (n>0){
+            if(n>PLAGE) n=PLAGE;
+            if(n<-PLAGE) n=-PLAGE; //evitons les dépassements de mémoire
+            if (n>0){
 
-                    /*xlamb=(500000*grille->x1+500000*i*(grille->x2-grille->x1)/grille->width)/500000;
-                    ylamb=(500000*grille->y1+500000*(grille->height-j)*(grille->y2-grille->y1)/grille->height)/500000;*/
-                    xlamb=transforme_i(i, grille->width, grille->x1, grille->x2);
-                    ylamb=transforme_j(j, grille->height, grille->y1, grille->y2);
+                /*xlamb=(500000*grille->x1+500000*i*(grille->x2-grille->x1)/grille->width)/500000;
+                ylamb=(500000*grille->y1+500000*(grille->height-j)*(grille->y2-grille->y1)/grille->height)/500000;*/
+                xlamb=transforme_i(i, grille->width, grille->x1, grille->x2);
+                ylamb=transforme_j(j, grille->height, grille->y1, grille->y2);
 
-                    pointe_pixel(f, xlamb, ylamb, /*0*/largeur, pix[n+12000], CARRE);
-                    //printf("%d ",n);
-                }
+                pointe_pixel(f, xlamb, ylamb, /*0*/largeur, pix[n+12000], CARRE);
+                //printf("%d ",n);
+            }
 
 
         } // fin de for i

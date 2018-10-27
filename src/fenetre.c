@@ -528,11 +528,9 @@ void trace_lignes(fenetre f, XPoint *points, int nb, couleur n, int largeur){
 ** n : couleur du tracé
 ** largeur : épaisseur du trait */
 
-    int err; /* détection d'une erreur */
-
     XSetForeground(f.dpy, f.gc, pix_colore[n]);
     XSetLineAttributes(f.dpy, f.gc, largeur, LineSolid, CapRound, JoinMiter);
-    err=XDrawLines(f.dpy, pixmap, f.gc, points, nb, CoordModeOrigin);
+    XDrawLines(f.dpy, pixmap, f.gc, points, nb, CoordModeOrigin);
     actualise_fenetre(f);
 
     //if(err!=0) printf("trace_ligne: %d", err);

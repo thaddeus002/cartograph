@@ -263,7 +263,7 @@ int main(int argc, char **argv){
         if (i==2) break;
     }
 
-    //if(verbose) fprintf(stderr, "\nAltitude maximale : %d, pour X=%d, Y=%d\n\n", hmax, xmax, ymax);
+    if(verbose) fprintf(stderr, "\nMaximal altitud : %d, for X=%d, Y=%d\n\n", hmax, xmax, ymax);
 
     /* libération de la mémoire et fermeture des display */
     free(file);
