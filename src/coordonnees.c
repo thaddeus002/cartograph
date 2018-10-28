@@ -46,16 +46,16 @@ static float radians(float degres){ return (degres*M_PI/180); }
  * Calculate Lambert coordinate from lat/lon of the same geodesic
  * system.
  */
-static coord_lamb calculate_plane_coordinates(coord_geo coord, int e, int c, int n, int l0, int xs, int ys) {
-    coord_lamb retour; /* la valeur de retour */
+static coord_lamb calculate_plane_coordinates(coord_geo coord, double e, double c, double n, double l0, double xs, double ys) {
+    coord_lamb retour; /* return value */
 
-    /* calculs intermédiaires */
-    float S=sinf(radians(coord.phi));
-    float L=0.5*logf( (1+S)/(1-S) ) - 0.5*e*logf( (1+e*S)/(1-e*S) );
-    float R=c*expf(-n*L);
-    float gamma=n*(coord.lambda-l0);
+    /* intermediary calculations */
+    double S=sinf(radians(coord.phi));
+    double L=0.5*logf( (1+S)/(1-S) ) - 0.5*e*logf( (1+e*S)/(1-e*S) );
+    double R=c*expf(-n*L);
+    double gamma=n*(coord.lambda-l0);
 
-    /* Calcul du resultat */
+    /* result */
     retour.X=xs+R*sinf(radians(gamma));
     retour.Y=ys-R*cosf(radians(gamma));
 
