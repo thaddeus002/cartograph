@@ -81,16 +81,6 @@ coord_lamb calcule_Lambert93(coord_geo coord) {
 
 
 
-coord_lamb correction_WGS84(coord_lamb brut){
-    coord_lamb corrige; // valeur de retour
-
-    corrige.X=brut.X+5000;
-    corrige.Y=brut.Y-7000;
-
-    return(corrige);
-}
-
-
 /**********************************************************//**
  *    3D CARTESIAN (X,Y,Z) TO GEOGRAPHICAL (Lambda,Phy,h)     *
  *************************************************************/

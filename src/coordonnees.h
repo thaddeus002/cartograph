@@ -65,11 +65,4 @@ coord_lamb calcule_Lambert(coord_geo coord);
 coord_lamb calcule_Lambert93(coord_geo coord);
 
 
-/**
- * \brief Coordinate translation form WGS84 internationnal system to
- * french NTF.
- */
-coord_lamb correction_WGS84(coord_lamb brut);
-
-
 #endif
