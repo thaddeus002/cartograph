@@ -23,11 +23,29 @@
 #define __COORD_H__ 1
 
 
+/**
+ * 3D Cartesian coordinates.
+ */
+typedef struct {
+    float X;
+    float Y;
+    float Z;
+} coord_cartesian;
+
+
+/**
+ * Geographical coordinates
+ */
 typedef struct {
     float lambda; /**< longitude in degrees */
     float phi; /**< latitude in degrees */
+    float h;
 } coord_geo;
 
+
+/**
+ * Plane coordinates for Lambert's projections 
+ */
 typedef struct {
     float X; // in meters
     float Y; // in meters

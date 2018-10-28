@@ -33,6 +33,11 @@
 
 
 
+/**********************************************************//**
+ *    GEOGRAPHICAL (Lambda,Phy,h) TO PLANE (LAMBERT)          *
+ *************************************************************/
+
+
 /** Converts degrees to radians */
 static float radians(float degres){ return (degres*M_PI/180); }
 
@@ -41,7 +46,7 @@ static float radians(float degres){ return (degres*M_PI/180); }
  * Calculate Lambert coordinate from lat/lon of the same geodesic
  * system.
  */
-static coord_lamb calculate_plane_coordinates(coord_geo coord, int c_e, int c_c, int c_n, int c_l0, int c_xs, int c_ys) {
+static coord_lamb calculate_plane_coordinates(coord_geo coord, int e, int c, int n, int l0, int xs, int ys) {
     coord_lamb retour; /* la valeur de retour */
 
     /* calculs intermédiaires */
@@ -83,4 +88,84 @@ coord_lamb correction_WGS84(coord_lamb brut){
     corrige.Y=brut.Y-7000;
 
     return(corrige);
+}
+
+
+/**********************************************************//**
+ *    3D CARTESIAN (X,Y,Z) TO GEOGRAPHICAL (Lambda,Phy,h)     *
+ *************************************************************/
+
+/**
+ * Calculate the excentricity of an ellipsoide.
+ * TODO a and b may be more precise and have decimals
+ */
+static double e_d(int a, int b) {
+    return sqrt(((float)(a*a-b*b))/a*a);
+}
+
+static double f_d(double e) {
+    return 1 - sqrt(1-e*e);
+}
+
+/**
+ * Calculate the distance of a point from the coordinates center.
+ */
+static double r_d(coord_cartesian coord) {
+    return sqrt(coord.X*coord.X+coord.Y*coord.Y+coord.Z*coord.Z);
+}
+
+
+static double mu_d(coord_cartesian coord, int a, double e) {
+
+    double k = coord.Z / sqrt(coord.X*coord.X + coord.Y*coord.Y);
+    double alpha = (1 - f_d(e))+(e*e*a/r_d(coord));
+    return atan(k*alpha);
+}
+
+coord_geo cartesian2geo(coord_cartesian coord, int a, int b) {
+
+    coord_geo value;
+
+    value.lambda = atan2f(coord.Y, coord.X);
+
+    double e = e_d(a, b);
+    double f = f_d(e);
+    double mu = mu_d(coord, a, b);
+    double smu = sin(mu);
+    double cmu = cos(mu);
+
+    double N = coord.Z * (1-f) + e*e*a*smu*smu*smu;
+    double D = (1-f)*(sqrt(coord.X*coord.X+coord.Y*coord.Y)-e*e*a*cmu*cmu*cmu);
+
+    value.phi = atan(N/D);
+
+    double cphi = cos(value.phi);
+    double sphi = sin(value.phi);
+
+    value.h = (sqrt(coord.X*coord.X+coord.Y*coord.Y)*cphi) + (coord.Z*sphi) - (a*sqrt(1-e*e*sphi*sphi));
+
+    return value;
+}
+
+
+/**********************************************************//**
+ *    GEOGRAPHICAL (Lambda,Phy,h) TO 3D CARTESIAN (X,Y,Z)     *
+ *************************************************************/
+
+
+coord_cartesian geo2cartesian(coord_geo coord, int a, int b) {
+
+    coord_cartesian cartesian;
+
+    double e = e_d(a, b);
+    double sphi = sin(coord.phi);
+
+    double W = sqrt(1-e*e*sphi*sphi);
+    double N = a / W;
+
+    cartesian.X = (N+coord.h) * cos(coord.phi) * cos(coord.lambda);
+    cartesian.Y = (N+coord.h) * cos(coord.phi) * sin(coord.lambda);
+    cartesian.Z = (N*(1-e*e)+coord.h) * sphi;
+
+    return cartesian;
 }

@@ -207,7 +207,9 @@ int main(int argc, char **argv){
     /* european countries */
     if(!fin){
         sprintf(file, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
-        if(trace_bln_geo(file, fen, 1, BLANC, 1, MARRON)!=0) fprintf(stderr, "Error dealing with Europe datafile\n");
+        if(trace_bln_geo(file, fen, 1, BLANC, 1, MARRON)!=0) {
+            fprintf(stderr, "Error dealing with Europe datafile\n");
+        }
     }
 
     /* Affichage de la grille de relief */
