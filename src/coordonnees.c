@@ -91,15 +91,15 @@ coord_lamb calcule_Lambert93(coord_geo coord) {
  *************************************************************/
 
 /**
- * Calculate the excentricity of an ellipsoide.
+ * Calculate the square excentricity of an ellipsoide.
  * TODO a and b may be more precise and have decimals
  */
-static double e_d(double a, double b) {
-    return sqrt((a*a-b*b)/(a*a));
+static double e2_d(double a, double b) {
+    return (a*a-b*b)/(a*a);
 }
 
-static double f_d(double e) {
-    return 1 - sqrt(1-e*e);
+static double f_d(double e2) {
+    return 1 - sqrt(1-e2);
 }
 
 /**
@@ -113,10 +113,10 @@ static double r_d(coord_cartesian coord) {
 /**
  * \return an angle in radians
  */
-static double mu_d(coord_cartesian coord, double a, double e) {
+static double mu_d(coord_cartesian coord, double a, double e2) {
 
     double k = coord.Z / sqrt(coord.X*coord.X + coord.Y*coord.Y);
-    double alpha = (1 - f_d(e))+(e*e*a/r_d(coord));
+    double alpha = (1 - f_d(e2))+(e2*a/r_d(coord));
     return atan(k*alpha);
 }
 
@@ -127,21 +127,21 @@ coord_geo cartesian2geo(coord_cartesian coord, double a, double b) {
 
     value.lambda = degrees(atan2f(coord.Y, coord.X));
 
-    double e = e_d(a, b);
-    double f = f_d(e);
-    double mu = mu_d(coord, a, e);
+    double e2 = e2_d(a, b);
+    double f = f_d(e2);
+    double mu = mu_d(coord, a, e2);
     double smu = sin(mu);
     double cmu = cos(mu);
 
-    double N = coord.Z * (1-f) + e*e*a*smu*smu*smu;
-    double D = (1-f)*(sqrt(coord.X*coord.X+coord.Y*coord.Y)-e*e*a*cmu*cmu*cmu);
+    double N = coord.Z * (1-f) + e2*a*smu*smu*smu;
+    double D = (1-f)*(sqrt(coord.X*coord.X+coord.Y*coord.Y)-e2*a*cmu*cmu*cmu);
 
     value.phi = degrees(atan(N/D));
 
     double cphi = cos(radians(value.phi));
     double sphi = sin(radians(value.phi));
 
-    value.h = (sqrt(coord.X*coord.X+coord.Y*coord.Y)*cphi) + (coord.Z*sphi) - (a*sqrt(1-e*e*sphi*sphi));
+    value.h = (sqrt(coord.X*coord.X+coord.Y*coord.Y)*cphi) + (coord.Z*sphi) - (a*sqrt(1-e2*sphi*sphi));
 
     return value;
 }
@@ -156,14 +156,14 @@ coord_cartesian geo2cartesian(coord_geo coord, double a, double b) {
 
     coord_cartesian cartesian;
 
-    double e = e_d(a, b);
+    double e2 = e2_d(a, b);
     double sphi = sin(radians(coord.phi));
-    double W = sqrt(1-e*e*sphi*sphi);
+    double W = sqrt(1-e2*sphi*sphi);
     double N = a / W;
 
     cartesian.X = (N+coord.h) * cos(radians(coord.phi)) * cos(radians(coord.lambda));
     cartesian.Y = (N+coord.h) * cos(radians(coord.phi)) * sin(radians(coord.lambda));
-    cartesian.Z = (N*(1-e*e)+coord.h) * sphi;
+    cartesian.Z = (N*(1-e2)+coord.h) * sphi;
 
     return cartesian;
 }
@@ -208,7 +208,7 @@ static coord_cartesian wgs2ntf(coord_cartesian initial) {
 #define NTF_A 6378249.2
 #define NTF_B 6356515
 #define WGS_A 6378137
-#define WGS_B 6378137*(1-1/298.257223563)
+#define WGS_B 6356752.314 /*6378137*(1-1/298.257223563)*/
 
 
 /**
