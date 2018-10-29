@@ -41,6 +41,9 @@
 /** Converts degrees to radians */
 static float radians(float degres){ return (degres*M_PI/180); }
 
+/** Converts radians to degrees */
+static float degrees(float radians) { return (radians*180/M_PI); }
+
 
 /**
  * Calculate Lambert coordinate from lat/lon of the same geodesic
@@ -72,6 +75,8 @@ coord_lamb calcule_Lambert(coord_geo coord) {
 }
 
 
+
+
 /**
  * Lambert 93 coordinates calculation from lat/lon of the RGF93 system.
  */
@@ -89,8 +94,8 @@ coord_lamb calcule_Lambert93(coord_geo coord) {
  * Calculate the excentricity of an ellipsoide.
  * TODO a and b may be more precise and have decimals
  */
-static double e_d(int a, int b) {
-    return sqrt(((float)(a*a-b*b))/a*a);
+static double e_d(double a, double b) {
+    return sqrt((a*a-b*b)/(a*a));
 }
 
 static double f_d(double e) {
@@ -105,32 +110,36 @@ static double r_d(coord_cartesian coord) {
 }
 
 
-static double mu_d(coord_cartesian coord, int a, double e) {
+/**
+ * \return an angle in radians
+ */
+static double mu_d(coord_cartesian coord, double a, double e) {
 
     double k = coord.Z / sqrt(coord.X*coord.X + coord.Y*coord.Y);
     double alpha = (1 - f_d(e))+(e*e*a/r_d(coord));
     return atan(k*alpha);
 }
 
-coord_geo cartesian2geo(coord_cartesian coord, int a, int b) {
+
+coord_geo cartesian2geo(coord_cartesian coord, double a, double b) {
 
     coord_geo value;
 
-    value.lambda = atan2f(coord.Y, coord.X);
+    value.lambda = degrees(atan2f(coord.Y, coord.X));
 
     double e = e_d(a, b);
     double f = f_d(e);
-    double mu = mu_d(coord, a, b);
+    double mu = mu_d(coord, a, e);
     double smu = sin(mu);
     double cmu = cos(mu);
 
     double N = coord.Z * (1-f) + e*e*a*smu*smu*smu;
     double D = (1-f)*(sqrt(coord.X*coord.X+coord.Y*coord.Y)-e*e*a*cmu*cmu*cmu);
 
-    value.phi = atan(N/D);
+    value.phi = degrees(atan(N/D));
 
-    double cphi = cos(value.phi);
-    double sphi = sin(value.phi);
+    double cphi = cos(radians(value.phi));
+    double sphi = sin(radians(value.phi));
 
     value.h = (sqrt(coord.X*coord.X+coord.Y*coord.Y)*cphi) + (coord.Z*sphi) - (a*sqrt(1-e*e*sphi*sphi));
 
@@ -143,19 +152,76 @@ coord_geo cartesian2geo(coord_cartesian coord, int a, int b) {
  *************************************************************/
 
 
-coord_cartesian geo2cartesian(coord_geo coord, int a, int b) {
+coord_cartesian geo2cartesian(coord_geo coord, double a, double b) {
 
     coord_cartesian cartesian;
 
     double e = e_d(a, b);
-    double sphi = sin(coord.phi);
-
+    double sphi = sin(radians(coord.phi));
     double W = sqrt(1-e*e*sphi*sphi);
     double N = a / W;
 
-    cartesian.X = (N+coord.h) * cos(coord.phi) * cos(coord.lambda);
-    cartesian.Y = (N+coord.h) * cos(coord.phi) * sin(coord.lambda);
+    cartesian.X = (N+coord.h) * cos(radians(coord.phi)) * cos(radians(coord.lambda));
+    cartesian.Y = (N+coord.h) * cos(radians(coord.phi)) * sin(radians(coord.lambda));
     cartesian.Z = (N*(1-e*e)+coord.h) * sphi;
 
     return cartesian;
 }
+
+
+
+/**********************************************************//**
+ *    GEOIDE CONVERSIONS                                      *
+ *************************************************************/
+
+/**
+ * Usable for metropolitan France
+ */
+static coord_cartesian ntf2wgs(coord_cartesian initial) {
+    coord_cartesian final;
+
+    final.X = initial.X - 168;
+    final.Y = initial.Y - 60;
+    final.Z = initial.Z + 320;
+    return final;
+}
+
+
+/**
+ * Usable for metropolitan France
+ */
+static coord_cartesian wgs2ntf(coord_cartesian initial) {
+    coord_cartesian final;
+
+    final.X = initial.X + 168;
+    final.Y = initial.Y + 60;
+    final.Z = initial.Z - 320;
+    return final;
+}
+
+
+/**********************************************************//**
+ *    GEODESIC CONVERSIONS                                    *
+ *************************************************************/
+
+// Ellipsoids characteristic
+#define NTF_A 6378249.2
+#define NTF_B 6356515
+#define WGS_A 6378137
+#define WGS_B 6378137*(1-1/298.257223563)
+
+
+/**
+ * Transform WGS84 lat/lon data to Extended Lambert II coordinates.
+ */
+coord_lamb Wgs84geo_to_Lambert(coord_geo pos) {
+
+    coord_cartesian cartesian_wgs = geo2cartesian(pos, WGS_A, WGS_B);
+    coord_cartesian cartesian_ntf = wgs2ntf(cartesian_wgs);
+    coord_geo geo_ntf = cartesian2geo(cartesian_ntf, NTF_A, NTF_B);
+    return calcule_Lambert(geo_ntf);
+}
+
+
+
+ 
