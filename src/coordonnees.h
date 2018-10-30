@@ -67,14 +67,19 @@ typedef struct {
 
 
 /**
- * Lambert II coordinates calculation from lat/lon of the NTF system
- * (Clarke's geoide).
+ * Apply the Extended Lambert II projection of geographical coordinates
+ * of the NTF system (Clarke's geoid).
+ * \param coord geographical coordinate of a point
+ * \return the plane coordinates after the projection
  */
 coord_lamb calcule_Lambert(coord_geo coord);
 
 
 /**
- * Lambert 93 coordinates calculation from lat/lon of the RGF93 system.
+ * Apply the Lambert 93 projection of geographical coordinates of the
+ * RGF93 system.
+ * \param coord geographical coordinate of a point
+ * \return the plane coordinates after the projection
  */
 coord_lamb calcule_Lambert93(coord_geo coord);
 
@@ -83,6 +88,12 @@ coord_lamb calcule_Lambert93(coord_geo coord);
  * Transform WGS84 lat/lon data to Extended Lambert II coordinates.
  */
 coord_lamb Wgs84geo_to_Lambert(coord_geo pos);
+
+
+/**
+ * Transform WGS84 lat/lon data to Lambert 93 coordinates.
+ */
+coord_lamb Wgs84geo_to_Lambert93(coord_geo pos);
 
 
 #endif

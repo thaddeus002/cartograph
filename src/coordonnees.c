@@ -67,18 +67,21 @@ static coord_lamb calculate_plane_coordinates(coord_geo coord, double e, double 
 
 
 /**
- * Lambert II coordinates calculation from lat/lon of the NTF system
- * (Clarke's geoide).
+ * Apply the Extended Lambert II projection of geographical coordinates
+ * of the NTF system (Clarke's geoid).
+ * \param coord geographical coordinate of a point
+ * \return the plane coordinates after the projection
  */
 coord_lamb calcule_Lambert(coord_geo coord) {
     return calculate_plane_coordinates(coord, C_E, C_C, C_N, C_L0, C_XS, C_YS);
 }
 
 
-
-
 /**
- * Lambert 93 coordinates calculation from lat/lon of the RGF93 system.
+ * Apply the Lambert 93 projection of geographical coordinates of the
+ * RGF93 system.
+ * \param coord geographical coordinate of a point
+ * \return the plane coordinates after the projection
  */
 coord_lamb calcule_Lambert93(coord_geo coord) {
     return calculate_plane_coordinates(coord, C93_E, C93_C, C93_N, C93_L0, C93_XS, C93_YS);
@@ -222,6 +225,14 @@ coord_lamb Wgs84geo_to_Lambert(coord_geo pos) {
     return calcule_Lambert(geo_ntf);
 }
 
+
+/**
+ * Transform WGS84 lat/lon data to Lambert 93 coordinates.
+ */
+coord_lamb Wgs84geo_to_Lambert93(coord_geo pos) {
+
+    return calcule_Lambert93(pos);
+}
 
 
  
