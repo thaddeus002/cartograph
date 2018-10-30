@@ -6,6 +6,7 @@
 
 
 #include "lecture_bln.h"
+#include "bln.h"
 #include "lecture_csv.h"
 #include "outils.h"
 #include <stdio.h>
@@ -29,7 +30,7 @@ static void usage(char *prog){
  */
 int main(int argc, char **argv){
 
-    bornes_bln bornes; // bornes du fichier à lire
+    bln_boundaries_t bornes; // bornes du fichier à lire
     int width, height; // taille de la fenetre
     float temp;//aide au calcul
     fenetre f; // fenetre d'affichage du tracé
@@ -43,31 +44,36 @@ int main(int argc, char **argv){
     if(argc<2) usage(argv[0]);
     printf("File to show : %s\n", argv[1]);
 
-    bornes=cherche_bornes_bln(argv[1]);
-    if(bornes.resultat!=0) {
-        fprintf(stderr,"Pb de format du fichier %s\n", argv[1]);
-        exit(bornes.resultat);
+    bln_data_t *data = bln_read_file(argv[1]);
+    bln_find_data_boundaries(data, &bornes);
+
+    if(bornes.result!=0) {
+        fprintf(stderr,"Incorrect file format : %s\n", argv[1]);
+        bln_destroy(data);
+        exit(bornes.result);
     }
 
-    printf("bornes trouvées : %f,%f - %f,%f : %d\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.resultat);
+    printf("boundaries found : %f,%f - %f,%f : %d\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.result);
     width=(bornes.xmax-bornes.xmin)*10;
     height=(bornes.ymax-bornes.ymin)*10;
     temp=bornes.xmax-bornes.xmin;
 
     if((width<0)|| (height<0)) {
-        printf("Erreur dans les bornes... Arrêt du programme\n");
+        printf("Boundaries error... Stopping program\n");
+        bln_destroy(data);
         exit(1);
     }
-
 
     if(width>LARGEUR_MAX) {
         height=height*LARGEUR_MAX/width; //conservation du ratio
         width=LARGEUR_MAX;
     }
+
     if(height>HAUTEUR_MAX){
         width=width*HAUTEUR_MAX/height; //conservation du ratio
         height=HAUTEUR_MAX;
     }
+
     //taille max
     if((width<LARGEUR_MAX)&&(height<HAUTEUR_MAX)){
         if((float)width/LARGEUR_MAX>(float)height/HAUTEUR_MAX){
@@ -82,15 +88,14 @@ int main(int argc, char **argv){
         }
     }
 
-    printf("largeur : %d - hauteur : %d \n", width, height);
+    printf("width : %d - height : %d \n", width, height);
 
-
-    /* Création de la fenêtre */
+    /* create the window */
     init_Xvariable();
     f=cree_fenetre_coloree(width, height, &depth, bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, BLEU);
 
     trace_bln_lignes(argv[1], f, 0, BLANC, 1, VERT);
-
+    bln_destroy(data);
 
     if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);
 
