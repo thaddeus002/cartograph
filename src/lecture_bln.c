@@ -4,6 +4,7 @@
 
 
 #include "lecture_bln.h"
+#include "bln.h"
 #include "outils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +20,7 @@
 /****************************************************/
 /* Interprète le contenu du fichier dans la fenetre de visualisation */
 /* renvoie une valeur differente de 0 en cas d'échec */
-int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage){
+static int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage){
 /* fichier : nom du fichier BLN
 ** f : fenetre où doit se faire le tracé
 ** largeur : largeur des lignes
@@ -50,7 +51,6 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
 
     XPoint *points; /* liste des points à relier */
     XPoint coordonnees; /* lu sur une ligne */
-
 
     /* ouverture du fichier en lecture */
     fd=fopen(fichier, "r");
@@ -98,16 +98,15 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
                 coord_lamb lamb;
 
                 geo.lambda=a; geo.phi=b;
-                lamb=correction_WGS84(calcule_Lambert(geo));
+                lamb=Wgs84geo_to_Lambert(geo);
 
-                a=lamb.X/100; b=lamb.Y/100; //cartographie en hectometres
+
+                a=lamb.X/100; b=lamb.Y/100; // the map is in hectometers
             }
 
 
             if(i==1){
 
-                //Xm=cc;//transforme_xLambert(cc, f.w, f.x1, f.x2);
-                //Ym=d;//transforme_yLambert(d, f.h, f.y1, f.y2);
                 /* sur un tracé fermé, le premier point est répété une fois */
                 Xmin=a; Xmax=a;
                 Ymin=b; Ymax=b;
@@ -117,11 +116,8 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
                 pointe(f,a,b,largeur,c,CARRE);
             else {
 
-                //x=transforme_xLambert(a, f.w, f.x1, f.x2);
-                //y=transforme_yLambert(b, f.h, f.y1, f.y2);
                 x=transforme_x(a, f.w, f.x1, f.x2);
                 y=transforme_y(b, f.h, f.y1, f.y2);
-
 
                 coordonnees.x=x; coordonnees.y=y;
                 points[i-1]=coordonnees;
@@ -130,7 +126,6 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
                 if(a<Xmin) Xmin=a; else if(a>Xmax) Xmax=a;
                 if(b<Ymin) Ymin=b; else if(b>Ymax) Ymax=b;
             }
-
         }
 
 
@@ -186,13 +181,6 @@ int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, in
 
 
 
-
-
-
-
-
-
-
 /* passer un nom de fichier bln en paramètre et on s'occupe de tout */
 /* retourne un code d'erreur non nul en cas d'échec */
 int trace_bln_points(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
@@ -214,6 +202,7 @@ int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int rempl
 int trace_bln_geo(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
     return(trace_bln_V2(fichier, f, largeur, c,1 , 1, remplir, remplissage));
 }
+
 
 
 
@@ -245,8 +234,7 @@ bornes_bln cherche_bornes_bln(char *file){
             if (N==0) continue;
         }
         else {
-        //a=cc; b=d;
-            if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) //return(bornes);
+            if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0)
             break;
 
             a=atof(X);
@@ -259,7 +247,6 @@ bornes_bln cherche_bornes_bln(char *file){
                 if(a<xmin) xmin=a; else if(a>xmax) xmax=a;
                 if(b<ymin) ymin=b; else if(b>ymax) ymax=b;
             }
-
         }
         if(i==N) i=0;
         else i++;
@@ -270,6 +257,5 @@ bornes_bln cherche_bornes_bln(char *file){
     bornes.xmin=xmin; bornes.xmax=xmax; bornes.ymin=ymin; bornes.ymax=ymax;
     bornes.resultat=0;
     return(bornes);
-
 }
 
