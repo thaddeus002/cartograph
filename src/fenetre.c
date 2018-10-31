@@ -10,6 +10,7 @@
 #include "yImage.h"
 #include "yImage_io.h"
 
+
 /* XSystem's variables */
 Display * dpy;
 Pixmap pixmap;
@@ -27,12 +28,12 @@ unsigned char *red, *green, *blue;
 
 
 /** calculate x point from coordinate */
-float xpoint(fenetre *f, float a) {
+int xpoint(fenetre *f, float a) {
     return transforme_x(a, f->w, f->x1, f->x2);
 }
 
 /** calculate y point from coordinate */
-float ypoint(fenetre *f, float b) {
+int ypoint(fenetre *f, float b) {
     return transforme_y(b, f->h, f->y1, f->y2);
 }
 
@@ -326,30 +327,6 @@ void do_output(fenetre f, int u, int v, couleur n)
 }
 /* fin de la fonction do_output */
 
-/* fonction trace_ligne */
-/* (utilise les coordonnées des points en Lambert) */
-void trace_ligne(fenetre f, float u1, float u2, float v1, float v2, couleur n, int largeur){
-    int x,y,z,t; /* coordonnees fenetres */
-
-    /* transformations du GC */
-    XSetForeground(f.dpy, f.gc, pix_colore[n]);
-    XSetLineAttributes(f.dpy, f.gc, largeur, LineSolid, CapRound, JoinMiter);
-
-    /* calcul des coordonées fenetre */
-    x=xpoint(&f, u1);
-    y=ypoint(&f, v1);
-    z=xpoint(&f, u2);
-    t=ypoint(&f, v2);
-
-
-    /* tracé de la ligne */
-    XDrawLine(f.dpy, /*f.win*/pixmap, f.gc, x, y, z, t);
-
-    /* affichage du résultat dans la fenetre */
-    /*actualise_fenetre(f);*/
-}
-/* fin de la fonction trace_ligne */
-
 
 /* écrit du texte dans la fenêtre principale */
 void display_text(fenetre f, int x, int y, char * text, couleur c){
@@ -358,7 +335,7 @@ void display_text(fenetre f, int x, int y, char * text, couleur c){
     int i, n; // i:numero de ligne, n: nb de caractères à afficher sur la ligne i (avant le saut de ligne)
 
     XSetFont(f.dpy, f.gc, xfont->fid);
-    XSetForeground(f.dpy, f.gc, /*white*/ pix_colore[c]);
+    XSetForeground(f.dpy, f.gc, pix_colore[c]);
 
     i = 0;
 
@@ -525,22 +502,74 @@ int fermeture(fenetre fen){
 }
 
 
-/* fctionne en coordonnées fenetres */
+/**
+ * Draw lines on a window.
+ * 
+ * \param f window for drawing
+ * \param points points array in window's coordinates
+ * \param nb number of points
+ * \param n lines' color
+ * \param largeur lines' width 
+ */
 void trace_lignes(fenetre f, XPoint *points, int nb, couleur n, int largeur){
-/* f : fenetre du tracé
-** points : la liste des points à relier
-** nb : le nb de points
-** n : couleur du tracé
-** largeur : épaisseur du trait */
-
     XSetForeground(f.dpy, f.gc, pix_colore[n]);
     XSetLineAttributes(f.dpy, f.gc, largeur, LineSolid, CapRound, JoinMiter);
     XDrawLines(f.dpy, pixmap, f.gc, points, nb, CoordModeOrigin);
     actualise_fenetre(f);
-
-    //if(err!=0) printf("trace_ligne: %d", err);
 }
 
+
+/* fonction trace_ligne */
+/* (utilise les coordonnées des points en Lambert) */
+void trace_ligne(fenetre f, float u1, float u2, float v1, float v2, couleur n, int largeur){
+    int x,y,z,t; /* coordonnees fenetres */
+
+    /* transformations du GC */
+    XSetForeground(f.dpy, f.gc, pix_colore[n]);
+    XSetLineAttributes(f.dpy, f.gc, largeur, LineSolid, CapRound, JoinMiter);
+
+    /* calcul des coordonées fenetre */
+    x=xpoint(&f, u1);
+    y=ypoint(&f, v1);
+    z=xpoint(&f, u2);
+    t=ypoint(&f, v2);
+
+    /* tracé de la ligne */
+    XDrawLine(f.dpy, pixmap, f.gc, x, y, z, t);
+}
+/* fin de la fonction trace_ligne */
+
+/**
+ * Draw lines on a window.
+ *
+ * \param f the window where draw
+ * \param x an array of X coordinates
+ * \param y an array of Y coordinates
+ * \param nb the number of points(x,y)
+ * \param c lines' color
+ * \param w lines' width
+ * \return 0 on success or an error code
+ */
+int window_draw_lines(fenetre f, float *x, float *y, int nb, couleur c, int w) {
+
+    XPoint *points;
+    int i;
+
+    points=malloc(nb*sizeof(XPoint));
+    if(points==NULL){
+        fprintf(stderr, "Could not allocate memory for draw lines\n");
+        return 3;
+    }
+
+    for(i=0; i<nb; i++) {
+        points[i].x=xpoint(&f, x[i]);
+        points[i].y=ypoint(&f, y[i]);
+    }
+
+    trace_lignes(f, points, nb, c, w);
+    free(points);
+    return 0;
+}
 
 /* remplissage d'un polygone */
 void remplit(fenetre f, XPoint *points, int nb, couleur n){
@@ -552,6 +581,38 @@ void remplit(fenetre f, XPoint *points, int nb, couleur n){
     XSetForeground(f.dpy, f.gc, pix_colore[n]);
     XFillPolygon(f.dpy, pixmap, f.gc, points, nb, Complex, CoordModeOrigin);
     actualise_fenetre(f);
+}
+
+
+/**
+ * Draw a filled polygon on a window.
+ *
+ * \param f the window where draw
+ * \param x an array of X coordinates
+ * \param y an array of Y coordinates
+ * \param nb the number of points(x,y)
+ * \param c polygon's color
+ * \return 0 on success or an error code
+ */
+int window_fill_polygon(fenetre f, float *x, float *y, int nb, couleur c) {
+
+    XPoint *points;
+    int i;
+
+    points=malloc(nb*sizeof(XPoint));
+    if(points==NULL){
+        fprintf(stderr, "Could not allocate memory for draw polygon\n");
+        return 3;
+    }
+
+    for(i=0; i<nb; i++) {
+        points[i].x=xpoint(&f, x[i]);
+        points[i].y=ypoint(&f, y[i]);
+    }
+
+    remplit(f, points, nb, c);
+    free(points);
+    return 0;
 }
 
 

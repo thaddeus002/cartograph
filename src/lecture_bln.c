@@ -5,6 +5,7 @@
 
 #include "lecture_bln.h"
 #include "bln.h"
+#include "coordonnees.h"
 #include "outils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,166 +14,133 @@
 #define LIGNE 250 /* longueur maximale des lignes du fichier, au dela on n'en tient pas compte */
 
 
-/*fct interne */
-/* ajout de geo le 12/04/2007 pour les fichiers en lon et lat */
-/****************************************************/
-/*               LA FONCTION DE TRACE               */
-/****************************************************/
-/* Interprète le contenu du fichier dans la fenetre de visualisation */
-/* renvoie une valeur differente de 0 en cas d'échec */
-static int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage){
-/* fichier : nom du fichier BLN
-** f : fenetre où doit se faire le tracé
-** largeur : largeur des lignes
-** c : couleur des lignes
-** ligne : 1 si les points sont rejoints par une ligne */
-/* ajout de l'argument "geo" le 12/04/2007 pour les fichiers en lon et lat */
-/* remplir : 1 s'il faut remplir les formes fermées
-** remplissage : couleur à l'intérieur des formes */
+
+/**
+ * transform WGS84 geographical data to plane Extended Lambert II data.
+ */
+static void geo2Lamb(bln_data_t *data) {
+
+    bln_data_t *current = data;
+
+    while(current != NULL) {
+        int n;
+        float xmin, xmax, ymin, ymax;
+        for(n=0; n<current->nbPoints; n++) {
+            coord_geo geo;
+            geo.lambda = current->x[n];
+            geo.phi = current->y[n];
+            geo.h = 0.f ;
+            coord_lamb lamb = Wgs84geo_to_Lambert(geo);
+            current->x[n] = lamb.X;
+            current->y[n] = lamb.Y;
+            // find the new extremun
+            if(n==0) {
+                xmin=lamb.X;
+                xmax=lamb.X;
+                ymin=lamb.Y;
+                ymax=lamb.Y;
+            } else {
+                if(lamb.X < xmin) {
+                    xmin = lamb.X;
+                } else if(lamb.X > xmax) {
+                    xmax = lamb.X;
+                }
+                if(lamb.Y < ymin) {
+                    ymin = lamb.Y;
+                } else if(lamb.Y > ymax) {
+                    ymax = lamb.Y;
+                }
+            }
+        }
+        current->xmin = xmin;
+        current->xmax = xmax;
+        current->ymin = ymin;
+        current->ymax = ymax;
+        current = current->next; 
+    }
+}
+
+
+/**
+ * Internal transformation to have data in hectometers.
+ */
+static void lambInHm(bln_data_t *data) {
+
+    bln_data_t *current = data;
+
+    while(current != NULL) {
+        int n;
+        for(n=0; n<current->nbPoints; n++) {
+            current->x[n] = current->x[n]/100;
+            current->y[n] = current->y[n]/100;
+        }
+        current->xmin = current->xmin/100;
+        current->xmax = current->xmax/100;
+        current->ymin = current->ymin/100;
+        current->ymax = current->ymax/100;
+        current = current->next; 
+    }
+}
 
 
 
-    /* variables */
-    FILE *fd; /* Descripteur pour l'ouverture du fichier */
-    char buf_read[LIGNE]; /* lecture d'une ligne */
-    int N; /* nb de valeurs (de lignes) pour un trait */
-    int i; /* numéro de ligne de coordonnées */
-    int j; /* compteur de boucle */
+/**
+ * The drawing function.
+ * 
+ * Shows the data of a bln file in a window.
+ * \param filename BLN file name
+ * \param f the window where draw
+ * \param largeur lines' width
+ * \param c lines' color
+ * \param ligne 1 if the points must be joined by lines
+ * \param remplir 1 if the closed forms must be filled
+ * \param remplissage filling color
+ * \return 0 on success or an error code
+ */
+static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage) {
 
-    char X[20], Y[20]; //lecture d'entier ou de reel selon les cas
-    float a, b; // coordonnées d'un point
-    int x, y; // transformés en coordonnées fenetres
+    bln_data_t *data = bln_read_file(filename);
+    bln_data_t *current;
 
-    int k; char pays[100], region[100]; // infos facultatives
-    pays[0]='\0';
-
-    float Xm,Ym; //calcul de la position moyenne du tracé
-    float Xmax,Xmin,Ymax,Ymin; // même but mais autre méthode
-
-    XPoint *points; /* liste des points à relier */
-    XPoint coordonnees; /* lu sur une ligne */
-
-    /* ouverture du fichier en lecture */
-    fd=fopen(fichier, "r");
-    if(fd==NULL) {
-        fprintf(stderr, "Impossible d'ouvrir le fichier %s\n", fichier);
-        return(1);
+    if(data == NULL) {
+        return 1;
     }
 
-    /* ajustement */
-    if(largeur>10) largeur=10;
+    if(geo) {
+        geo2Lamb(data);
+        lambInHm(data);
+    }
 
-    /* initialisations */
-    a=0; b=0;
-    i=0;
+    current = data;
+    while(current != NULL) {
 
+        int n = 0; // point index
+        float Xm,Ym; // where show the countries' names
 
-    /* Lecture ligne par ligne */
-    while(fgets(buf_read, LIGNE, fd)!=NULL){
-
-        if(i==0) { /* ligne d'entete */
-            sscanf(buf_read, "%d,%d,%[a-zA-Z'\" -],%s", &N, &k, pays, region);
-            if (N==0) continue; /* i reste à 0 pour la lecture de la prochaine ligne */
-
-        } else { /* ligne de donnée : coordonnée d'un point */
-
-            if(i==1){
-                points=malloc(N*sizeof(XPoint));
-                if(points==NULL){
-                    fprintf(stderr, "Allocation mémoire impossible\n");
-                    return(3);
-                }
+        if(ligne == 0) {
+            while(n<current->nbPoints) {
+                pointe(f,current->x[n],current->y[n],largeur,c,CARRE);
+                n++;
             }
-
-            /* lecture d'un enregistrement */
-            if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) return(2);
-            a=atof(X);
-            b=atof(Y);
-
-
-            /* ajout du 12/04/2007 pour les fichiers en lon et lat */
-            if(geo){
-                coord_geo geo;
-                coord_lamb lamb;
-
-                geo.lambda=a; geo.phi=b;
-                lamb=Wgs84geo_to_Lambert(geo);
-
-
-                a=lamb.X/100; b=lamb.Y/100; // the map is in hectometers
+        } else {
+            if(remplir && current->x[0]==current->x[current->nbPoints-1] && current->y[0]==current->y[current->nbPoints-1] ) {
+                window_fill_polygon(f, current->x, current->y, current->nbPoints, remplissage);
             }
-
-
-            if(i==1){
-
-                /* sur un tracé fermé, le premier point est répété une fois */
-                Xmin=a; Xmax=a;
-                Ymin=b; Ymax=b;
-            }
-
-            if(ligne==0)
-                pointe(f,a,b,largeur,c,CARRE);
-            else {
-
-                x=xpoint(&f, a);
-                y=ypoint(&f, b);
-
-                coordonnees.x=x; coordonnees.y=y;
-                points[i-1]=coordonnees;
-
-                Xm+=a; Ym+=b;
-                if(a<Xmin) Xmin=a; else if(a>Xmax) Xmax=a;
-                if(b<Ymin) Ymin=b; else if(b>Ymax) Ymax=b;
-            }
+            window_draw_lines(f, current->x, current->y, current->nbPoints, c, largeur);
         }
 
+        Xm=0.5*(current->xmin+current->xmax); Ym=0.5*(current->ymin+current->ymax);
 
-        /* evolution des compteurs */
-        if(i==N) {
-            if(ligne!=0) {
-                if((remplir)&&(points[0].x==points[N-1].x)&&(points[0].y==points[N-1].y)) {
-                    remplit(f, points, N, remplissage);
-                }
-                trace_lignes(f, points, N, c, largeur);
-            }
-            free(points);
-
-            Xm=Xm/N; Ym=Ym/N;
-            /*suppression des guillemets*/
-            if(pays[0]=='"') {
-                if (pays[1]=='"') pays[0]='\0';
-                else {
-                    j=0;
-                    while((pays[j+1]!='"')&&(j+1<strlen(pays))) {
-                        pays[j]=pays[j+1];
-                        j++;
-                    }
-                    pays[j]='\0';
-                }
-            }
-
-            if((pays[0]!='\0')&&(N>=2)) display_text(f,xpoint(&f, Xm)-(strlen(pays))*4,ypoint(&f, Ym),pays,ROUGE);
-            /*autre positionnement du texte*/
-            Xm=0.5*(Xmin+Xmax); Ym=0.5*(Ymin+Ymax);
-            if((pays[0]!='\0')&&(N>=2) ) display_text(f,xpoint(&f, Xm)-(strlen(pays))*4,ypoint(&f, Ym),pays,VERT);
-
-            i=0;
-            pays[0]='\0';
+        if((current->name!=NULL)&&(current->nbPoints>=2)) {
+            display_text(f,xpoint(&f, Xm)-(strlen(current->name))*4,ypoint(&f, Ym),current->name,JAUNE);
         }
-        else i++;
 
-    } /* Arrivée à la fin du fichier */
+        current = current->next; 
+    }
 
-    fclose(fd);
-    //if (points!=NULL) free(points);
-    return(0);
+    bln_destroy(data);
+    return 0;    
 }
-/*******************************/
-/* Fin de la fct trace_bln_V2  */
-/*******************************/
-
-
-
 
 
 

@@ -65,11 +65,11 @@ fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float 
 
 
 /** calculate x point from coordinate */
-float xpoint(fenetre *f, float a);
+int xpoint(fenetre *f, float a);
 
 
 /** calculate y point from coordinate */
-float ypoint(fenetre *f, float b);
+int ypoint(fenetre *f, float b);
 
 
 
@@ -103,6 +103,20 @@ void trace_lignes(fenetre f, XPoint *points, int nb, couleur n, int largeur);
 
 
 /**
+ * Draw lines on a window.
+ *
+ * \param f the window where draw
+ * \param x an array of X coordinates
+ * \param y an array of Y coordinates
+ * \param nb the number of points(x,y)
+ * \param c lines' color
+ * \param w lines' width
+ * \return 0 on success or an error code
+ */
+int window_draw_lines(fenetre f, float *x, float *y, int nb, couleur c, int w);
+
+
+/**
  * Fill a polygon.
  * \param f where to draw
  * \param points the polygon's corners
@@ -110,6 +124,20 @@ void trace_lignes(fenetre f, XPoint *points, int nb, couleur n, int largeur);
  * \param n color for the inner polygon
  */
 void remplit(fenetre f, XPoint *points, int nb, couleur n);
+
+
+
+/**
+ * Draw a filled polygon on a window.
+ *
+ * \param f the window where draw
+ * \param x an array of X coordinates
+ * \param y an array of Y coordinates
+ * \param nb the number of points(x,y)
+ * \param c polygon's color
+ * \return 0 on success or an error code
+ */
+int window_fill_polygon(fenetre f, float *x, float *y, int nb, couleur c);
 
 
 /**
