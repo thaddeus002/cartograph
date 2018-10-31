@@ -26,6 +26,16 @@ unsigned char *red, *green, *blue;
 
 
 
+/** calculate x point from coordinate */
+float xpoint(fenetre *f, float a) {
+    return transforme_x(a, f->w, f->x1, f->x2);
+}
+
+/** calculate y point from coordinate */
+float ypoint(fenetre *f, float b) {
+    return transforme_y(b, f->h, f->y1, f->y2);
+}
+
 
 /** Initialization of global variables. */
 void init_Xvariable(){
@@ -326,15 +336,10 @@ void trace_ligne(fenetre f, float u1, float u2, float v1, float v2, couleur n, i
     XSetLineAttributes(f.dpy, f.gc, largeur, LineSolid, CapRound, JoinMiter);
 
     /* calcul des coordonées fenetre */
-    /*x=transforme_xLambert(u1, f.w, f.x1, f.x2);
-    y=transforme_yLambert(v1, f.h, f.y1, f.y2);
-    z=transforme_xLambert(u2, f.w, f.x1, f.x2);
-    t=transforme_yLambert(v2, f.h, f.y1, f.y2);*/
-    x=transforme_x(u1, f.w, f.x1, f.x2);
-    y=transforme_y(v1, f.h, f.y1, f.y2);
-    z=transforme_x(u2, f.w, f.x1, f.x2);
-    t=transforme_y(v2, f.h, f.y1, f.y2);
-
+    x=xpoint(&f, u1);
+    y=ypoint(&f, v1);
+    z=xpoint(&f, u2);
+    t=ypoint(&f, v2);
 
 
     /* tracé de la ligne */

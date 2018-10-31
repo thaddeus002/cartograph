@@ -64,6 +64,14 @@ fenetre cree_fenetre(int width, int height, int *depth, float x1, float x2, floa
 fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float x2, float y1, float y2, couleur c);
 
 
+/** calculate x point from coordinate */
+float xpoint(fenetre *f, float a);
+
+
+/** calculate y point from coordinate */
+float ypoint(fenetre *f, float b);
+
+
 
 /**
  * Manage mouse and keyboard events.

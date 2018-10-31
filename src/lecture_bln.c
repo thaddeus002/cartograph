@@ -73,9 +73,8 @@ static int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int li
         if(i==0) { /* ligne d'entete */
             sscanf(buf_read, "%d,%d,%[a-zA-Z'\" -],%s", &N, &k, pays, region);
             if (N==0) continue; /* i reste à 0 pour la lecture de la prochaine ligne */
-        }
 
-        else { /* ligne de donnée : coordonnée d'un point */
+        } else { /* ligne de donnée : coordonnée d'un point */
 
             if(i==1){
                 points=malloc(N*sizeof(XPoint));
@@ -84,7 +83,6 @@ static int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int li
                     return(3);
                 }
             }
-
 
             /* lecture d'un enregistrement */
             if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) return(2);
@@ -116,8 +114,8 @@ static int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int li
                 pointe(f,a,b,largeur,c,CARRE);
             else {
 
-                x=transforme_x(a, f.w, f.x1, f.x2);
-                y=transforme_y(b, f.h, f.y1, f.y2);
+                x=xpoint(&f, a);
+                y=ypoint(&f, b);
 
                 coordonnees.x=x; coordonnees.y=y;
                 points[i-1]=coordonnees;
@@ -153,13 +151,10 @@ static int trace_bln_V2(char *fichier, fenetre f, int largeur, couleur c, int li
                 }
             }
 
-            //if((pays[0]!='\0')&&(N>=20) &&(Xm>f.x1) &&(Xm<f.x2) &&(Ym>f.y1) &&(Ym<f.y2)  ) display_text(f,transforme_x(Xm, f.w, f.x1, f.x2)-(strlen(pays))*4,transforme_y(Ym, f.h, f.y1, f.y2),pays,ROUGE);
-            if((pays[0]!='\0')&&(N>=2)) display_text(f,transforme_x(Xm, f.w, f.x1, f.x2)-(strlen(pays))*4,transforme_y(Ym, f.h, f.y1, f.y2),pays,ROUGE);
+            if((pays[0]!='\0')&&(N>=2)) display_text(f,xpoint(&f, Xm)-(strlen(pays))*4,ypoint(&f, Ym),pays,ROUGE);
             /*autre positionnement du texte*/
             Xm=0.5*(Xmin+Xmax); Ym=0.5*(Ymin+Ymax);
-            //if((pays[0]!='\0')&&(N>=20) &&(Xm>f.x1) &&(Xm<f.x2) &&(Ym>f.y1) &&(Ym<f.y2)  ) display_text(f,transforme_xLambert(Xm, f.w, f.x1, f.x2)-(strlen(pays))*4,transforme_yLambert(Ym, f.h, f.y1, f.y2),pays,VERT);
-            if((pays[0]!='\0')&&(N>=2) ) display_text(f,transforme_x(Xm, f.w, f.x1, f.x2)-(strlen(pays))*4,transforme_y(Ym, f.h, f.y1, f.y2),pays,VERT);
-
+            if((pays[0]!='\0')&&(N>=2) ) display_text(f,xpoint(&f, Xm)-(strlen(pays))*4,ypoint(&f, Ym),pays,VERT);
 
             i=0;
             pays[0]='\0';

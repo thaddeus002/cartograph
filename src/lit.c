@@ -47,8 +47,8 @@ int trace_shape(fenetre f, GenericShape *sh){
         }
 
         for(i=0; i<=N-1; i++){
-            points[i].x=transforme_x(sh->points[i].x, f.w, f.x1, f.x2);
-            points[i].y=transforme_y(sh->points[i].y, f.h, f.y1, f.y2);
+            points[i].x=xpoint(&f, sh->points[i].x);
+            points[i].y=ypoint(&f, sh->points[i].y);
         }
 
 

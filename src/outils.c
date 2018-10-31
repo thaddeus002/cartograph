@@ -1,8 +1,8 @@
 /** \file outils.c */
 
 #include "outils.h"
-
 #include <math.h>
+
 
 /* transforme les coordonnées planes (Lambert, lon-lat, ...) en coordonnées fenetre ou grille */
 /* les coordonnées trouvées peuvent etre a l'exterieur de la fenetre    */
@@ -26,6 +26,7 @@ int transforme_x(float xLamb, int w, float x1, float x2){
     return(i);
 }
 
+
 int transforme_y(float yLamb, int h, float y1, float y2) {
     float d; // Delta yLamb entre 2 pixels
     float e; // erreur entre ylamb réel et ylamb pixel
@@ -42,16 +43,15 @@ int transforme_y(float yLamb, int h, float y1, float y2) {
     e=yLamb-(y1+(j-1)*d);
     if(e>d/2) j++; else if(e<-d/2) j--;
     return(h-j+1); // y fenêtre compté à partir du haut
-
 }
-
-
 
 
 float transforme_i(int i, int w, float x1, float x2){
     //return((500000*x1+500000*(i-1)*(x2-x1)/(w-1))/500000);
     return(x1+(i-1)*(x2-x1)/(w-1));
 }
+
+
 float transforme_j(int j, int h, float y1, float y2){
     //return((500000*y1+500000*(h-j)*(y2-y1)/(h-1))/500000);
     return(y1+(h-j)*(y2-y1)/(h-1));

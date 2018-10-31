@@ -16,7 +16,7 @@ static int pointe_ville(fenetre fen, poste_t *ville, forme_t pointage, int large
 
     p=pointe(fen, ville->X, ville->Y, largeur, cpoint, pointage);
 
-    if(p==0) display_text(fen, transforme_x(ville->X, fen.w, fen.x1, fen.x2)+9, transforme_y(ville->Y, fen.h, fen.y1, fen.y2), ville->commune, ctexte);
+    if(p==0) display_text(fen, xpoint(&fen, ville->X)+9, ypoint(&fen, ville->Y), ville->commune, ctexte);
 
     return(p);
 }
