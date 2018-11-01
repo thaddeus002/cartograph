@@ -35,10 +35,15 @@ int traite_csv(fenetre fen, char *fichier_csv, forme_t pointage, int largeur, co
         return(1);
     }
 
+    // read header line
+    char header[500];
+    fscanf(fd, "%s\n", header);
+
     // read data
     enregistrement = lit_enregistrement_csv(fd, &err);
     while(!err){
         pointe_ville(fen, enregistrement, pointage, largeur, cpoint, ctexte);
+        enregistrement = lit_enregistrement_csv(fd, &err);
     }
 
     // close file
