@@ -24,9 +24,7 @@ typedef struct {
 } bornes_bln;
 
 
-/* fonctions */
-
-bornes_bln cherche_bornes_bln(char *file);
+/* functions */
 
 
 /* passer un nom de fichier bln en paramètre et on s'occupe de tout */
