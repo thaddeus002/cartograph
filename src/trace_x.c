@@ -53,7 +53,7 @@ int main(int argc, char **argv){
         exit(bornes.result);
     }
 
-    printf("boundaries found : %f,%f - %f,%f : %d\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.result);
+    printf("boundaries found : %f,%f - %f,%f\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
     width=(bornes.xmax-bornes.xmin)*10;
     height=(bornes.ymax-bornes.ymin)*10;
     temp=bornes.xmax-bornes.xmin;
@@ -94,7 +94,7 @@ int main(int argc, char **argv){
     init_Xvariable();
     f=cree_fenetre_coloree(width, height, &depth, bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, BLEU);
 
-    trace_bln_lignes(argv[1], f, 0, BLANC, 1, VERT);
+    bln_show_in_window(data, f, 0, BLANC, 1, VERT);
     bln_destroy(data);
 
     if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);

@@ -12,6 +12,7 @@
 
 #include "fenetre.h"
 #include "coordonnees.h"
+#include "bln.h"
 
 /* types */
 
@@ -24,8 +25,7 @@ typedef struct {
 } bornes_bln;
 
 
-/* functions */
-
+/* functions than may be deprecated */
 
 /* passer un nom de fichier bln en paramètre et on s'occupe de tout */
 /* retourne un code d'erreur non nul en cas d'échec */
@@ -37,6 +37,23 @@ int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int rempl
 
 /* lorsque les donnees sont en lon et lat */
 int trace_bln_geo(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage);
+
+/* new functions */
+
+/**
+ * The drawing function.
+ * 
+ * Shows bln data in a window.
+ * \param data the bln data to draw
+ * \param f the window where draw
+ * \param largeur lines' width
+ * \param c lines' color
+ * \param remplir 1 if the closed forms must be filled
+ * \param remplissage filling color
+ * \return 0 on success or an error code
+ */
+int bln_show_in_window(bln_data_t *data, fenetre f, int largeur, couleur c, int remplir, couleur remplissage);
+
 
 
 #endif

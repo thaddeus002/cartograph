@@ -4,7 +4,6 @@
 
 
 #include "lecture_bln.h"
-#include "bln.h"
 #include "coordonnees.h"
 #include "outils.h"
 #include <stdio.h>
@@ -87,8 +86,8 @@ static void lambInHm(bln_data_t *data) {
 /**
  * The drawing function.
  * 
- * Shows the data of a bln file in a window.
- * \param filename BLN file name
+ * Shows bln data in a window.
+ * \param data the bln data to draw
  * \param f the window where draw
  * \param largeur lines' width
  * \param c lines' color
@@ -97,21 +96,9 @@ static void lambInHm(bln_data_t *data) {
  * \param remplissage filling color
  * \return 0 on success or an error code
  */
-static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage) {
+static int bln_show_in_window_lines(bln_data_t *data, fenetre f, int largeur, couleur c, int ligne, int remplir, couleur remplissage) {
 
-    bln_data_t *data = bln_read_file(filename);
-    bln_data_t *current;
-
-    if(data == NULL) {
-        return 1;
-    }
-
-    if(geo) {
-        geo2Lamb(data);
-        lambInHm(data);
-    }
-
-    current = data;
+    bln_data_t *current = data;
     while(current != NULL) {
 
         int n = 0; // point index
@@ -137,6 +124,56 @@ static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int l
 
         current = current->next; 
     }
+}
+
+
+
+/**
+ * The drawing function.
+ * 
+ * Shows bln data in a window.
+ * \param data the bln data to draw
+ * \param f the window where draw
+ * \param largeur lines' width
+ * \param c lines' color
+ * \param remplir 1 if the closed forms must be filled
+ * \param remplissage filling color
+ * \return 0 on success or an error code
+ */
+int bln_show_in_window(bln_data_t *data, fenetre f, int largeur, couleur c, int remplir, couleur remplissage) {
+    return bln_show_in_window_lines(data, f, largeur, c, 1, remplir, remplissage);
+}
+
+
+
+
+/**
+ * The drawing function.
+ * 
+ * Shows the data of a bln file in a window.
+ * \param filename BLN file name
+ * \param f the window where draw
+ * \param largeur lines' width
+ * \param c lines' color
+ * \param ligne 1 if the points must be joined by lines
+ * \param remplir 1 if the closed forms must be filled
+ * \param remplissage filling color
+ * \return 0 on success or an error code
+ */
+static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage) {
+
+    bln_data_t *data = bln_read_file(filename);
+    
+    if(data == NULL) {
+        return 1;
+    }
+
+    if(geo) {
+        geo2Lamb(data);
+        lambInHm(data);
+    }
+
+    bln_show_in_window_lines(data, f, largeur, c, ligne, remplir, remplissage);
 
     bln_destroy(data);
     return 0;    
