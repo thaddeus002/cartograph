@@ -1,6 +1,6 @@
 /**
  * \file trace_x.c
- * Draw a map using the content of a bln file.
+ * \brief Draw a map using the content of a bln file.
  * This is the same goal than trace.c but using the xlib.
  */
 
@@ -9,6 +9,7 @@
 #include "bln.h"
 #include "lecture_csv.h"
 #include "outils.h"
+#include "yder.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -25,70 +26,93 @@ static void usage(char *prog){
     exit(1);
 }
 
+
+/**
+ * As we don't know what is the data domain, we better choose image's
+ * size at execution time.
+ * \param width must be allocated
+ * \param heigth must be allocated
+ */
+static int choose_image_size(bln_boundaries_t *bornes, int *width, int *height) {
+
+    float r; //zoom ratio
+
+    *width=(bornes->xmax-bornes->xmin)*10;
+    *height=(bornes->ymax-bornes->ymin)*10;
+
+    if((*width<0)|| (*height<0)) {
+        printf("Boundaries error\n");
+        return(1);
+    }
+
+    if(*width>LARGEUR_MAX) {
+        *height=*height*LARGEUR_MAX/(*width); // ratio conservation
+        *width=LARGEUR_MAX;
+    }
+
+    if(*height>HAUTEUR_MAX){
+        *width=*width*HAUTEUR_MAX/(*height); // ratio conservation
+        *height=HAUTEUR_MAX;
+    }
+
+    // max size
+    if((*width<LARGEUR_MAX)&&(*height<HAUTEUR_MAX)){
+        if((float)(*width)/LARGEUR_MAX>(float)(*height)/HAUTEUR_MAX){
+            r=(float)(*width)/LARGEUR_MAX;
+            *width=LARGEUR_MAX;
+            *height=*height/r;
+        }
+        else {
+            r=(float)(*height)/HAUTEUR_MAX;
+            *height=HAUTEUR_MAX;
+            *width=*width/r;
+        }
+    }
+
+    printf("width : %d - height : %d \n", *width, *height);
+    return 0;
+}
+
+
+
 /**
  * Main program
  */
 int main(int argc, char **argv){
 
-    bln_boundaries_t bornes; // bornes du fichier à lire
-    int width, height; // taille de la fenetre
-    float temp;//aide au calcul
-    fenetre f; // fenetre d'affichage du tracé
-    int depth; // nb de couleurs?
-    XEvent event; //evenement clavier ou souris
-    int i; //numero d'evenement clavier
-    float r; //ratio pour l'agrandissement
+    int width, height; // image size
+    bln_boundaries_t bornes; // data's boundaries
     int err; // error code
+    fenetre f; // drawing window
+    int depth; // nb de couleurs?
+    XEvent event; // evenement clavier ou souris
+    int i; // numero d'evenement clavier
 
+
+    y_init_logs(argv[0], Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, NULL);
 
     if(argc<2) usage(argv[0]);
-    printf("File to show : %s\n", argv[1]);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "File to draw : %s", argv[1]);
 
     bln_data_t *data = bln_read_file(argv[1]);
+
     bln_find_data_boundaries(data, &bornes);
 
     if(bornes.result!=0) {
-        fprintf(stderr,"Incorrect file format : %s\n", argv[1]);
+        fprintf(stderr, "Incorrect file format : %s\n", argv[1]);
         bln_destroy(data);
         exit(bornes.result);
     }
 
     printf("boundaries found : %f,%f - %f,%f\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
-    width=(bornes.xmax-bornes.xmin)*10;
-    height=(bornes.ymax-bornes.ymin)*10;
-    temp=bornes.xmax-bornes.xmin;
 
-    if((width<0)|| (height<0)) {
-        printf("Boundaries error... Stopping program\n");
-        bln_destroy(data);
-        exit(1);
+
+    err = choose_image_size(&bornes, &width, &height);
+    if(err) {
+        y_log_message(Y_LOG_LEVEL_ERROR, "Exiting program");
+        return err;
     }
 
-    if(width>LARGEUR_MAX) {
-        height=height*LARGEUR_MAX/width; //conservation du ratio
-        width=LARGEUR_MAX;
-    }
-
-    if(height>HAUTEUR_MAX){
-        width=width*HAUTEUR_MAX/height; //conservation du ratio
-        height=HAUTEUR_MAX;
-    }
-
-    //taille max
-    if((width<LARGEUR_MAX)&&(height<HAUTEUR_MAX)){
-        if((float)width/LARGEUR_MAX>(float)height/HAUTEUR_MAX){
-            r=(float)width/LARGEUR_MAX;
-            width=LARGEUR_MAX;
-            height=height/r;
-        }
-        else {
-            r=(float)height/HAUTEUR_MAX;
-            height=HAUTEUR_MAX;
-            width=width/r;
-        }
-    }
-
-    printf("width : %d - height : %d \n", width, height);
 
     /* create the window */
     init_Xvariable();
@@ -111,3 +135,4 @@ int main(int argc, char **argv){
     fermeture(f);
     return 0;
 }
+

@@ -16,7 +16,7 @@
 #define HAUTEUR_MAX 800
 
 /**
- * The usage function.
+ * The usage function
  */
 static void usage(char *prog){
     fprintf(stderr,"Draws the lines listed in a BLN file.\n");
@@ -31,27 +31,15 @@ static void usage(char *prog){
  * \param width must be allocated
  * \param heigth must be allocated
  */
-static int choose_image_size(char *blnfile, int *width, int *height) {
+static int choose_image_size(bln_boundaries_t *bornes, int *width, int *height) {
 
-    bln_boundaries_t bornes;
     float r; //zoom ratio
 
-    bln_data_t *data = bln_read_file(blnfile);
-    bln_find_data_boundaries(data, &bornes);
-    bln_destroy(data);
-
-
-    if(bornes.result!=0) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Error in format of file %s", blnfile);
-        return(bornes.result);
-    }
-
-    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.result);
-    *width=(bornes.xmax-bornes.xmin)*10;
-    *height=(bornes.ymax-bornes.ymin)*10;
+    *width=(bornes->xmax-bornes->xmin)*10;
+    *height=(bornes->ymax-bornes->ymin)*10;
 
     if((*width<0)|| (*height<0)) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Error in boundaries... Stopping program");
+        y_log_message(Y_LOG_LEVEL_ERROR, "Boundaries error");
         return(1);
     }
 
@@ -59,10 +47,12 @@ static int choose_image_size(char *blnfile, int *width, int *height) {
         *height=*height*LARGEUR_MAX/(*width); // ratio conservation
         *width=LARGEUR_MAX;
     }
+
     if(*height>HAUTEUR_MAX){
         *width=*width*HAUTEUR_MAX/(*height); // ratio conservation
         *height=HAUTEUR_MAX;
     }
+
     // max size
     if((*width<LARGEUR_MAX)&&(*height<HAUTEUR_MAX)){
         if((float)(*width)/LARGEUR_MAX>(float)(*height)/HAUTEUR_MAX){
@@ -89,7 +79,8 @@ static int choose_image_size(char *blnfile, int *width, int *height) {
 int main(int argc, char **argv){
 
     int width, height; // image size
-    int err;
+    bln_boundaries_t bornes; // data's boundaries
+    int err; // error code
     map_t *map;
     yColor *backColor, *countriesColor, *fillColor;
     yColor *meridian_c; // color for the meridians and parallels
@@ -100,7 +91,21 @@ int main(int argc, char **argv){
     if(argc<2) usage(argv[0]);
     y_log_message(Y_LOG_LEVEL_DEBUG, "File to draw : %s", argv[1]);
 
-    err = choose_image_size(argv[1], &width, &height);
+    bln_data_t *data = bln_read_file(argv[1]);
+
+    bln_find_data_boundaries(data, &bornes);
+    bln_destroy(data);
+
+
+    if(bornes.result!=0) {
+        y_log_message(Y_LOG_LEVEL_ERROR, "Incorrect file format : %s", argv[1]);
+        exit(bornes.result);
+    }
+
+    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.result);
+
+
+    err = choose_image_size(&bornes, &width, &height);
     if(err) {
         y_log_message(Y_LOG_LEVEL_ERROR, "Exiting program");
         return err;
@@ -138,3 +143,4 @@ int main(int argc, char **argv){
     y_close_logs();
     return 0;
 }
+
