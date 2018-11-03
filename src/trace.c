@@ -102,7 +102,7 @@ int main(int argc, char **argv){
         exit(bornes.result);
     }
 
-    y_log_message(Y_LOG_LEVEL_DEBUG, "Found BLN boundaries : %f,%f - %f,%f : %d", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax, bornes.result);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "boundaries found : %f,%f - %f,%f", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
 
 
     err = choose_image_size(&bornes, &width, &height);

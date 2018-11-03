@@ -12,6 +12,7 @@
 #include "yder.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 #define LARGEUR_MAX 1400
@@ -41,7 +42,7 @@ static int choose_image_size(bln_boundaries_t *bornes, int *width, int *height) 
     *height=(bornes->ymax-bornes->ymin)*10;
 
     if((*width<0)|| (*height<0)) {
-        printf("Boundaries error\n");
+        y_log_message(Y_LOG_LEVEL_ERROR, "Boundaries error");
         return(1);
     }
 
@@ -69,7 +70,7 @@ static int choose_image_size(bln_boundaries_t *bornes, int *width, int *height) 
         }
     }
 
-    printf("width : %d - height : %d \n", *width, *height);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "width : %d - height : %d", *width, *height);
     return 0;
 }
 
@@ -99,12 +100,12 @@ int main(int argc, char **argv){
     bln_find_data_boundaries(data, &bornes);
 
     if(bornes.result!=0) {
-        fprintf(stderr, "Incorrect file format : %s\n", argv[1]);
+        y_log_message(Y_LOG_LEVEL_ERROR, "Incorrect file format : %s", argv[1]);
         bln_destroy(data);
         exit(bornes.result);
     }
 
-    printf("boundaries found : %f,%f - %f,%f\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
+    y_log_message(Y_LOG_LEVEL_DEBUG, "boundaries found : %f,%f - %f,%f", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
 
 
     err = choose_image_size(&bornes, &width, &height);
@@ -131,8 +132,10 @@ int main(int argc, char **argv){
     }
 
     /* close display */
+    y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace_y.png");
     sauve_fenetre_png(&f, "output_trace.png");
     fermeture(f);
+    y_close_logs();
     return 0;
 }
 
