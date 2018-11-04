@@ -22,14 +22,14 @@
 /* Names of datafiles */
 #define DATA_DIR "/usr/local/share/geographie/donnees_France"
 #define DATA_DIR_MONDE "/usr/local/share/geographie/donnees_monde"
-#define RELIEF_GRD_FILE "grilles relief/France - relief 1km.grd"
-#define RELIEF_GRI_FILE "grilles relief/France_1km.gr2"
-#define RELIEF_GRD_FILE_HR "grilles relief/France-250m.grd"
-#define RELIEF_GRI_FILE_HR "grilles relief/France_250m.gr2"
+#define RELIEF_GRD_FILE "grilles_relief/France_-_relief_1km.grd"
+#define RELIEF_GRI_FILE "grilles_relief/France_1km.gr2"
+#define RELIEF_GRD_FILE_HR "grilles_relief/France-250m.grd"
+#define RELIEF_GRI_FILE_HR "grilles_relief/France_250m.gr2"
 #define PREFECTURES_CVS_FILE "fichiers_postes/France_prefectures.csv"
-#define RIVIERES_BLN_FILE "fonds de cartes/fonds hydro/France - rivières principales.bln"
-#define DEPARTEMENTS_BLN_FILE "fonds de cartes/France_et_departements.bln"
-#define CENTRE_BLN_FILE "fonds de cartes/régions économiques/Centre.bln"
+#define RIVIERES_BLN_FILE "fonds_de_cartes/fonds_hydro/France_-_rivieres_principales.bln"
+#define DEPARTEMENTS_BLN_FILE "fonds_de_cartes/France_et_departements.bln"
+#define CENTRE_BLN_FILE "fonds_de_cartes/regions_economiques/Centre.bln"
 #define PAYS_EUROPE "europe.bln"
 
 
@@ -233,15 +233,15 @@ int main(int argc, char **argv){
 
     /* départements */
     sprintf(file, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
-    if(trace_bln_lignes(file, fen, 2, ORANGE, 0, 0)!=0) fprintf(stderr, "Error when dealing with departments' boundaries data\n");
-
-    /* centre marqué plus fort */
-    /*sprintf(file, "%s/%s", data_dir, CENTRE_BLN_FILE);
-    if(trace_bln_points(file, fen, 2, ORANGE, 0, 0)!=0) fprintf(stderr, "Problème avec le fichier centre\n");*/
+    bln_data_t *departments = bln_read_file(file);
+    bln_show_in_window(departments, fen, 2, ORANGE, 0, 0);
+    bln_destroy(departments);
 
     /* les rivieres */
-    //sprintf(file, "%s/%s", data_dir, RIVIERES_BLN_FILE);
-    //if(trace_bln_lignes(file, fen, 1+fin, BLEU, 0, 0)!=0) fprintf(stderr, "problème avec le fichier rivières\n");
+    sprintf(file, "%s/%s", data_dir, RIVIERES_BLN_FILE);
+    bln_data_t *rivers = bln_read_file(file);
+    bln_show_in_window(rivers, fen, 1+fin, BLEU, 0, 0);
+    bln_destroy(rivers);
 
     /* pointages */
     sprintf(file, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
