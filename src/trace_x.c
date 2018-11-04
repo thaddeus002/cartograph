@@ -111,6 +111,7 @@ int main(int argc, char **argv){
     err = choose_image_size(&bornes, &width, &height);
     if(err) {
         y_log_message(Y_LOG_LEVEL_ERROR, "Exiting program");
+        bln_destroy(data);
         return err;
     }
 
@@ -132,7 +133,7 @@ int main(int argc, char **argv){
     }
 
     /* close display */
-    y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace_y.png");
+    y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace.png");
     sauve_fenetre_png(&f, "output_trace.png");
     fermeture(f);
     y_close_logs();

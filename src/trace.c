@@ -94,11 +94,10 @@ int main(int argc, char **argv){
     bln_data_t *data = bln_read_file(argv[1]);
 
     bln_find_data_boundaries(data, &bornes);
-    bln_destroy(data);
-
 
     if(bornes.result!=0) {
         y_log_message(Y_LOG_LEVEL_ERROR, "Incorrect file format : %s", argv[1]);
+        bln_destroy(data);
         exit(bornes.result);
     }
 
@@ -108,6 +107,7 @@ int main(int argc, char **argv){
     err = choose_image_size(&bornes, &width, &height);
     if(err) {
         y_log_message(Y_LOG_LEVEL_ERROR, "Exiting program");
+        bln_destroy(data);
         return err;
     }
 
@@ -116,7 +116,10 @@ int main(int argc, char **argv){
     backColor = y_color(BLUE);
     countriesColor= y_color(MARRON);
     fillColor=y_color(GREEN);
-    map = map_create_with_bln(argv[1], backColor, countriesColor, fillColor, EPSG_4326, width, height);
+    map = map_init(EPSG_4326, bornes.ymin, bornes.xmin, bornes.ymax, bornes.xmax, width, height);
+    map_set_background(map, backColor);
+    map_trace_bln_data(map, data, countriesColor, fillColor);
+    bln_destroy(data);
     free(backColor);
     free(countriesColor);
     free(fillColor);
