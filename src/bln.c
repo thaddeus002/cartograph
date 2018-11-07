@@ -58,6 +58,7 @@ bln_data_t *bln_read_file(char *filename){
 
             char pays[LINE_LENGHT];
             char region[LINE_LENGHT];
+            int nbRead;
 
             current = malloc(sizeof(bln_data_t));
             if(current == NULL) {
@@ -65,13 +66,21 @@ bln_data_t *bln_read_file(char *filename){
                 continue;
             }
 
-            sscanf(buf_read, "%d,%d,%[a-zA-Z'\" -],%s", &(current->nbPoints), &(current->closed), pays, region);
-            if (current->nbPoints<=0) {
+            nbRead = sscanf(buf_read, "%d,%d,%[a-zA-Z'\" -],%s", &(current->nbPoints), &(current->closed), pays, region);
+            if (nbRead < 1 || current->nbPoints<=0) {
                 free(current);
                 current=NULL;
                 continue; // i remain to 0 for next line reading
             } else {
-                // supress quotes
+                if(nbRead < 4) {
+                    region[0]='\0';
+                }
+                if(nbRead < 3) {
+                    pays[0] = '\0';
+                }
+                if(nbRead < 2) {
+                    current->closed=0;
+                }
                 suppress_quotes(pays);
                 suppress_quotes(region);
                 current->name = malloc(sizeof(char) * (strlen(pays)+1));
