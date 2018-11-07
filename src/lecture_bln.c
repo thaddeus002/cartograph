@@ -148,12 +148,11 @@ static void lambInHm(bln_data_t *data) {
  * \param f the window where draw
  * \param largeur lines' width
  * \param c lines' color
- * \param ligne 1 if the points must be joined by lines
  * \param remplir 1 if the closed forms must be filled
  * \param remplissage filling color
  * \return 0 on success or an error code
  */
-static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int ligne, int geo, int remplir, couleur remplissage) {
+static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int geo, int remplir, couleur remplissage) {
 
     bln_data_t *data = bln_read_file(filename);
     
@@ -166,24 +165,17 @@ static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int l
         lambInHm(data);
     }
 
-    bln_show_in_window_lines(data, f, largeur, c, ligne, remplir, remplissage);
+    bln_show_in_window(data, f, largeur, c, remplir, remplissage);
 
     bln_destroy(data);
     return 0;    
 }
 
 
-
-/* passer un nom de fichier bln en paramètre et on s'occupe de tout */
-/* retourne un code d'erreur non nul en cas d'échec */
-int trace_bln_points(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
-    return(trace_bln_V2(fichier, f, largeur, c, 0, 0, remplir, remplissage));
-}
-
 /* passer un nom de fichier bln en paramètre et on s'occupe de tout */
 /* retourne un code d'erreur non nul en cas d'échec */
 int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
-    return(trace_bln_V2(fichier, f, largeur, c, 1 , 0, remplir, remplissage));
+    return(trace_bln_V2(fichier, f, largeur, c, 0, remplir, remplissage));
 }
 
 
@@ -191,6 +183,5 @@ int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int rempl
 /* retourne un code d'erreur non nul en cas d'échec */
 /* le fichier d'entrée contient des coordonnées en lon et lat */
 int trace_bln_geo(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
-    return(trace_bln_V2(fichier, f, largeur, c, 1 , 1, remplir, remplissage));
+    return(trace_bln_V2(fichier, f, largeur, c , 1, remplir, remplissage));
 }
-

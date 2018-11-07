@@ -29,10 +29,6 @@ typedef struct {
 
 /* passer un nom de fichier bln en paramètre et on s'occupe de tout */
 /* retourne un code d'erreur non nul en cas d'échec */
-int trace_bln_points(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage);
-
-/* passer un nom de fichier bln en paramètre et on s'occupe de tout */
-/* retourne un code d'erreur non nul en cas d'échec */
 int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage);
 
 /* lorsque les donnees sont en lon et lat */

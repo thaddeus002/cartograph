@@ -35,7 +35,7 @@
 
 /* global variables */
 
-/* répertoires et noms de fichiers */
+/* directories and files names */
 char *data_dir;
 char *data_file;
 
@@ -62,10 +62,18 @@ void usage(char *nom){
 }
 
 
-/* les plages de couleur */
+/* color ranges */
 //char color_scheme[] = "-999,0x000000,-990,0x00000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,615,0x00CCFF,1230,0x99FFFF,1845,0x33CC99,2460,0xCCFFCC,3075,0xE2FFDB,3690,0xFFFFDD,4305,0xFFE6B4,4920,0xCCB380,5535,0xFFFF66,6150,0x999933,6765,0x996633,7380,0xFF6600";
 char color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,308,0x00CCFF,615,0x99FFFF,922,0x33CC99,1230,0xCCFFCC,1532,0xE2FFDB,1845,0xFFFFDD,2152,0xFFE6B4,2460,0xCCB380,2737,0xFFFF66,3075,0x999933,3282,0x996633,4650,0xFF6600";
 
+
+static int draw_european_countries(fenetre fen) {
+    char file[1000];
+    int err;    
+    sprintf(file, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
+    err = trace_bln_geo(file, fen, 1, BLANC, 1, MARRON);
+    return err;
+}
 
 
 int main(int argc, char **argv){
@@ -85,14 +93,14 @@ int main(int argc, char **argv){
     grille_t *reliefEurope; /* relief etopo sur une plus grande zone */
     grille_t *reliefZoneII; /* la même en lambert */
 
-    /*init*/
+    /* init */
     verbose=0;
     width=0; height=0;
     x1=0; x2=0; y1=0; y2=0;
     hmax=0; xmax=0; ymax=0;
 
 
-    /* Vérification des paramètres */
+    /* Checking parameters */
     for (i=1; i<argc; i++) {
         if (!strcasecmp(argv[i], "-help")) usage(argv[0]);
         else
@@ -143,13 +151,13 @@ int main(int argc, char **argv){
         else
             usage(argv[0]);
     }
-    /* Fin de lecture des paramètres */
+    /* End reading parameters */
 
-    /* Vérifications */
+    /* Checking */
     if((x1>x2)||(y1>y2)) usage(argv[0]);
 
 
-    /* détermination du nom du fichier à utiliser */
+    /* filename to use for relief */
     if (data_dir==NULL) data_dir = DATA_DIR;
     file = (char*)malloc((strlen(data_dir)+200)*sizeof(char));
     if (fin==0) sprintf(file, "%s/%s", data_dir, RELIEF_GRI_FILE);
@@ -166,9 +174,9 @@ int main(int argc, char **argv){
         exit(-1);
     }
 
-    if (verbose)
+    if (verbose) {
         fprintf(stderr, "\nReading header data from '%s'\n", data_file);
-
+    }
 
     structure=read_header_data(fd);
 
@@ -196,18 +204,16 @@ int main(int argc, char **argv){
 
     fclose(fd);
 
-    /* Ouverture fenêtre */
+    /* Open window */
     init_Xvariable();
     fen=cree_fenetre_coloree(width, height, &depth, x1, x2, y1, y2, BLEU);
 
     init_colors(color_scheme,depth,1, hmax);
 
 
-
     /* european countries */
     if(!fin){
-        sprintf(file, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
-        if(trace_bln_geo(file, fen, 1, BLANC, 1, MARRON)!=0) {
+        if(draw_european_countries(fen)!=0) {
             fprintf(stderr, "Error dealing with Europe datafile\n");
         }
     }
@@ -231,19 +237,19 @@ int main(int argc, char **argv){
     destroy_grille(reliefZoneII);
 
 
-    /* départements */
+    /* departments */
     sprintf(file, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
     bln_data_t *departments = bln_read_file(file);
     bln_show_in_window(departments, fen, 2, ORANGE, 0, 0);
     bln_destroy(departments);
 
-    /* les rivieres */
+    /* rivers */
     sprintf(file, "%s/%s", data_dir, RIVIERES_BLN_FILE);
     bln_data_t *rivers = bln_read_file(file);
     bln_show_in_window(rivers, fen, 1+fin, BLEU, 0, 0);
     bln_destroy(rivers);
 
-    /* pointages */
+    /* points cities */
     sprintf(file, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
     traite_csv(fen, file, ROND, 4+fin, MARRON_, NOIR);
 
@@ -267,7 +273,7 @@ int main(int argc, char **argv){
 
     if(verbose) fprintf(stderr, "\nMaximal altitud : %d, for X=%d, Y=%d\n\n", hmax, xmax, ymax);
 
-    /* libération de la mémoire et fermeture des display */
+    /* free memory and close display */
     free(file);
     fermeture(fen);
     printf("End of program\n");
