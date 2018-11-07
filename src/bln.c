@@ -10,6 +10,24 @@
 
 #define LINE_LENGHT 250
 
+
+static void suppress_quotes(char buf[]) {
+    int len = strlen(buf);
+
+    if(len<=1) {
+        return;
+    }
+
+    if((buf[0] == '"' && buf[len-1] == '"') || (buf[0] == '\'' && buf[len-1] == '\'')) {
+        int i;
+        for(i = 1; i < len-1; i++) {
+            buf[i-1] = buf[i];
+        }
+        buf[len-2] = '\0';
+    }
+}
+
+
 /**
  * \brief Read a bln file.
  * \param filename
@@ -20,7 +38,7 @@ bln_data_t *bln_read_file(char *filename){
     bln_data_t *result = NULL;
     FILE *fd;
     int i=0; // line number
-    char buf_read[LINE_LENGHT]; /* one file's line */
+    char buf_read[LINE_LENGHT]; // one file's line
     bln_data_t *current = NULL; // the next struct to add to result
 
 
@@ -51,8 +69,11 @@ bln_data_t *bln_read_file(char *filename){
             if (current->nbPoints<=0) {
                 free(current);
                 current=NULL;
-                continue; /* i reste à 0 pour la lecture de la prochaine ligne */
+                continue; // i remain to 0 for next line reading
             } else {
+                // supress quotes
+                suppress_quotes(pays);
+                suppress_quotes(region);
                 current->name = malloc(sizeof(char) * (strlen(pays)+1));
                 current->description = malloc(sizeof(char) * (strlen(region)+1));
                 current->x = malloc(sizeof(float)*current->nbPoints);
@@ -69,9 +90,9 @@ bln_data_t *bln_read_file(char *filename){
                 strcpy(current->description, region);
             }
 
-        } else { /* data line containing a point's coordinates */
+        } else { // data line containing a point's coordinates
 
-            /* reading data */
+            // reading data
             if(sscanf(buf_read, "%[0-9.-],%[0-9.-]", X, Y)==0) {
                 bln_destroy(current);
                 bln_destroy(result);
@@ -94,16 +115,13 @@ bln_data_t *bln_read_file(char *filename){
             }
         }
 
-
         i++;
 
         // Validate data
-        //fprintf(stdout, "%d points OK\n", current->nbPoints);
         if(i>current->nbPoints) {
             if(result == NULL) {
                 result = current;
             } else {
-                fprintf(stdout, "Map's Boundaries end : %f,%f - %f,%f\n", current->xmin, current->xmax, current->ymin, current->ymax);
                 bln_data_t *last = result;
                 while (last->next != NULL) last = last->next;
                 last->next = current;

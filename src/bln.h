@@ -58,7 +58,6 @@ typedef struct {
 int bln_find_data_boundaries(bln_data_t *data, bln_boundaries_t *bound);
 
 
-
 /**
  * \brief Read a bln file.
  * \param filename
@@ -77,7 +76,6 @@ void bln_destroy(bln_data_t *data);
  * \brief Write the data in a file.
  */
 int bln_write_file(bln_data_t *data, char *filename);
-
 
 
 
