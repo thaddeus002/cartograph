@@ -25,14 +25,11 @@ typedef struct {
 } bornes_bln;
 
 
-/* functions than may be deprecated */
+/* function than may be deprecated */
 
 /* passer un nom de fichier bln en paramètre et on s'occupe de tout */
 /* retourne un code d'erreur non nul en cas d'échec */
 int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage);
-
-/* lorsque les donnees sont en lon et lat */
-int trace_bln_geo(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage);
 
 /* new functions */
 

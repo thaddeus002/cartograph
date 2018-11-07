@@ -67,11 +67,91 @@ void usage(char *nom){
 char color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,308,0x00CCFF,615,0x99FFFF,922,0x33CC99,1230,0xCCFFCC,1532,0xE2FFDB,1845,0xFFFFDD,2152,0xFFE6B4,2460,0xCCB380,2737,0xFFFF66,3075,0x999933,3282,0x996633,4650,0xFF6600";
 
 
+
+/**
+ * transform WGS84 geographical data to plane Extended Lambert II data.
+ */
+static void geo2Lamb(bln_data_t *data) {
+
+    bln_data_t *current = data;
+
+    while(current != NULL) {
+        int n;
+        float xmin, xmax, ymin, ymax;
+        for(n=0; n<current->nbPoints; n++) {
+            coord_geo geo;
+            geo.lambda = current->x[n];
+            geo.phi = current->y[n];
+            geo.h = 0.f ;
+            coord_lamb lamb = Wgs84geo_to_Lambert(geo);
+            current->x[n] = lamb.X;
+            current->y[n] = lamb.Y;
+            // find the new extremun
+            if(n==0) {
+                xmin=lamb.X;
+                xmax=lamb.X;
+                ymin=lamb.Y;
+                ymax=lamb.Y;
+            } else {
+                if(lamb.X < xmin) {
+                    xmin = lamb.X;
+                } else if(lamb.X > xmax) {
+                    xmax = lamb.X;
+                }
+                if(lamb.Y < ymin) {
+                    ymin = lamb.Y;
+                } else if(lamb.Y > ymax) {
+                    ymax = lamb.Y;
+                }
+            }
+        }
+        current->xmin = xmin;
+        current->xmax = xmax;
+        current->ymin = ymin;
+        current->ymax = ymax;
+        current = current->next; 
+    }
+}
+
+
+/**
+ * Internal transformation to have data in hectometers.
+ */
+static void lambInHm(bln_data_t *data) {
+
+    bln_data_t *current = data;
+
+    while(current != NULL) {
+        int n;
+        for(n=0; n<current->nbPoints; n++) {
+            current->x[n] = current->x[n]/100;
+            current->y[n] = current->y[n]/100;
+        }
+        current->xmin = current->xmin/100;
+        current->xmax = current->xmax/100;
+        current->ymin = current->ymin/100;
+        current->ymax = current->ymax/100;
+        current = current->next; 
+    }
+}
+
+
 static int draw_european_countries(fenetre fen) {
-    char file[1000];
+    char filename[1000];
     int err;    
-    sprintf(file, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
-    err = trace_bln_geo(file, fen, 1, BLANC, 1, MARRON);
+    sprintf(filename, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
+
+    bln_data_t *data = bln_read_file(filename);
+    
+    if(data == NULL) {
+        return 1;
+    }
+
+    geo2Lamb(data);
+    lambInHm(data);
+    
+    err = bln_show_in_window(data, fen, 1, BLANC, 1, MARRON);
+    bln_destroy(data);
     return err;
 }
 

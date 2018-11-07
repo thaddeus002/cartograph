@@ -73,74 +73,6 @@ int bln_show_in_window(bln_data_t *data, fenetre f, int largeur, couleur c, int 
 
 
 /**
- * transform WGS84 geographical data to plane Extended Lambert II data.
- */
-static void geo2Lamb(bln_data_t *data) {
-
-    bln_data_t *current = data;
-
-    while(current != NULL) {
-        int n;
-        float xmin, xmax, ymin, ymax;
-        for(n=0; n<current->nbPoints; n++) {
-            coord_geo geo;
-            geo.lambda = current->x[n];
-            geo.phi = current->y[n];
-            geo.h = 0.f ;
-            coord_lamb lamb = Wgs84geo_to_Lambert(geo);
-            current->x[n] = lamb.X;
-            current->y[n] = lamb.Y;
-            // find the new extremun
-            if(n==0) {
-                xmin=lamb.X;
-                xmax=lamb.X;
-                ymin=lamb.Y;
-                ymax=lamb.Y;
-            } else {
-                if(lamb.X < xmin) {
-                    xmin = lamb.X;
-                } else if(lamb.X > xmax) {
-                    xmax = lamb.X;
-                }
-                if(lamb.Y < ymin) {
-                    ymin = lamb.Y;
-                } else if(lamb.Y > ymax) {
-                    ymax = lamb.Y;
-                }
-            }
-        }
-        current->xmin = xmin;
-        current->xmax = xmax;
-        current->ymin = ymin;
-        current->ymax = ymax;
-        current = current->next; 
-    }
-}
-
-
-/**
- * Internal transformation to have data in hectometers.
- */
-static void lambInHm(bln_data_t *data) {
-
-    bln_data_t *current = data;
-
-    while(current != NULL) {
-        int n;
-        for(n=0; n<current->nbPoints; n++) {
-            current->x[n] = current->x[n]/100;
-            current->y[n] = current->y[n]/100;
-        }
-        current->xmin = current->xmin/100;
-        current->xmax = current->xmax/100;
-        current->ymin = current->ymin/100;
-        current->ymax = current->ymax/100;
-        current = current->next; 
-    }
-}
-
-
-/**
  * The drawing function.
  * 
  * Shows the data of a bln file in a window.
@@ -152,17 +84,12 @@ static void lambInHm(bln_data_t *data) {
  * \param remplissage filling color
  * \return 0 on success or an error code
  */
-static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int geo, int remplir, couleur remplissage) {
+int trace_bln_lignes(char *filename, fenetre f, int largeur, couleur c, int remplir, couleur remplissage) {
 
     bln_data_t *data = bln_read_file(filename);
     
     if(data == NULL) {
         return 1;
-    }
-
-    if(geo) {
-        geo2Lamb(data);
-        lambInHm(data);
     }
 
     bln_show_in_window(data, f, largeur, c, remplir, remplissage);
@@ -171,17 +98,3 @@ static int trace_bln_V2(char *filename, fenetre f, int largeur, couleur c, int g
     return 0;    
 }
 
-
-/* passer un nom de fichier bln en paramètre et on s'occupe de tout */
-/* retourne un code d'erreur non nul en cas d'échec */
-int trace_bln_lignes(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
-    return(trace_bln_V2(fichier, f, largeur, c, 0, remplir, remplissage));
-}
-
-
-/* passer un nom de fichier bln en paramètre et on s'occupe de tout */
-/* retourne un code d'erreur non nul en cas d'échec */
-/* le fichier d'entrée contient des coordonnées en lon et lat */
-int trace_bln_geo(char *fichier, fenetre f, int largeur, couleur c, int remplir, couleur remplissage){
-    return(trace_bln_V2(fichier, f, largeur, c , 1, remplir, remplissage));
-}
