@@ -71,30 +71,3 @@ int bln_show_in_window(bln_data_t *data, fenetre f, int largeur, couleur c, int 
     return bln_show_in_window_lines(data, f, largeur, c, 1, remplir, remplissage);
 }
 
-
-/**
- * The drawing function.
- * 
- * Shows the data of a bln file in a window.
- * \param filename BLN file name
- * \param f the window where draw
- * \param largeur lines' width
- * \param c lines' color
- * \param remplir 1 if the closed forms must be filled
- * \param remplissage filling color
- * \return 0 on success or an error code
- */
-int trace_bln_lignes(char *filename, fenetre f, int largeur, couleur c, int remplir, couleur remplissage) {
-
-    bln_data_t *data = bln_read_file(filename);
-    
-    if(data == NULL) {
-        return 1;
-    }
-
-    bln_show_in_window(data, f, largeur, c, remplir, remplissage);
-
-    bln_destroy(data);
-    return 0;    
-}
-
