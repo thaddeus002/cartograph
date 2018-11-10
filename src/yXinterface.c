@@ -165,28 +165,12 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
 
     XDestroyImage(xim);
 
+    im = NULL;
     if (data)
     {
-        im = malloc(sizeof(yImage));
-        if (!im)
-            return NULL;
-        im->rgbWidth = width;
-        im->rgbHeight = height;
-        im->rgbData = malloc(im->rgbWidth * im->rgbHeight * 3);
-        if (!im->rgbData)
-        {
-            free(im);
-            return NULL;
-        }
-        memcpy(im->rgbData, data, im->rgbWidth * im->rgbHeight * 3);
-
-        im->shapeColor.r=-1;
-        im->shapeColor.g=-1;
-        im->shapeColor.b=-1;
-
+        int err;
+        im = y_create_image(&err, data, width, height);
         free(data);
-        return(im);
-    } else {
-        return(NULL);
     }
+    return(im);
 }
