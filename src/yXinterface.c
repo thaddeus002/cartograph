@@ -1,10 +1,13 @@
 /**
  * \file yXinterface.c
- * yXinterface is part of yImage under GNU GENERAL PUBLIC LICENSE.
  * Creating an "yImage" from a Xlib Drawable.
  */
 
 #include "yXinterface.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <X11/Xutil.h>
 
 char x_error;
 
@@ -18,8 +21,7 @@ static void __handle_x_error(Display * d, XErrorEvent * ev)
 
 yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, int x, int y, int width, int height)
 {
-    unsigned char      *data = NULL, *ptr, r, g, b;
-    unsigned long       pixel;
+    unsigned char      *data = NULL;
     /* xx and yy are counters */
     int                 xx, yy, w, h, inx, iny, clipx, clipy, rx, ry;
     XImage             *xim;
@@ -134,32 +136,26 @@ yImage *create_yImage_from_drawable(Drawable win, Visual *vis, Display  *disp, i
     data = malloc(width * height * 3);
     if (data)
     {
-        ptr = data;
+        unsigned char *ptr = data;
         switch (xatt.depth)
         {
-
         case 24:
         case 32:
             for (yy = 0; yy < height; yy++)
             {
                 for (xx = 0; xx < width; xx++)
                 {
-                    pixel = XGetPixel(xim, xx, yy);
-                    r = (pixel >> 16) & 0xff;
-                    g = (pixel >> 8) & 0xff;
-                    b = pixel & 0xff;
-                    *ptr++ = r;
-                    *ptr++ = g;
-                    *ptr++ = b;
+                    unsigned long pixel = XGetPixel(xim, xx, yy);
+                    *ptr++ = (pixel >> 16) & 0xff;
+                    *ptr++ = (pixel >> 8) & 0xff;
+                    *ptr++ = pixel & 0xff;
                 }
             }
             break;
         default: /* not supported case */
-            fprintf(stderr, "Profondeur d'image non supportée :%d\n", xatt.depth);
+            fprintf(stderr, "Image's depth not supported: %d\n", xatt.depth);
             free(data);
-            XDestroyImage(xim);
-            return(NULL);
-            break;
+            data = NULL;
         }
     }
 
