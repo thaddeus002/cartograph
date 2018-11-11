@@ -156,26 +156,6 @@ yImage *map_set_background(map_t *map, yColor *color){
 /**
  * Add lines or polygons to the map.
  */
-int map_trace_bln(map_t *map, char *blnFile, yColor *color){
-
-    bln_data_t *data = bln_read_file(blnFile);
-    int err = 0;
-
-    if(data != NULL) {
-        map_trace_bln_data(map,data,color,NULL);
-        bln_destroy(data);
-    } else {
-        err = 1;
-    }
-
-    return err;
-}
-
-
-
-/**
- * Add lines or polygons to the map.
- */
 int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color, yColor *fillColor){
     /* variables */
     int i; /* number of the current coordinate line */
@@ -325,9 +305,10 @@ static int pointe(map_t *map, float xLamb, float yLamb, int L, yColor *c, shape_
 
 
 static int display_text(yImage *image, int x, int y, char *text, yColor *c){
-    char line[80]; // chaine à afficher
-    char *ptr1, *ptr2; // sert au découpage de la chaine en lignes
-    int i, n; // i:numero de ligne, n: nb de caractères à afficher sur la ligne i (avant le saut de ligne)
+    char line[80]; // string to show
+    char *ptr1, *ptr2; // to split the string in lines
+    int i; // line's number
+    int n; // number of characters to show on line i (before line feed)
     int err;
 
     i = 0;
@@ -360,40 +341,28 @@ static int display_text(yImage *image, int x, int y, char *text, yColor *c){
 
 
 
-static int pointe_ville(map_t *map, poste_t *ville, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte){
+static int pointe_ville(map_t *map, poste_t *ville, shape_t pointage, int largeur, yColor *cpoint, yColor *ctext){
     int p; // err code
 
     p=pointe(map, ville->X, ville->Y, largeur, cpoint, pointage);
 
     if(p==0) {
-        p=display_text(map->image, transforme_x(map, ville->X)+9, transforme_y(map, ville->Y), ville->commune, ctexte);
+        p=display_text(map->image, transforme_x(map, ville->X)+9, transforme_y(map, ville->Y), ville->commune, ctext);
     }
 
     return(p);
 }
 
 
+int map_point(map_t *map, poste_t *points, shape_t pointage, int largeur, yColor *cpoint, yColor *ctext){
 
-int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte){
-
-    poste_t *enregistrement;
     poste_t *courant;
     int err;
 
-    enregistrement=read_points_file(csvDataFile);
-
-    courant = enregistrement;
+    courant = points;
     while(courant != NULL) {
-        err=pointe_ville(map, courant, pointage, largeur, cpoint, ctexte);
+        err=pointe_ville(map, courant, pointage, largeur, cpoint, ctext);
         courant = courant->next;
-    }
-
-    // free memory
-    courant = enregistrement;
-    while (courant != NULL) {
-        poste_t *next = courant->next;
-        free(courant);
-        courant = next;
     }
 
     return(err);

@@ -106,8 +106,7 @@ int main(int argc, char **argv){
 
     red = y_color(RED);
     yellow = y_color(YELLOW);
-
-    map_point(map, argv[1], ROUND, 3, red, yellow);
+    map_point(map, cities, ROUND, 3, red, yellow);
     destroy_points_data(cities);
     free(red);
     free(yellow);

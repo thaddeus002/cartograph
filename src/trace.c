@@ -135,7 +135,10 @@ int main(int argc, char **argv){
     if(argc==3) {
         points_c = y_color(RED);
         text_c = y_color(WHITE);
-        map_point(map, argv[2], ROUND, 3, points_c, text_c);
+        poste_t *points = read_points_file(argv[2]);
+        map_point(map, points, ROUND, 3, points_c, text_c);
+        // free memory
+        destroy_points_data(points);
         free(points_c);
         free(text_c);
     }

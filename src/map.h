@@ -13,6 +13,7 @@
 
 #include "yImage.h"
 #include "bln.h"
+#include "points.h"
 
 
 #ifndef __Y_MAP_H__
@@ -95,16 +96,6 @@ yImage *map_set_background(map_t *map, yColor *color);
 
 
 /**
- * Add lines or polygons to the map without fill the polygons.
- * \param map where draw the lines
- * \param blnFile the data file
- * \param color lines' color
- * \return 0 on success
- */
-int map_trace_bln(map_t *map, char *blnFile, yColor *color);
-
-
-/**
  * Add lines or polygons to the map.
  * \param map where draw the lines
  * \param blnData the lines
@@ -141,14 +132,13 @@ void map_draw_meridians(map_t *map, yColor *color);
 /**
  * Marks points on the map.
  * \param map where draw the points
- * \param csvDataFile datafile
+ * \param points the data to plot
  * \param pointage shape for the points
  * \param largeur points' size
  * \param cpoint points' color
  * \param ctext legend's color
  * \return 0 on success
  */
-int map_point(map_t *map, char *csvDataFile, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte);
-
+int map_point(map_t *map, poste_t *points, shape_t pointage, int largeur, yColor *cpoint, yColor *ctexte);
 
 #endif
