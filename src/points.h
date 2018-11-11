@@ -10,6 +10,7 @@
 #ifndef __POINTS_H__
 #define __POINTS_H__ 1
 
+#include <stdio.h>
 
 /**
  * A pointed objet
@@ -51,6 +52,13 @@ poste_t *read_points_file(char *csvDataFile);
  * \return 0 in case of success
  */
 int find_data_boundaries(poste_t *list, data_boundaries_t *bound);
+
+
+/**
+ * \brief free memory.
+ * \param points the points linked list to free
+ */
+void destroy_points_data(poste_t *points);
 
 
 #endif

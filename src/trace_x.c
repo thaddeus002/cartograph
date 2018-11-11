@@ -31,8 +31,10 @@ static void usage(char *prog){
 /**
  * As we don't know what is the data domain, we better choose image's
  * size at execution time.
+ * \param bornes data's boundaries
  * \param width must be allocated
  * \param heigth must be allocated
+ * \return 0 in case of success
  */
 static int choose_image_size(bln_boundaries_t *bornes, int *width, int *height) {
 

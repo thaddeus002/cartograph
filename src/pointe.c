@@ -18,16 +18,68 @@ void usage(char *prog){
     exit(1);
 }
 
-/* Main program */
+
+/**
+ * As we don't know what is the data domain, we better choose image's
+ * size at execution time.
+ * \param bornes data's boundaries
+ * \param width must be allocated
+ * \param heigth must be allocated
+ * \return 0 in case of success
+ */
+static int choose_image_size(data_boundaries_t *bornes, int *width, int *height) {
+
+    float r; //zoom ratio
+
+    *width=(bornes->xmax-bornes->xmin)*10;
+    *height=(bornes->ymax-bornes->ymin)*10;
+
+    if((*width<0)|| (*height<0)) {
+        printf("Boundaries error\n");
+        return(1);
+    }
+
+    if(*width>LARGEUR_MAX) {
+        *height=*height*LARGEUR_MAX/(*width); // ratio conservation
+        *width=LARGEUR_MAX;
+    }
+
+    if(*height>HAUTEUR_MAX){
+        *width=*width*HAUTEUR_MAX/(*height); // ratio conservation
+        *height=HAUTEUR_MAX;
+    }
+
+    // max size
+    if((*width<LARGEUR_MAX)&&(*height<HAUTEUR_MAX)){
+        if((float)(*width)/LARGEUR_MAX>(float)(*height)/HAUTEUR_MAX){
+            r=(float)(*width)/LARGEUR_MAX;
+            *width=LARGEUR_MAX;
+            *height=*height/r;
+        }
+        else {
+            r=(float)(*height)/HAUTEUR_MAX;
+            *height=HAUTEUR_MAX;
+            *width=*width/r;
+        }
+    }
+
+    printf("image width : %d - height : %d \n", *width, *height);
+    return 0;
+}
+
+
+
+/**
+ * Main program
+ */
 int main(int argc, char **argv){
 
     data_boundaries_t bornes; // boundaries of data file
-    int width, height; // taille de la fenetre
+    int width, height; // window's size
+    int err; // error code
     map_t *map; // where make the drawing
-    float r; //ratio pour l'agrandissement
     yColor *red, *yellow;
     poste_t *cities; // the points to plot
-    int err;
 
 
     if(argc<2) usage(argv[0]);
@@ -37,41 +89,17 @@ int main(int argc, char **argv){
     err = find_data_boundaries(cities, &bornes);
     if(err) {
         fprintf(stderr,"Bad file format : %s\n", argv[1]);
+        destroy_points_data(cities);
         exit(err);
     }
 
-    fprintf(stdout, "found boundaries : %f,%f - %f,%f\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
-    width=(bornes.xmax-bornes.xmin)*10;
-    height=(bornes.ymax-bornes.ymin)*10;
-
-    if((width<0)|| (height<0)) {
-        printf("Boundaries Error... Exiting program\n");
-        exit(1);
+    fprintf(stdout, "boundaries found : %f,%f - %f,%f\n", bornes.xmin, bornes.xmax, bornes.ymin, bornes.ymax);
+    err = choose_image_size(&bornes, &width, &height);
+    if(err) {
+        fprintf(stderr, "Exiting program\n");
+        destroy_points_data(cities);
+        return err;
     }
-
-    if(width>LARGEUR_MAX) {
-        height=height*LARGEUR_MAX/width; //conservation du ratio
-        width=LARGEUR_MAX;
-    }
-    if(height>HAUTEUR_MAX){
-        width=width*HAUTEUR_MAX/height; //conservation du ratio
-        height=HAUTEUR_MAX;
-    }
-    //taille max
-    if((width<LARGEUR_MAX)&&(height<HAUTEUR_MAX)){
-        if((float)width/LARGEUR_MAX>(float)height/HAUTEUR_MAX){
-            r=(float)width/LARGEUR_MAX;
-            width=LARGEUR_MAX;
-            height=height/r;
-        }
-        else {
-            r=(float)height/HAUTEUR_MAX;
-            height=HAUTEUR_MAX;
-            width=width/r;
-        }
-    }
-
-    printf("image width : %d - height : %d \n", width, height);
 
     /* Creating the map */
     map = map_init(EPSG_4326, bornes.ymin, bornes.xmin, bornes.ymax, bornes.xmax, width, height);
@@ -80,7 +108,7 @@ int main(int argc, char **argv){
     yellow = y_color(YELLOW);
 
     map_point(map, argv[1], ROUND, 3, red, yellow);
-
+    destroy_points_data(cities);
     free(red);
     free(yellow);
 
@@ -89,3 +117,4 @@ int main(int argc, char **argv){
 
     return 0;
 }
+

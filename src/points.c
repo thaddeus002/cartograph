@@ -123,3 +123,12 @@ int find_data_boundaries(poste_t *list, data_boundaries_t *bound){
     return result;
 }
 
+
+void destroy_points_data(poste_t *points) {
+    poste_t *current = points;
+    while(current != NULL){
+        poste_t *next =current->next;  
+        free(current);
+        current = next;
+    }
+}
