@@ -72,6 +72,10 @@ poste_t *read_points_file(char *csvDataFile){
         return(NULL);
     }
 
+    // header line currently not managed
+    char header_line[1000];
+    fscanf(fd, "%s\n", header_line);
+
     // reading the data
     list = NULL;
     enregistrement=lit_enregistrement_csv(fd, &err);
