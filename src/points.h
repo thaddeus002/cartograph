@@ -30,17 +30,11 @@ typedef struct {
     float xmin, xmax, ymin, ymax;
 } data_boundaries_t;
 
-/**
- * \brief Read the next entry in a "points file".
- * \param fd a descriptor on a file
- * \param err
- * \return NULL if reading fail
- */
-poste_t *lit_enregistrement_csv(FILE *fd, int *err);
-
 
 /**
  * \brief read all the points of a "point file".
+ * \param csvDataFile path of the data file
+ * \return the file content or NULL if reading fail
  */
 poste_t *read_points_file(char *csvDataFile);
 

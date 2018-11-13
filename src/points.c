@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include "points.h"
 
-poste_t *lit_enregistrement_csv(FILE *fd, int *err) {
+static poste_t *lit_enregistrement_csv(FILE *fd, int *err) {
     char buf_read[300]; // reading buffer
     int i,j; // number of read data, counters
     char com[250]; // city's name

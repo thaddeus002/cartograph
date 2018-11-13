@@ -17,8 +17,17 @@
 #include "points.h"
 
 
-
-int traite_csv(fenetre fen, char *fichier_cvs, forme_t pointage, int largeur, couleur cpoint, couleur ctexte);
+/**
+ * Points data on a X11 window.
+ * \param fen the window where draw
+ * \param points the data
+ * \param pointage points' shape
+ * \param largeur points' width
+ * \param cpoint points' color
+ * \param ctexte text's color
+ * \return 0 on success
+ */
+int point_data(fenetre fen, poste_t *points, forme_t pointage, int largeur, couleur cpoint, couleur ctexte);
 
 
 #endif

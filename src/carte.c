@@ -260,7 +260,7 @@ int main(int argc, char **argv){
 
     structure=read_header_data(fd);
 
-    //si la taille e(height!=0)st choisie par parametre
+    //si la taille (height!=0) est choisie par parametre
     //pas de zoom
     if((x2!=0)||(x1!=0)){ // si une plage de x a été définie
         if ((transforme_x(x2,structure->width,structure->x1,structure->x2)-transforme_x(x1,structure->width,structure->x1,structure->x2)<width)||(width==0))  width=(transforme_x(x2,structure->width,structure->x1,structure->x2)-transforme_x(x1,structure->width,structure->x1,structure->x2));
@@ -331,7 +331,12 @@ int main(int argc, char **argv){
 
     /* points cities */
     sprintf(file, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
-    traite_csv(fen, file, ROND, 4+fin, MARRON_, NOIR);
+
+    poste_t *points = read_points_file(file);
+    if(points != NULL) {
+        point_data(fen, points, ROND, 4+fin, MARRON_, NOIR);
+        destroy_points_data(points);
+    }
 
 
     /* ECHELLE  */

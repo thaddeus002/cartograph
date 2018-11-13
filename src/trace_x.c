@@ -125,7 +125,13 @@ int main(int argc, char **argv){
     bln_show_in_window(data, f, 0, BLANC, 1, VERT);
     bln_destroy(data);
 
-    if(argc==3) traite_csv(f,argv[2],ROND,3,ROUGE,JAUNE);
+    if(argc==3) {
+        poste_t *points = read_points_file(argv[2]);
+        if(points != NULL) {
+            point_data(f, points, ROND, 3, ROUGE, JAUNE);
+            destroy_points_data(points);
+        }
+    }
 
     /* main loop */
     while(1) {
