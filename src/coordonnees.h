@@ -1,7 +1,6 @@
 /**
  * \file coordonnees.h
  * \brief Geographical Coordinates Transformations
- * \since 11/04/2007
  *
  * Various Geodesic systems can be used in this project, and the
  * coordinates may have to be transposed from one to another.
@@ -37,6 +36,18 @@
 #define __COORD_H__ 1
 
 
+// Representing the coordinates
+
+/**
+ * Enumeration of coordinates types.
+ */
+typedef enum {
+    CARTESIAN,
+    GEOGRAPHICAL,
+    PLANE
+} coordinates_t;
+
+
 /**
  * 3D Cartesian coordinates.
  */
@@ -53,47 +64,73 @@ typedef struct {
 typedef struct {
     float lambda; /**< longitude in degrees */
     float phi; /**< latitude in degrees */
-    float h;
+    float h; /**< altitude */
 } coord_geo;
 
 
 /**
- * Plane coordinates for Lambert's projections 
+ * Plane coordinates. For Lambert's projections there are in meters. 
  */
 typedef struct {
-    float X; // in meters
-    float Y; // in meters
-} coord_lamb;
+    float X;
+    float Y;
+} coord_plane;
 
+
+// Making projections : geographical to plane coordinates
 
 /**
- * Apply the Extended Lambert II projection of geographical coordinates
- * of the NTF system (Clarke's geoid).
+ * Apply the Extended Lambert II projection on geographical coordinates.
+ * The geogragraphical coordinates are supposed to be in the NTF system
+ * (Clarke's geoid).
  * \param coord geographical coordinate of a point
  * \return the plane coordinates after the projection
  */
-coord_lamb calcule_Lambert(coord_geo coord);
+coord_plane proj_Lambert(coord_geo coord);
 
 
 /**
- * Apply the Lambert 93 projection of geographical coordinates of the
- * RGF93 system.
+ * Apply the Lambert 93 projection of geographical coordinates. The
+ * geographical coordinates are supposed tobe in the RGF93 system.
  * \param coord geographical coordinate of a point
  * \return the plane coordinates after the projection
  */
-coord_lamb calcule_Lambert93(coord_geo coord);
+coord_plane proj_Lambert93(coord_geo coord);
 
 
 /**
- * Transform WGS84 lat/lon data to Extended Lambert II coordinates.
+ * Apply the "Plate Caree" projection of geographical coordinates.
+ * This is the projection used in WGS84 system.
+ * \param coord geographical coordinate of a point
+ * \return the plane coordinates after the projection
  */
-coord_lamb Wgs84geo_to_Lambert(coord_geo pos);
+coord_plane proj_PlateCaree(coord_geo coord);
+
+
+// plane to geographical coordinate
 
 
 /**
- * Transform WGS84 lat/lon data to Lambert 93 coordinates.
+ * Revert a "Plate Caree" projection to geographical coordinates.
+ * \param coord plane coordinate of a point in plate caree projection
+ * \return the geographical coordinate of the point
  */
-coord_lamb Wgs84geo_to_Lambert93(coord_geo pos);
+coord_geo plate_caree_to_geographical(coord_plane coord);
+
+
+// Switching between geodics systems
+
+
+/**
+ * Transform WGS84 to Extended Lambert II coordinates.
+ */
+coord_plane Wgs84_to_Lambert(coord_plane pos);
+
+
+/**
+ * Transform WGS84 to Lambert 93 coordinates.
+ */
+coord_plane Wgs84_to_Lambert93(coord_plane pos);
 
 
 #endif

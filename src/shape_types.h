@@ -24,7 +24,7 @@ typedef struct {
 } shape_header;
 
 
-/* Types de données */
+/* Types de donnÃ©es */
 
 typedef struct {
     //int shapeType=0;
@@ -148,7 +148,7 @@ typedef struct {
     int numParts; /*nb de parts*/
     int numPoints; /* nb de points */
     int *parts; /*index of first point in part*/
-    int *partTypes; /* types des différentes parties */
+    int *partTypes; /* types des diffÃ©rentes parties */
     Point *points; /*points of all parts*/
     double zRange[2];
     double *zArray; /*Z values*/
@@ -163,7 +163,7 @@ typedef struct {
 4 first ring
 5 ring */
 
-/* le type générique pouvant correspondre à n'importe lequel definit précédemment */
+/* le type gÃ©nÃ©rique pouvant correspondre Ã  n'importe lequel definit prÃ©cÃ©demment */
 typedef struct {
     int shapeType;
 
@@ -178,7 +178,7 @@ typedef struct {
     int numParts; /*nb de parts*/
     int numPoints; /* nb de points */
     int *parts; /*index of first point in part*/
-    int *partTypes; /* types des différentes parties */
+    int *partTypes; /* types des diffÃ©rentes parties */
     Point *points; /*points of all parts*/
     double zRange[2];
     double *zArray; /*Z values*/

@@ -49,8 +49,8 @@ static float degrees(float radians) { return (radians*180/M_PI); }
  * Calculate Lambert coordinate from lat/lon of the same geodesic
  * system.
  */
-static coord_lamb calculate_plane_coordinates(coord_geo coord, double e, double c, double n, double l0, double xs, double ys) {
-    coord_lamb retour; /* return value */
+static coord_plane calculate_plane_coordinates(coord_geo coord, double e, double c, double n, double l0, double xs, double ys) {
+    coord_plane result; /* return value */
 
     /* intermediary calculations */
     double S=sinf(radians(coord.phi));
@@ -59,32 +59,62 @@ static coord_lamb calculate_plane_coordinates(coord_geo coord, double e, double 
     double gamma=n*(coord.lambda-l0);
 
     /* result */
-    retour.X=xs+R*sinf(radians(gamma));
-    retour.Y=ys-R*cosf(radians(gamma));
+    result.X=xs+R*sinf(radians(gamma));
+    result.Y=ys-R*cosf(radians(gamma));
 
-    return(retour);
+    return(result);
 }
 
 
 /**
- * Apply the Extended Lambert II projection of geographical coordinates
- * of the NTF system (Clarke's geoid).
+ * Apply the Extended Lambert II projection on geographical coordinates.
+ * The geogragraphical coordinates are supposed to be in the NTF system
+ * (Clarke's geoid).
  * \param coord geographical coordinate of a point
  * \return the plane coordinates after the projection
  */
-coord_lamb calcule_Lambert(coord_geo coord) {
+coord_plane proj_Lambert(coord_geo coord) {
     return calculate_plane_coordinates(coord, C_E, C_C, C_N, C_L0, C_XS, C_YS);
 }
 
 
 /**
- * Apply the Lambert 93 projection of geographical coordinates of the
- * RGF93 system.
+ * Apply the Lambert 93 projection of geographical coordinates. The
+ * geographical coordinates are supposed tobe in the RGF93 system.
  * \param coord geographical coordinate of a point
  * \return the plane coordinates after the projection
  */
-coord_lamb calcule_Lambert93(coord_geo coord) {
+coord_plane proj_Lambert93(coord_geo coord) {
     return calculate_plane_coordinates(coord, C93_E, C93_C, C93_N, C93_L0, C93_XS, C93_YS);
+}
+
+
+coord_plane ploj_PlateCaree(coord_geo coord) {
+    coord_plane result;
+    // this projection is very simple
+    result.X = coord.lambda;
+    result.Y = coord.phi;
+    return result;
+}
+
+
+
+/**********************************************************//**
+ *         PLANE (X,Y) TO GEOGRAPHICAL (Lambda,Phy,h)         *
+ *************************************************************/
+
+
+/**
+ * Revert a "Plate Caree" projection to geographical coordinates.
+ * \param coord plane coordinate of a point in plate caree projection
+ * \return the geographical coordinate of the point
+ */
+coord_geo plate_caree_to_geographical(coord_plane coord){
+    coord_geo result;
+    result.lambda = coord.X;
+    result.phi = coord.Y;
+    result.h = 0;
+    return result;
 }
 
 
@@ -215,23 +245,27 @@ static coord_cartesian wgs2ntf(coord_cartesian initial) {
 
 
 /**
- * Transform WGS84 lat/lon data to Extended Lambert II coordinates.
+ * Transform WGS84 to Extended Lambert II coordinates.
  */
-coord_lamb Wgs84geo_to_Lambert(coord_geo pos) {
+coord_plane Wgs84_to_Lambert(coord_plane pos) {
 
-    coord_cartesian cartesian_wgs = geo2cartesian(pos, WGS_A, WGS_B);
+    coord_geo geo_wgs = plate_caree_to_geographical(pos);
+    coord_cartesian cartesian_wgs = geo2cartesian(geo_wgs, WGS_A, WGS_B);
     coord_cartesian cartesian_ntf = wgs2ntf(cartesian_wgs);
     coord_geo geo_ntf = cartesian2geo(cartesian_ntf, NTF_A, NTF_B);
-    return calcule_Lambert(geo_ntf);
+    return proj_Lambert(geo_ntf);
 }
 
 
 /**
- * Transform WGS84 lat/lon data to Lambert 93 coordinates.
+ * Transform WGS84 to Lambert 93 coordinates.
  */
-coord_lamb Wgs84geo_to_Lambert93(coord_geo pos) {
+coord_plane Wgs84_to_Lambert93(coord_plane pos) {
 
-    return calcule_Lambert93(pos);
+    coord_geo geo_wgs = plate_caree_to_geographical(pos);
+    // the geographical coordinates are the same for WGS84 and Lambert93
+    // because of the use of the same reference ellipsoid.
+    return proj_Lambert93(geo_wgs);
 }
 
 

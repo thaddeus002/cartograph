@@ -69,7 +69,7 @@ char color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x0000FF,1,0
 
 
 /**
- * transform WGS84 geographical data to plane Extended Lambert II data.
+ * transform WGS84 data to Extended Lambert II data.
  */
 static void geo2Lamb(bln_data_t *data) {
 
@@ -79,11 +79,10 @@ static void geo2Lamb(bln_data_t *data) {
         int n;
         float xmin, xmax, ymin, ymax;
         for(n=0; n<current->nbPoints; n++) {
-            coord_geo geo;
-            geo.lambda = current->x[n];
-            geo.phi = current->y[n];
-            geo.h = 0.f ;
-            coord_lamb lamb = Wgs84geo_to_Lambert(geo);
+            coord_plane wgs;
+            wgs.X = current->x[n];
+            wgs.Y = current->y[n];
+            coord_plane lamb = Wgs84_to_Lambert(wgs);
             current->x[n] = lamb.X;
             current->y[n] = lamb.Y;
             // find the new extremun

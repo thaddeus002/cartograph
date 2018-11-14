@@ -4,7 +4,7 @@
 #include "outils.h"
 #include "coordonnees.h"
 #include <ctype.h>
-/* pour la fonction abs() */
+/* for abs() */
 #include "stdlib.h"
 
 /* zone lambert2e utile */
@@ -107,7 +107,7 @@ grille_t *read_header_data(FILE *fd){
 
     return(retour);
 }
-/* fin de read_header_data */
+/* end of read_header_data */
 
 
 
@@ -447,7 +447,7 @@ grille_t *transforme_vers_Lambert(grille_t *grille_latlon){
     grille_t *retour; /* la grille lambert */
     float latmin, latmax, lonmin, lonmax; /* zone concernée en latlon */
     coord_geo point_geo; /* coordonnées latlon à transformer en lambert */
-    coord_lamb point_lamb; /* le resultat de la transformation */
+    coord_plane point_lamb; /* le resultat de la transformation */
     int i,j; /* compteurs */
     int i1,i2,j1,j2; /* bornes */
     float deltaX, deltaY; /* résolution de la grille lambert */
@@ -490,12 +490,12 @@ grille_t *transforme_vers_Lambert(grille_t *grille_latlon){
     /* correspondance des bornes en Lambert */
     point_geo.lambda=lonmin;
     point_geo.phi=latmin;
-    point_lamb=calcule_Lambert(point_geo);
+    point_lamb=proj_Lambert(point_geo);
     retour->x1=point_lamb.X/100.; /* transformation des mètres en hectomètres */
     retour->y1=point_lamb.Y/100.;
     point_geo.lambda=lonmax;
     point_geo.phi=latmax;
-    point_lamb=calcule_Lambert(point_geo);
+    point_lamb=proj_Lambert(point_geo);
     retour->x2=point_lamb.X/100.;
     retour->y2=point_lamb.Y/100.;
 
@@ -507,17 +507,17 @@ grille_t *transforme_vers_Lambert(grille_t *grille_latlon){
     /* Elargissement vers le Nord */
     point_geo.lambda=lonmin;
     point_geo.phi=latmax;
-    point_lamb=calcule_Lambert(point_geo);
+    point_lamb=proj_Lambert(point_geo);
     if(retour->y2<point_lamb.Y/100.) retour->y2=point_lamb.Y/100.;
     /* Elargissement vers l'Est */
     point_geo.lambda=lonmax;
     point_geo.phi=latmin;
-    point_lamb=calcule_Lambert(point_geo);
+    point_lamb=proj_Lambert(point_geo);
     retour->x2=point_lamb.X/100.;
     /* Elargissement vers le Sud */
     point_geo.lambda=(lonmax+lonmin)/2;
     point_geo.phi=latmin;
-    point_lamb=calcule_Lambert(point_geo);
+    point_lamb=proj_Lambert(point_geo);
     if(retour->y1>point_lamb.Y/100.) retour->y1=point_lamb.Y/100.;
 
     fprintf(stdout,"Zone Lambert de la nouvelle grille : (%.0f;%.0f) * (%.0f;%.0f)\n",retour->x1,retour->x2,retour->y1,retour->y2);
@@ -549,7 +549,7 @@ grille_t *transforme_vers_Lambert(grille_t *grille_latlon){
         point_geo.lambda=transforme_i(i, grille_latlon->width,grille_latlon->x1, grille_latlon->x2);
         point_geo.phi=transforme_j(j, grille_latlon->height,grille_latlon->y1, grille_latlon->y2);
         /* Transformation en point lamb */
-        point_lamb=calcule_Lambert(point_geo);
+        point_lamb=proj_Lambert(point_geo);
         /* calcul de la position dans la nouvelle grille */
         k=transforme_x(point_lamb.X/100.,retour->width,retour->x1, retour->x2);
         l=transforme_y(point_lamb.Y/100.,retour->height,retour->y1, retour->y2);
