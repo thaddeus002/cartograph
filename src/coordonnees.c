@@ -32,17 +32,16 @@
 #define C93_E C_E
 
 
-
-/**********************************************************//**
- *    GEOGRAPHICAL (Lambda,Phy,h) TO PLANE (LAMBERT)          *
- *************************************************************/
-
-
 /** Converts degrees to radians */
 static float radians(float degres){ return (degres*M_PI/180); }
 
 /** Converts radians to degrees */
 static float degrees(float radians) { return (radians*180/M_PI); }
+
+
+/**********************************************************//**
+ *    GEOGRAPHICAL (Lambda,Phy,h) TO PLANE (X,Y)              *
+ *************************************************************/
 
 
 /**
@@ -80,7 +79,7 @@ coord_plane proj_Lambert(coord_geo coord) {
 
 /**
  * Apply the Lambert 93 projection of geographical coordinates. The
- * geographical coordinates are supposed tobe in the RGF93 system.
+ * geographical coordinates are supposed to be in the RGF93 system.
  * \param coord geographical coordinate of a point
  * \return the plane coordinates after the projection
  */
@@ -102,6 +101,62 @@ coord_plane ploj_PlateCaree(coord_geo coord) {
 /**********************************************************//**
  *         PLANE (X,Y) TO GEOGRAPHICAL (Lambda,Phy,h)         *
  *************************************************************/
+
+
+static double iter_pi(double pi, double L, double e) {
+    return 2*atan(pow((1+e*sin(pi))/(1-e*sin(pi)),e/2)*exp(L))-M_PI/2;
+}
+
+static double lat_from_isometric_lat(double L, double e) {
+
+    double p0 = 2*atan(exp(L))-M_PI/2;
+
+    double pi = p0;
+    double pj = iter_pi(pi, L, e);
+
+    while(fabs(pj-pi)>1e-11) {
+        pi = pj;
+        pj = iter_pi(pi, L, e);       
+    }
+
+    return pj;
+}
+
+
+static coord_geo calculate_geo_coordinates(coord_plane coord, double e, double c, double n, double l0, double xs, double ys) {
+    coord_geo result; /* return value */
+
+    double R = sqrt((coord.X-xs)*(coord.X-xs)+(coord.Y-ys)*(coord.Y-ys));
+    double gamma = atan((coord.X-xs)/(ys-coord.Y));
+    result.lambda=degrees(l0+gamma/n);
+    double L = -1/n * log(fabs(R/c));
+    result.phi=lat_from_isometric_lat(L, e);
+
+    return result;
+}
+
+
+/**
+ * Extended Lambert II projection to geographical coordinates.
+ * The geogragraphical coordinates are in the NTF system
+ * (Clarke's geoid).
+ * \param coord Lambert coordinates of a point
+ * \return the corresponding geographical coordinates
+ */
+coord_geo Lambert_to_geographical(coord_plane coord) {
+    return calculate_geo_coordinates(coord, C_E, C_C, C_N, C_L0, C_XS, C_YS);
+}
+
+
+/**
+ * Lambert 93 to geographical coordinates.
+ * The geographical coordinates are in the RGF93 system.
+ * \param coord Lambert93 coordinates of a point
+ * \return the corresponding geographical coordinates
+ */
+coord_geo Lambert93_to_geographical(coord_plane coord) {
+    return calculate_geo_coordinates(coord, C93_E, C93_C, C93_N, C93_L0, C93_XS, C93_YS);
+}
 
 
 /**
@@ -268,5 +323,3 @@ coord_plane Wgs84_to_Lambert93(coord_plane pos) {
     return proj_Lambert93(geo_wgs);
 }
 
-
- 

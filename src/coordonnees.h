@@ -91,7 +91,7 @@ coord_plane proj_Lambert(coord_geo coord);
 
 /**
  * Apply the Lambert 93 projection of geographical coordinates. The
- * geographical coordinates are supposed tobe in the RGF93 system.
+ * geographical coordinates are supposed to be in the RGF93 system.
  * \param coord geographical coordinate of a point
  * \return the plane coordinates after the projection
  */
@@ -108,6 +108,25 @@ coord_plane proj_PlateCaree(coord_geo coord);
 
 
 // plane to geographical coordinate
+
+
+/**
+ * Extended Lambert II projection to geographical coordinates.
+ * The geogragraphical coordinates are in the NTF system
+ * (Clarke's geoid).
+ * \param coord Lambert coordinates of a point
+ * \return the corresponding geographical coordinates
+ */
+coord_geo Lambert_to_geographical(coord_plane coord);
+
+
+/**
+ * Lambert 93 to geographical coordinates.
+ * The geographical coordinates are in the RGF93 system.
+ * \param coord Lambert93 coordinates of a point
+ * \return the corresponding geographical coordinates
+ */
+coord_geo Lambert93_to_geographical(coord_plane coord);
 
 
 /**
