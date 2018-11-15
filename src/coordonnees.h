@@ -152,4 +152,16 @@ coord_plane Wgs84_to_Lambert(coord_plane pos);
 coord_plane Wgs84_to_Lambert93(coord_plane pos);
 
 
+/**
+ * Transform Extended Lambert II coordinates to WGS84.
+ */
+coord_plane Lambert_to_Wgs84(coord_plane pos);
+
+/**
+ * Transform Lambert93 coordinates to WGS84.
+ */
+coord_plane Lambert93_to_Wgs84(coord_plane pos);
+
+
+
 #endif

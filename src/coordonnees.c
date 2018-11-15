@@ -323,3 +323,28 @@ coord_plane Wgs84_to_Lambert93(coord_plane pos) {
     return proj_Lambert93(geo_wgs);
 }
 
+
+/**
+ * Transform Extended Lambert II coordinates to WGS84.
+ */
+coord_plane Lambert_to_Wgs84(coord_plane pos) {
+
+    coord_geo geo_lamb = Lambert_to_geographical(pos);
+    coord_cartesian cartesian_ntf = geo2cartesian(geo_lamb, NTF_A, NTF_B);
+    coord_cartesian cartesian_wgs = ntf2wgs(cartesian_ntf);
+    coord_geo geo_wgs = cartesian2geo(cartesian_wgs, WGS_A, WGS_B);
+    return proj_PlateCaree(geo_wgs);
+}
+
+
+/**
+ * Transform Lambert93 coordinates to WGS84.
+ */
+coord_plane Lambert93_to_Wgs84(coord_plane pos) {
+
+    coord_geo geo_lamb = Lambert93_to_geographical(pos);
+    // the geographical coordinates are the same for WGS84 and Lambert93
+    // because of the use of the same reference ellipsoid.
+    return proj_PlateCaree(geo_lamb);
+}
+
