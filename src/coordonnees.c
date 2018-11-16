@@ -88,7 +88,7 @@ coord_plane proj_Lambert93(coord_geo coord) {
 }
 
 
-coord_plane ploj_PlateCaree(coord_geo coord) {
+coord_plane proj_PlateCaree(coord_geo coord) {
     coord_plane result;
     // this projection is very simple
     result.X = coord.lambda;
