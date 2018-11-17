@@ -14,19 +14,12 @@
 #include "yImage.h"
 #include "bln.h"
 #include "points.h"
+#include "coordinates.h"
 
 
 #ifndef __Y_MAP_H__
 #define __Y_MAP_H__
 
-
-
-/**
- * Supported projections
- */
-typedef enum {
-    EPSG_4326
-} yProjection;
 
 
 /**
@@ -43,7 +36,7 @@ typedef struct bbox_ {
 typedef struct map_ {
 
     yImage *image; /**< the image representing the map */
-    yProjection proj; /**< the projection used */
+    geodetic_system_t proj; /**< the projection used */
     bbox_t boundaries; /**< the coordinates in the boundaries of the image */
 } map_t;
 
@@ -72,7 +65,7 @@ int map_intercept(bbox_t *b1, bbox_t *b2);
  * Create a new map with a empty drawing.
  * \return a pointer to a newly allocated structure
  */
-map_t *map_init(yProjection proj, float latMin, float lonMin, float latMax, float lonMax, int width, int height);
+map_t *map_init(geodetic_system_t proj, float latMin, float lonMin, float latMax, float lonMax, int width, int height);
 
 
 /**
@@ -118,7 +111,7 @@ int map_trace_bln_data(map_t *map, bln_data_t *blnData, yColor *color, yColor *f
  * \param height the map's height
  * \return the created map
  */
-map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, yProjection proj, int width, int height);
+map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, geodetic_system_t proj, int width, int height);
 
 
 /**

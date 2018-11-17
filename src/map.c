@@ -87,7 +87,7 @@ int map_intercept(bbox_t *b1, bbox_t *b2){
  * Create a new map with a empty drawing.
  * \return a pointer to a newly allocated structure
  */
-map_t *map_init(yProjection proj, float latMin, float lonMin, float latMax, float lonMax, int width, int height){
+map_t *map_init(geodetic_system_t proj, float latMin, float lonMin, float latMax, float lonMax, int width, int height){
 
     int err;
     map_t *map = malloc(sizeof(map_t));
@@ -204,7 +204,7 @@ int map_trace_bln_data_empty(map_t *map, bln_data_t *blnData, yColor *color){
 
 
 
-map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, yProjection proj, int width, int height){
+map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, geodetic_system_t proj, int width, int height){
 
     bln_data_t *data = bln_read_file(blnFile);
     map_t *map = NULL;

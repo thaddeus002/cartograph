@@ -27,7 +27,7 @@ grille_t *read_header_data(FILE *fd){
     grille_t *retour;
     retour=malloc(sizeof(grille_t));
     retour->data=NULL;
-    retour->type=INDEFINI;
+    retour->type=EPSG_4326; // default value
 
     fprintf(stdout, "Lecture de l'entête du fichier source ...\n");
 
@@ -253,7 +253,7 @@ grille_t *lit_grille(char *fichier,float x1,float x2,float y1,float y2){
     grille->data=malloc(sizeof(int)*grille->width*grille->height);
     //fprintf(stdout, "Allocation de %d octets\n", sizeof(int)*grille->width*grille->height);
 
-    grille->type=INDEFINI;
+    grille->type=EPSG_4326; // default value
 
     // lecture des données
 
@@ -454,7 +454,7 @@ grille_t *transforme_vers_Lambert(grille_t *grille_latlon){
 
 
     /* sorties en echec */
-    if(grille_latlon->type != LATLON) return NULL;
+    if(grille_latlon->type != EPSG_4326) return NULL;
     if(grille_latlon->data == NULL) return NULL;
 
     /* zone utile */
@@ -469,7 +469,7 @@ grille_t *transforme_vers_Lambert(grille_t *grille_latlon){
     /* allocation de la nouvelle grille */
     retour=malloc(sizeof(grille_t));
     retour->longueur=grille_latlon->longueur;
-    retour->type=LAMBERT2E;
+    retour->type=EPSG_27572;
     retour->format=INCONNU;
     retour->hmin=0;
     retour->hmax=0;

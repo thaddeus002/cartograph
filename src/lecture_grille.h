@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "coordinates.h"
 
 /**
  * Data format types
@@ -21,14 +21,6 @@ typedef enum {
 } format_t;
 
 
-/* type de coordonnées */
-typedef enum {
-    INDEFINI=0,
-    LATLON,
-    LAMBERT2E,
-    LAMBERT93
-} type_coordonnees;
-
 /* Le contenu du fichier grille */
 typedef struct grille_ {
     /* ENTETE */
@@ -38,7 +30,7 @@ typedef struct grille_ {
     float x1,x2,y1,y2,hmin,hmax; /* bornes de la zone concernée */
     /* DONNEES */
     int *data; /* tableau double dimensions traité linéairement (1 dim) pour simplifier l'alloc dyn */
-    type_coordonnees type; /* à quoi correspondent les coordonnées i,j du fichier? */
+    geodetic_system_t type; /* what are the data coordinates ? */
 } grille_t;
 
 void info_grille(grille_t *grille);
@@ -70,6 +62,8 @@ int getdata(grille_t *grille, int i, int j);
 
 
 /* transformation de grille LATLON en LAMBERT2E */
+/** \deprecated convert raster data between geodetic systems will not be
+ * possible in this project */
 grille_t *transforme_vers_Lambert(grille_t *grille_latlon);
 
 

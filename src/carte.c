@@ -308,7 +308,7 @@ int main(int argc, char **argv){
     //reliefEurope=lit_grille_entiere("../../donnees_Etopo/etopo1_bed_c_i2.GR2");
 
     
-    reliefEurope->type=LATLON;
+    reliefEurope->type=EPSG_4326;
     info_grille(reliefEurope);
     reliefZoneII=transforme_vers_Lambert(reliefEurope);
     info_grille(reliefZoneII);

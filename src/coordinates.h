@@ -36,6 +36,16 @@
 #define __COORD_H__ 1
 
 
+/**
+ * Supported geodetic systems
+ */
+typedef enum {
+    EPSG_4326, /* WGS84 : X <=> lon, Y <=> lat */
+    EPSG_27572, /* extended Lambert II */
+    EPSG_2154 /* Lambert 93 */
+} geodetic_system_t;
+
+
 // Representing the coordinates
 
 /**
@@ -137,7 +147,7 @@ coord_geo Lambert93_to_geographical(coord_plane coord);
 coord_geo plate_caree_to_geographical(coord_plane coord);
 
 
-// Switching between geodics systems
+// Switching between geodetics systems
 
 
 /**
