@@ -12,7 +12,6 @@
 #define __BLN_H__ 1
 
 #include "fenetre.h"
-#include "coordonnees.h"
 #include "bln.h"
 
 

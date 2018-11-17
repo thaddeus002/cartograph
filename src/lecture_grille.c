@@ -2,7 +2,7 @@
 
 #include "lecture_grille.h"
 #include "outils.h"
-#include "coordonnees.h"
+#include "coordinates.h"
 #include <ctype.h>
 /* for abs() */
 #include "stdlib.h"

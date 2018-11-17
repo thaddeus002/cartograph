@@ -14,7 +14,7 @@
 #include "lecture_grille.h"
 #include "lecture_bln.h"
 #include "outils.h"
-#include "coordonnees.h"
+#include "coordinates.h"
 #include "affichage.h"
 
 #include "yImage.h"
@@ -63,8 +63,8 @@ void usage(char *nom){
 
 
 /* color ranges */
-//char color_scheme[] = "-999,0x000000,-990,0x00000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,615,0x00CCFF,1230,0x99FFFF,1845,0x33CC99,2460,0xCCFFCC,3075,0xE2FFDB,3690,0xFFFFDD,4305,0xFFE6B4,4920,0xCCB380,5535,0xFFFF66,6150,0x999933,6765,0x996633,7380,0xFF6600";
-char color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,308,0x00CCFF,615,0x99FFFF,922,0x33CC99,1230,0xCCFFCC,1532,0xE2FFDB,1845,0xFFFFDD,2152,0xFFE6B4,2460,0xCCB380,2737,0xFFFF66,3075,0x999933,3282,0x996633,4650,0xFF6600";
+char world_color_scheme[] = "-999,0x000000,-990,0x00000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,615,0x00CCFF,1230,0x99FFFF,1845,0x33CC99,2460,0xCCFFCC,3075,0xE2FFDB,3690,0xFFFFDD,4305,0xFFE6B4,4920,0xCCB380,5535,0xFFFF66,6150,0x999933,6765,0x996633,7380,0xFF6600";
+char europe_color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x0000FF,1,0x00FF00,308,0x00CCFF,615,0x99FFFF,922,0x33CC99,1230,0xCCFFCC,1532,0xE2FFDB,1845,0xFFFFDD,2152,0xFFE6B4,2460,0xCCB380,2737,0xFFFF66,3075,0x999933,3282,0x996633,4650,0xFF6600";
 
 
 
@@ -158,7 +158,7 @@ static int draw_european_countries(fenetre fen) {
 int main(int argc, char **argv){
     int i; // counter
     int width, height, depth; // taille de la fenêtre d'affichage et nb de bits pour les couleurs
-    float x1,y1,x2,y2; //coordonnées lambert max et min
+    float x1,y1,x2,y2; // max and min plane coordinates for the map
     char *file;
     FILE *fd; // data file
     grille_t *structure; // les valeurs lues dans l'entête
@@ -287,7 +287,7 @@ int main(int argc, char **argv){
     init_Xvariable();
     fen=cree_fenetre_coloree(width, height, &depth, x1, x2, y1, y2, BLEU);
 
-    init_colors(color_scheme,depth,1, hmax);
+    init_colors(europe_color_scheme,depth,1, hmax);
 
 
     /* european countries */
@@ -306,12 +306,15 @@ int main(int argc, char **argv){
     //reliefEurope=lit_grille_entiere("../etopo5.alt");
     reliefEurope=lit_grille_entiere(/*"../etopo2.gr"*/"../../donnees_Etopo/etopo2v2c_i2_MSB.ALT");
     //reliefEurope=lit_grille_entiere("../../donnees_Etopo/etopo1_bed_c_i2.GR2");
+
+    
     reliefEurope->type=LATLON;
     info_grille(reliefEurope);
     reliefZoneII=transforme_vers_Lambert(reliefEurope);
     info_grille(reliefZoneII);
     if(reliefZoneII==NULL) fprintf(stdout, "Relief not available\n");
     else affiche_grille_(fen, reliefZoneII, NULL);
+
     destroy_grille(reliefEurope);
     destroy_grille(reliefZoneII);
 
@@ -345,8 +348,6 @@ int main(int argc, char **argv){
     //display_text(fen, 3, fen.h-35, "Programme d'affichage de données géographiques\nYannick Garcia - 2006", JAUNE);
 
     /* main loop */
-    /*XSetWindowBackgroundPixmap(fen.dpy, fen.win, pixmap);
-    XClearWindow(fen.dpy, fen.win); */
     actualise_fenetre(fen);
 
     while(1) {

@@ -4,7 +4,7 @@
  */
 
 #include "lecture_bln.h"
-#include "coordonnees.h"
+#include "coordinates.h"
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -1,5 +1,5 @@
 /**
- * \file coordonnees.h
+ * \file coordinates.h
  * \brief Geographical Coordinates Transformations
  *
  * Various Geodesic systems can be used in this project, and the

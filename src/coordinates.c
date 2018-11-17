@@ -1,10 +1,10 @@
 /**
- * \file coordonnees.c
+ * \file coordinates.c
  * \brief Extensive Lambert II Geographical Coordinates Transformations
  * \since 11/04/2007
  */
 
-#include "coordonnees.h"
+#include "coordinates.h"
 
 #include <math.h>
 
