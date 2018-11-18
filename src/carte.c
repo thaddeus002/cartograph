@@ -287,7 +287,7 @@ int main(int argc, char **argv){
     init_Xvariable();
     fen=cree_fenetre_coloree(width, height, &depth, x1, x2, y1, y2, BLEU);
 
-    init_colors(europe_color_scheme,depth,1, hmax);
+    //init_colors(europe_color_scheme, depth, 1, hmax);
 
 
     /* european countries */
@@ -313,7 +313,7 @@ int main(int argc, char **argv){
     reliefZoneII=transforme_vers_Lambert(reliefEurope);
     info_grille(reliefZoneII);
     if(reliefZoneII==NULL) fprintf(stdout, "Relief not available\n");
-    else affiche_grille_(fen, reliefZoneII, NULL);
+    else affiche_grille_(fen, reliefZoneII, NULL, europe_color_scheme, depth, hmax);
 
     destroy_grille(reliefEurope);
     destroy_grille(reliefZoneII);
@@ -348,11 +348,11 @@ int main(int argc, char **argv){
     //display_text(fen, 3, fen.h-35, "Programme d'affichage de données géographiques\nYannick Garcia - 2006", JAUNE);
 
     /* main loop */
-    actualise_fenetre(fen);
+    actualise_fenetre(fen.window);
 
     while(1) {
-        XNextEvent(fen.dpy, &event);
-        i = manage_event(fen, event);
+        XNextEvent(fen.window.dpy, &event);
+        i = manage_event(fen.window, event);
         if (i==2) break;
     }
 

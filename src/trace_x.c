@@ -135,14 +135,14 @@ int main(int argc, char **argv){
 
     /* main loop */
     while(1) {
-        XNextEvent(f.dpy, &event);
-        i = manage_event(f, event);
+        XNextEvent(f.window.dpy, &event);
+        i = manage_event(f.window, event);
         if (i==2) break;
     }
 
     /* close display */
     y_log_message(Y_LOG_LEVEL_INFO, "Creating file %s", "output_trace.png");
-    sauve_fenetre_png(&f, "output_trace.png");
+    sauve_fenetre_png(&(f.window), "output_trace.png");
     fermeture(f);
     y_close_logs();
     return 0;

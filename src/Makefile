@@ -10,7 +10,7 @@ YDER_FLAGS=-I$(YDER_LOCATION) -L$(YDER_LOCATION)
 YIMAGE_LOCATION=../lib/yImage
 YIMAGE_FLAGS=-I$(YIMAGE_LOCATION) -L$(YIMAGE_LOCATION)
 
-OBJS=fenetre.o affichage.o lecture_csv.o points.o lecture_grille.o lecture_bln.o bln.o outils.o coordinates.o yXinterface.o map.o
+OBJS=window.o fenetre.o affichage.o lecture_csv.o points.o lecture_grille.o lecture_bln.o bln.o outils.o coordinates.o yXinterface.o map.o
 
 PROG=carte trace pointe
 

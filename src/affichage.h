@@ -12,13 +12,13 @@
 
 
 /** Show the data on a window */
-int affiche_grille_(fenetre f, grille_t *grille, char *palette);
+int affiche_grille_(fenetre f, grille_t *grille, char *palette, char *color_scheme, int depth, int hmax);
 
 
 /**
  * Read grid data and show them on a window.
  */
-int affiche_grille(fenetre f, char *fichier, char *palette);
+int affiche_grille(fenetre f, char *fichier, char *palette, char *color_scheme, int depth, int hmax);
 
 
 

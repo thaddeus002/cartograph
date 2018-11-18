@@ -2,8 +2,6 @@
 
 /* programme de test de la bibliothèque de lecture des shapefiles */
 
-//#include <stdio.h>
-//#include <stdlib.h>
 
 #include "shape_data.h"
 
@@ -63,9 +61,6 @@ int trace_shape(fenetre f, GenericShape *sh){
         trace_lignes(f, points+sh->parts[Np-1], N-sh->parts[Np-1],JAUNE, 1);
 
 
-
-
-
         free(points);
     } /*if(sh->shapeType==POLYGON)*/
     else {
@@ -112,9 +107,7 @@ int trace_e(Enregistrement *e){
     /* fermeture des display */
     fermeture(f);
     return 0;
-
 }
-
 
 
 

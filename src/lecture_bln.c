@@ -46,7 +46,7 @@ static int bln_show_in_window_lines(bln_data_t *data, fenetre f, int largeur, co
         Xm=0.5*(current->xmin+current->xmax); Ym=0.5*(current->ymin+current->ymax);
 
         if((current->name!=NULL)&&(current->nbPoints>=2)) {
-            display_text(f,xpoint(&f, Xm)-(strlen(current->name))*4,ypoint(&f, Ym),current->name,JAUNE);
+            display_text(f.window,xpoint(&f, Xm)-(strlen(current->name))*4,ypoint(&f, Ym),current->name,JAUNE);
         }
 
         current = current->next; 
