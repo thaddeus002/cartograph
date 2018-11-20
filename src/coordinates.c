@@ -128,9 +128,9 @@ static coord_geo calculate_geo_coordinates(coord_plane coord, double e, double c
 
     double R = sqrt((coord.X-xs)*(coord.X-xs)+(coord.Y-ys)*(coord.Y-ys));
     double gamma = atan((coord.X-xs)/(ys-coord.Y));
-    result.lambda=degrees(l0+gamma/n);
+    result.lambda=degrees(radians(l0)+gamma/n);
     double L = -1/n * log(fabs(R/c));
-    result.phi=lat_from_isometric_lat(L, e);
+    result.phi=degrees(lat_from_isometric_lat(L, e));
 
     return result;
 }
