@@ -9,6 +9,8 @@
 #ifndef __BLN_FILE_H__
 #define __BLN_FILE_H__ 1
 
+#include "coordinates.h"
+
 
 /**
  * \brief Information a of line. A BLN file may contains many of lines. So this
@@ -30,6 +32,7 @@ typedef struct bln_data_t_ {
     char *description; /**< \brief complementary description, may be a region */
     /* tables of coordinates */
     float *x, *y;
+    geodetic_system_t type; /**< \brief geodetic system of x and y coordinates */
     /* boundaries' coordinates */
     float xmin, xmax, ymin, ymax;
     struct bln_data_t_ *next; /**< \brief link to the next structur */
@@ -61,9 +64,10 @@ int bln_find_data_boundaries(bln_data_t *data, bln_boundaries_t *bound);
 /**
  * \brief Read a bln file.
  * \param filename
+ * \param type the geodetic system of the data
  * \return the content of the file
  */
-bln_data_t *bln_read_file(char *filename);
+bln_data_t *bln_read_file(char *filename, geodetic_system_t type);
 
 
 /**

@@ -206,7 +206,7 @@ int map_trace_bln_data_empty(map_t *map, bln_data_t *blnData, yColor *color){
 
 map_t *map_create_with_bln(char *blnFile, yColor *background, yColor *color, yColor *fillColor, geodetic_system_t proj, int width, int height){
 
-    bln_data_t *data = bln_read_file(blnFile);
+    bln_data_t *data = bln_read_file(blnFile, proj);
     map_t *map = NULL;
 
     if(data != NULL) {

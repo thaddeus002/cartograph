@@ -30,7 +30,7 @@ carte: carte.c libyImage $(OBJS)
 
 trace: trace.c libyImage libyder bln.o map.o points.o
 	@echo "linking in" $@
-	gcc -Wall $< bln.o map.o points.o -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
+	gcc -Wall $< bln.o map.o points.o coordinates.o -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
 
 trace_x: trace_x.c libyImage libyder $(OBJS)
 	@echo "linking in" $@
@@ -38,7 +38,7 @@ trace_x: trace_x.c libyImage libyder $(OBJS)
 
 pointe: pointe.c libyImage bln.o map.o points.o
 	@echo "linking in" $@
-	gcc -Wall $< bln.o map.o points.o -o $@ $(CFLAGS)
+	gcc -Wall $< bln.o map.o points.o coordinates.o -o $@ $(CFLAGS)
 
 pointe_x: pointe_x.c libyImage libyder $(OBJS)
 	@echo "linking in" $@
@@ -82,5 +82,5 @@ libmap.a: map.o bln.o points.o libyImage
 	# Static library
 	rm -f libmap.a
 	ar -x $(YIMAGE_LOCATION)/libyImage.a
-	ar -cvq libmap.a map.o bln.o points.o y*.o
+	ar -cvq libmap.a map.o bln.o points.o coordinates.o y*.o
 	ranlib libmap.a

@@ -85,7 +85,7 @@ int main(int argc, char **argv){
     if(argc<2) usage(argv[0]);
     printf("File to points : %s\n", argv[1]);
 
-    cities = read_points_file(argv[1]);
+    cities = read_points_file(argv[1], EPSG_4326);
     err = find_data_boundaries(cities, &bornes);
     if(err) {
         fprintf(stderr,"Bad file format : %s\n", argv[1]);

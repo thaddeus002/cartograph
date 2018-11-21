@@ -11,12 +11,15 @@
 #define __POINTS_H__ 1
 
 #include <stdio.h>
+#include "coordinates.h"
+
 
 /**
  * A pointed objet
  */
 typedef struct poste_ {
     char commune[250]; /**< object name */
+    geodetic_system_t type; /**< geodetic system for X and Y coordinates */
     float X, Y; /**< coordinates */
     int departement; /** department number if it exists */
     struct poste_ *next;
@@ -34,9 +37,10 @@ typedef struct {
 /**
  * \brief read all the points of a "point file".
  * \param csvDataFile path of the data file
+ * \param type the geodetic system of the data
  * \return the file content or NULL if reading fail
  */
-poste_t *read_points_file(char *csvDataFile);
+poste_t *read_points_file(char *csvDataFile, geodetic_system_t type);
 
 
 /**

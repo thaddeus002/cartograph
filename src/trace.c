@@ -93,7 +93,7 @@ int main(int argc, char **argv){
     if(argc<2) usage(argv[0]);
     y_log_message(Y_LOG_LEVEL_DEBUG, "File to draw : %s", argv[1]);
 
-    bln_data_t *data = bln_read_file(argv[1]);
+    bln_data_t *data = bln_read_file(argv[1], EPSG_4326);
 
     bln_find_data_boundaries(data, &bornes);
 
@@ -135,7 +135,7 @@ int main(int argc, char **argv){
     if(argc==3) {
         points_c = y_color(RED);
         text_c = y_color(WHITE);
-        poste_t *points = read_points_file(argv[2]);
+        poste_t *points = read_points_file(argv[2], EPSG_4326);
         map_point(map, points, ROUND, 3, points_c, text_c);
         // free memory
         destroy_points_data(points);

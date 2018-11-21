@@ -33,7 +33,7 @@ static void suppress_quotes(char buf[]) {
  * \param filename
  * \return the content of the file
  */
-bln_data_t *bln_read_file(char *filename){
+bln_data_t *bln_read_file(char *filename, geodetic_system_t type){
 
     bln_data_t *result = NULL;
     FILE *fd;
@@ -87,6 +87,7 @@ bln_data_t *bln_read_file(char *filename){
                 current->description = malloc(sizeof(char) * (strlen(region)+1));
                 current->x = malloc(sizeof(float)*current->nbPoints);
                 current->y = malloc(sizeof(float)*current->nbPoints);
+                current->type = type;
                 current->next = NULL;
 
                 if(current->name == NULL || current->description == NULL || current->x == NULL || current->y == NULL) {

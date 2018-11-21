@@ -140,7 +140,7 @@ static int draw_european_countries(fenetre fen) {
     int err;    
     sprintf(filename, "%s/%s", DATA_DIR_MONDE, PAYS_EUROPE);
 
-    bln_data_t *data = bln_read_file(filename);
+    bln_data_t *data = bln_read_file(filename, EPSG_4326);
     
     if(data == NULL) {
         return 1;
@@ -311,20 +311,20 @@ int main(int argc, char **argv){
 
     /* departments */
     sprintf(file, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
-    bln_data_t *departments = bln_read_file(file);
+    bln_data_t *departments = bln_read_file(file, EPSG_27572);
     bln_show_in_window(departments, fen, 2, ORANGE, 0, 0);
     bln_destroy(departments);
 
     /* rivers */
     sprintf(file, "%s/%s", data_dir, RIVIERES_BLN_FILE);
-    bln_data_t *rivers = bln_read_file(file);
+    bln_data_t *rivers = bln_read_file(file, EPSG_27572);
     bln_show_in_window(rivers, fen, 1+fin, BLEU, 0, 0);
     bln_destroy(rivers);
 
     /* points cities */
     sprintf(file, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
 
-    poste_t *points = read_points_file(file);
+    poste_t *points = read_points_file(file, EPSG_27572);
     if(points != NULL) {
         point_data(fen, points, ROND, 4+fin, MARRON_, NOIR);
         destroy_points_data(points);

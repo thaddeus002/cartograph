@@ -59,7 +59,7 @@ static poste_t *lit_enregistrement_csv(FILE *fd, int *err) {
 
 
 
-poste_t *read_points_file(char *csvDataFile){
+poste_t *read_points_file(char *csvDataFile, geodetic_system_t type){
     FILE *fd;
     poste_t *enregistrement;
     poste_t *list, *last;
@@ -80,6 +80,8 @@ poste_t *read_points_file(char *csvDataFile){
     list = NULL;
     enregistrement=lit_enregistrement_csv(fd, &err);
     while(!err) {
+
+        enregistrement->type = type;
 
         if(list==NULL) {
             list = enregistrement;
