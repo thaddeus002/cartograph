@@ -22,7 +22,7 @@ static int pointe_ville(fenetre fen, poste_t *ville, forme_t pointage, int large
 
 int point_data(fenetre fen, poste_t *points, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
     poste_t *current = points;
-    int err;
+    int err = 0;
     while(current != NULL) {
         err = pointe_ville(fen, current, pointage, largeur, cpoint, ctexte);
         current = current->next;

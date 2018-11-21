@@ -157,26 +157,7 @@ static void init_colors(char *range, int depth, int gamma_f, int hmax)
 /* end of init_colors */
 
 
-
-
-
-
-
-int affiche_grille(fenetre f, char *fichier, char *palette, char *color_scheme, int depth, int hmax){
-
-    grille_t *grille;
-    int retour;
-
-    grille=lit_grille_entiere(fichier);
-
-    retour=affiche_grille_(f, grille, palette, color_scheme, depth, hmax);
-    destroy_grille(grille);
-    return(retour);
-}
-
-
-
-int affiche_grille_(fenetre f, grille_t *grille, char *palette, char *color_scheme, int depth, int hmax){
+int affiche_grille(fenetre f, grille_t *grille, char *palette, char *color_scheme, int depth, int hmax){
 
     float x1, x2, y1, y2; //coordonees de la zone utile (données à afficher (intersection avec) zone de la fenetre)
     int i1, i2, j1, j2; // correspondance en numéro de point de grille

@@ -22,12 +22,13 @@
 
 #include "outils.h"
 #include "window.h"
+#include "coordinates.h"
 
 
 typedef struct {
     window_t window;
-
-    /* flat coordinates (may be Lambert) of the window's bounds */
+    geodetic_system_t gs;
+    /* flat coordinates of the window's bounds */
     float x1, x2, y1, y2;
 } fenetre;
 
@@ -74,11 +75,11 @@ int window_draw_lines(fenetre f, float *x, float *y, int nb, couleur c, int w);
 int window_fill_polygon(fenetre f, float *x, float *y, int nb, couleur c);
 
 /**
- * Draw a point in Lambert's coordinates.
+ * Draw a point in plane coordinates.
  */
-int pointe_pixel(fenetre f, float xLamb, float yLamb, int L, Pixel p, forme_t forme);
+int pointe_pixel(fenetre f, float x, float y, int L, Pixel p, forme_t forme);
 
-int pointe(fenetre f, float xLamb, float yLamb, int L, couleur c, forme_t forme);
+int pointe(fenetre f, float x, float y, int L, couleur c, forme_t forme);
 
 void trace_echelle(fenetre fen, couleur cdessin, couleur ctexte);
 

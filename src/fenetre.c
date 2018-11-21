@@ -18,16 +18,18 @@ int ypoint(fenetre *f, float b) {
 
 
 
-/* retourne w=0 si echec */
+/**
+ * \return w=0 if fail
+ */
 fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float x2, float y1, float y2, couleur c){
 
     fenetre retour;
     retour.window = create_window_with_background_color(width, height, depth, c);
+    retour.gs = EPSG_2154; //default value
     retour.x1=x1; retour.x2=x2; retour.y1=y1; retour.y2=y2;
 
     return(retour);
 }
-/* fin de la fonction cree_fenetre_coloree */
 
 
 /* retourne w=0 si echec */
@@ -36,34 +38,32 @@ fenetre cree_fenetre(int width, int height, int *depth, float x1, float x2, floa
 }
 
 /* trace un point en fct des coordonnées Lambert */
-int pointe_pixel(fenetre f, float xLamb, float yLamb, int L, /*couleur c*/Pixel p, forme_t forme) {
-    int x, y; // les coordonnées sur la carte
+int pointe_pixel(fenetre f, float x, float y, int L, /*couleur c*/Pixel p, forme_t forme) {
+    int i, j; // les coordonnées sur la carte
     int k, l; //compteurs
     //int L=1; //demi largeur du point
 
     /* passage des coordonnées cartes aux coordonnées fenêtre */
-    x=transforme_x(xLamb, f.window.w, f.x1, f.x2)-1; /* les coord fenetre vont de 0 à w-1 */
-    y=transforme_y(yLamb, f.window.h, f.y1, f.y2)-1;
-    //printf("%f %d %f %f %d\n", xLamb, f.w, f.x1, f.x2, x);
+    i=transforme_x(x, f.window.w, f.x1, f.x2)-1; /* les coord fenetre vont de 0 à w-1 */
+    j=transforme_y(y, f.window.h, f.y1, f.y2)-1;
 
-    /*if(x==-2)*/if(x<0) return(1);
-    /*if(y==-2)*/if(y<0) return(1);
-    if((x>f.window.w)||(y>f.window.h)) return(2);
+    if(i<0) return(1);
+    if(j<0) return(1);
+    if((i>f.window.w)||(j>f.window.h)) return(2);
 
     if(L==0) forme=CARRE;
-    //printf("%d %d : ",x,y);
     if (forme==CARRE) // carré
         for(k=-L; k<=L; k++)
             for(l=-L; l<=L; l++)
-                do_output_pixel(f.window,x+l,y+k, p);
+                do_output_pixel(f.window,i+l,j+k, p);
     else if(forme==TRIANGLE_) // triangle
         for(k=-L; k<=L+1; k++)
             for(l=-(k+L)*2/3; l<=(k+L)*2/3; l++)
-                do_output_pixel(f.window,x+l,y+k, p);
+                do_output_pixel(f.window,i+l,j+k, p);
     else if(forme==ROND) //rond
         for(k=-L; k<=L; k++)
             for(l=-floor(sqrt(L*L*10000-10000*k*k)/100); l<floor(sqrt(10000*L*L-10000*k*k)/100); l++)
-                do_output_pixel(f.window,x+l,y+k, p);
+                do_output_pixel(f.window,i+l,j+k, p);
 
     /* affichage du résultat dans la fenetre */
     //actualise_fenetre(f); //trop lent si on le fait pour chaque point
@@ -71,8 +71,8 @@ int pointe_pixel(fenetre f, float xLamb, float yLamb, int L, /*couleur c*/Pixel 
 }
 
 
-int pointe(fenetre f, float xLamb, float yLamb, int L, couleur c, forme_t forme) {
-    return(pointe_pixel(f, xLamb, yLamb, L, pix_colore[c], forme));
+int pointe(fenetre f, float x, float y, int L, couleur c, forme_t forme) {
+    return(pointe_pixel(f, x, y, L, pix_colore[c], forme));
 }
 
 

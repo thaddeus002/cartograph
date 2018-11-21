@@ -268,26 +268,18 @@ int main(int argc, char **argv){
         if ((transforme_y(y1,structure->height,structure->y1,structure->y2)-transforme_y(y2,structure->height,structure->y1,structure->y2)<height)||(height==0))  height=(transforme_y(y1,structure->height,structure->y1,structure->y2)-transforme_y(y2,structure->height,structure->y1,structure->y2));
     }
 
-    /*if( (x2!=0)&&(x1!=0)&&((x2-x1<width)|| (width==0)) ) width=(x2-x1)/2;
-    if( (y2!=0)&&(y1!=0)&&((y2-y1<height)|| (height==0)) ) height=(y2-y1)/2; // pourquoi /2 ?*/
-
-
-    if(width==0) width=structure->width+250*(!fin);//+400;
-    if (height==0) height=structure->height-150*(!fin);
-    if(x1==0) x1=structure->x1/*-1500*/;
+    if(width==0) width=structure->width+250*(!fin);
+    if(height==0) height=structure->height-150*(!fin);
+    if(x1==0) x1=structure->x1;
     if(x2==0) x2=structure->x2+2500*(!fin);
     if(y1==0) y1=structure->y1-1000*(!fin);
-    if(y2==0) y2=structure->y2;//*0.93;
-//  width=(x2-x1)/10+1; height=(y2-y1)/10+1;
-
+    if(y2==0) y2=structure->y2;
 
     fclose(fd);
 
     /* Open window */
     init_Xvariable();
     fen=cree_fenetre_coloree(width, height, &depth, x1, x2, y1, y2, BLEU);
-
-    //init_colors(europe_color_scheme, depth, 1, hmax);
 
 
     /* european countries */
@@ -307,17 +299,15 @@ int main(int argc, char **argv){
     reliefEurope=lit_grille_entiere(/*"../etopo2.gr"*/"../../donnees_Etopo/etopo2v2c_i2_MSB.ALT");
     //reliefEurope=lit_grille_entiere("../../donnees_Etopo/etopo1_bed_c_i2.GR2");
 
-    
     reliefEurope->type=EPSG_4326;
     info_grille(reliefEurope);
     reliefZoneII=transforme_vers_Lambert(reliefEurope);
     info_grille(reliefZoneII);
     if(reliefZoneII==NULL) fprintf(stdout, "Relief not available\n");
-    else affiche_grille_(fen, reliefZoneII, NULL, europe_color_scheme, depth, hmax);
+    else affiche_grille(fen, reliefZoneII, NULL, europe_color_scheme, depth, hmax);
 
     destroy_grille(reliefEurope);
     destroy_grille(reliefZoneII);
-
 
     /* departments */
     sprintf(file, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
