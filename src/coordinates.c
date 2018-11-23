@@ -348,3 +348,72 @@ coord_plane Lambert93_to_Wgs84(coord_plane pos) {
     return proj_PlateCaree(geo_lamb);
 }
 
+
+coord_plane coordinates_convert(coord_plane pos, geodetic_system_t from, geodetic_system_t to) {
+
+    coord_plane result = { .X=pos.X, .Y=pos.Y };
+
+    if(to == from) {
+        return result;
+    }
+
+    coord_geo geo0;
+    double a0, b0;
+    switch(from) {
+    case EPSG_4326 :
+        geo0 = plate_caree_to_geographical(pos);
+        a0 = WGS_A;
+        b0 = WGS_B;
+        break;
+    case EPSG_27572:
+        geo0 = Lambert_to_geographical(pos);
+        a0 = NTF_A;
+        b0 = NTF_B;
+        break;
+    case EPSG_2154:
+        geo0 = Lambert93_to_geographical(pos);
+        a0 = WGS_A;
+        b0 = WGS_B;
+        break;
+    }
+
+    coord_cartesian cartesian0 = geo2cartesian(geo0, a0, b0);
+    coord_cartesian cartesian1 = { .X=cartesian0.X, .Y=cartesian0.Y };
+
+    if ((from == EPSG_4326 || from == EPSG_2154) && (to == EPSG_27572)) {
+        cartesian1 = wgs2ntf(cartesian0);
+    } else if ((from == EPSG_27572) && (to == EPSG_4326 || to == EPSG_2154)) {
+        cartesian0 = ntf2wgs(cartesian1);
+    }
+
+    double a1, b1;
+    coord_plane (*proj)(coord_geo);
+    switch(to) {
+    case EPSG_4326 :
+        a1 = WGS_A;
+        b1 = WGS_B;
+        proj = proj_PlateCaree;
+        break;
+    case EPSG_27572:
+        a1 = NTF_A;
+        b1 = NTF_B;
+        proj = proj_Lambert;
+        break;
+    case EPSG_2154:
+        a1 = WGS_A;
+        b1 = WGS_B;
+        proj = proj_Lambert93;
+        break;
+    }
+    
+    coord_geo geo1 = cartesian2geo(cartesian1, a1, b1);
+    if(from==EPSG_4326 && to!=EPSG_4326) {
+        // to have Lambert data in hectometers
+        // must find a better way to do this
+        coord_plane pos1 = proj(geo1);
+        pos1.X=pos1.X/100;
+        pos1.Y=pos1.Y/100;
+        return pos1;
+    }
+    return proj(geo1);
+}

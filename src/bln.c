@@ -240,3 +240,66 @@ int bln_write_file(bln_data_t *data, char *filename){
     return 0;
 }
 
+
+/**
+ * create a new variable to fit a given geodetic system.
+ * \param line the data struct to adapt
+ * \param type the target geodetic system
+ * \return a newly allocated struct or NULL if memory allocation failed
+ */
+bln_data_t *bln_toGS(bln_data_t *line, geodetic_system_t type) {
+
+    bln_data_t *result = malloc(sizeof(bln_data_t));
+
+    if(result==NULL) {
+        return NULL;
+    }
+
+    result->nbPoints = line->nbPoints;
+    result->closed = line->closed;
+    result->name = malloc(sizeof(char)*(strlen(line->name)+1));
+    result->description = malloc(sizeof(char)*(strlen(line->description)+1));
+    result->x = malloc(sizeof(float)*line->nbPoints);
+    result->y = malloc(sizeof(float)*line->nbPoints);
+    result->type = type;
+    result->next = NULL;
+
+    if(result->name==NULL || result->description==NULL || result->x == NULL || result->y ==  NULL) {
+        bln_destroy(result);
+        return NULL;
+    }
+
+    strcpy(result->name, line->name);
+    strcpy(result->description, line->description);
+
+    int i;
+    
+    for(i = 0; i < line->nbPoints; i++) {
+
+        coord_plane ori = { .X=line->x[i], .Y=line->y[i] };
+        coord_plane res = coordinates_convert(ori, line->type, type);
+
+        result->x[i] = res.X;
+        result->y[i] = res.Y;
+
+        if(i==0) {
+            result->xmin = res.X;
+            result->xmax = res.X;
+            result->ymin = res.Y;
+            result->ymax = res.Y;
+        } else {
+            if(res.X < result->xmin) {
+                result->xmin=res.X;
+            } else if(res.X > result->xmax) {
+                result->xmax=res.X;
+            }
+            if(res.Y < result->ymin) {
+                result->ymin=res.Y;
+            } else if(res.Y > result->ymax) {
+                result->ymax=res.Y;
+            }
+        }
+    }
+
+    return result;
+}

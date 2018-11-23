@@ -68,73 +68,6 @@ char europe_color_scheme[] =  "-999,0x000000,-990,0x000000,-989,0x0000FF,0,0x000
 
 
 
-/**
- * transform WGS84 data to Extended Lambert II data.
- */
-static void geo2Lamb(bln_data_t *data) {
-
-    bln_data_t *current = data;
-
-    while(current != NULL) {
-        int n;
-        float xmin, xmax, ymin, ymax;
-        for(n=0; n<current->nbPoints; n++) {
-            coord_plane wgs;
-            wgs.X = current->x[n];
-            wgs.Y = current->y[n];
-            coord_plane lamb = Wgs84_to_Lambert(wgs);
-            current->x[n] = lamb.X;
-            current->y[n] = lamb.Y;
-            // find the new extremun
-            if(n==0) {
-                xmin=lamb.X;
-                xmax=lamb.X;
-                ymin=lamb.Y;
-                ymax=lamb.Y;
-            } else {
-                if(lamb.X < xmin) {
-                    xmin = lamb.X;
-                } else if(lamb.X > xmax) {
-                    xmax = lamb.X;
-                }
-                if(lamb.Y < ymin) {
-                    ymin = lamb.Y;
-                } else if(lamb.Y > ymax) {
-                    ymax = lamb.Y;
-                }
-            }
-        }
-        current->xmin = xmin;
-        current->xmax = xmax;
-        current->ymin = ymin;
-        current->ymax = ymax;
-        current = current->next; 
-    }
-}
-
-
-/**
- * Internal transformation to have data in hectometers.
- */
-static void lambInHm(bln_data_t *data) {
-
-    bln_data_t *current = data;
-
-    while(current != NULL) {
-        int n;
-        for(n=0; n<current->nbPoints; n++) {
-            current->x[n] = current->x[n]/100;
-            current->y[n] = current->y[n]/100;
-        }
-        current->xmin = current->xmin/100;
-        current->xmax = current->xmax/100;
-        current->ymin = current->ymin/100;
-        current->ymax = current->ymax/100;
-        current = current->next; 
-    }
-}
-
-
 static int draw_european_countries(fenetre fen) {
     char filename[1000];
     int err;    
@@ -146,9 +79,6 @@ static int draw_european_countries(fenetre fen) {
         return 1;
     }
 
-    geo2Lamb(data);
-    lambInHm(data);
-    
     err = bln_show_in_window(data, fen, 1, BLANC, 1, MARRON);
     bln_destroy(data);
     return err;
@@ -280,7 +210,7 @@ int main(int argc, char **argv){
     /* Open window */
     init_Xvariable();
     fen=cree_fenetre_coloree(width, height, &depth, x1, x2, y1, y2, BLEU);
-
+    fen.gs = EPSG_27572;
 
     /* european countries */
     if(!fin){

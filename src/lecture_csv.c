@@ -9,12 +9,15 @@
 #include <string.h>
 
 
+
 static int pointe_ville(fenetre fen, poste_t *ville, forme_t pointage, int largeur, couleur cpoint, couleur ctexte){
     int p; // pointing success
+    poste_t city = { .X=ville->X, .Y=ville->Y, .type=ville->type };
 
-    p=pointe(fen, ville->X, ville->Y, largeur, cpoint, pointage);
+    point_toGS(&city, fen.gs);
+    p=pointe(fen, city.X, city.Y, largeur, cpoint, pointage);
 
-    if(p==0) display_text(fen.window, xpoint(&fen, ville->X)+9, ypoint(&fen, ville->Y), ville->commune, ctexte);
+    if(p==0) display_text(fen.window, xpoint(&fen, city.X)+9, ypoint(&fen, city.Y), ville->commune, ctexte);
 
     return p ;
 }

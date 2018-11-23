@@ -167,11 +167,21 @@ coord_plane Wgs84_to_Lambert93(coord_plane pos);
  */
 coord_plane Lambert_to_Wgs84(coord_plane pos);
 
+
 /**
  * Transform Lambert93 coordinates to WGS84.
  */
 coord_plane Lambert93_to_Wgs84(coord_plane pos);
 
+
+/**
+ * Generic plane coordinates conversion between two geoditic systems.
+ * \param pos the coordinates in the origin system
+ * \param to the origin geodetic system
+ * \param from the target geodetic system
+ * \return the coordinates in the target system
+ */
+coord_plane coordinates_convert(coord_plane pos, geodetic_system_t from, geodetic_system_t to);
 
 
 #endif

@@ -82,5 +82,13 @@ void bln_destroy(bln_data_t *data);
 int bln_write_file(bln_data_t *data, char *filename);
 
 
+/**
+ * create a new variable to fit a given geodetic system.
+ * \param line the data struct to adapt
+ * \param type the target geodetic system
+ * \return a newly allocated struct or NULL if memory allocation failed
+ */
+bln_data_t *bln_toGS(bln_data_t *line, geodetic_system_t type);
+
 
 #endif

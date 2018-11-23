@@ -138,3 +138,18 @@ void destroy_points_data(poste_t *points) {
         current = next;
     }
 }
+
+
+/**
+ * Modify a poste_t variable to fit a given geodetic system.
+ * \param city the struct to modify
+ * \param type the target geodetic system
+ */
+void point_toGS(poste_t *city, geodetic_system_t type) {
+
+    coord_plane coord = { .X=city->X, .Y=city->Y };
+    coord_plane result = coordinates_convert(coord, city->type, type);
+    city->X = result.X;
+    city->Y = result.Y;
+    city->type = type;
+}

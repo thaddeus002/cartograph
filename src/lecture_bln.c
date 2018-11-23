@@ -31,24 +31,30 @@ static int bln_show_in_window_lines(bln_data_t *data, fenetre f, int largeur, co
         int n = 0; // point index
         float Xm,Ym; // where show the countries' names
 
+        bln_data_t *line = bln_toGS(current, f.gs);
+        if(line == NULL) goto completed;
+
+
         if(ligne == 0) {
-            while(n<current->nbPoints) {
-                pointe(f,current->x[n],current->y[n],largeur,c,CARRE);
+            while(n<line->nbPoints) {
+                pointe(f,line->x[n],line->y[n],largeur,c,CARRE);
                 n++;
             }
         } else {
-            if(remplir && current->x[0]==current->x[current->nbPoints-1] && current->y[0]==current->y[current->nbPoints-1] ) {
-                window_fill_polygon(f, current->x, current->y, current->nbPoints, remplissage);
+            if(remplir && line->x[0]==line->x[line->nbPoints-1] && line->y[0]==line->y[line->nbPoints-1] ) {
+                window_fill_polygon(f, line->x, line->y, line->nbPoints, remplissage);
             }
-            window_draw_lines(f, current->x, current->y, current->nbPoints, c, largeur);
+            window_draw_lines(f, line->x, line->y, line->nbPoints, c, largeur);
         }
 
-        Xm=0.5*(current->xmin+current->xmax); Ym=0.5*(current->ymin+current->ymax);
+        Xm=0.5*(line->xmin+line->xmax); Ym=0.5*(line->ymin+line->ymax);
 
-        if((current->name!=NULL)&&(current->nbPoints>=2)) {
-            display_text(f.window,xpoint(&f, Xm)-(strlen(current->name))*4,ypoint(&f, Ym),current->name,JAUNE);
+        if((line->name!=NULL)&&(line->nbPoints>=2)) {
+            display_text(f.window,xpoint(&f, Xm)-(strlen(line->name))*4,ypoint(&f, Ym),line->name,JAUNE);
         }
 
+        bln_destroy(line);
+        completed:
         current = current->next; 
     }
     return 0;

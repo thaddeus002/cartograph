@@ -59,4 +59,11 @@ int find_data_boundaries(poste_t *list, data_boundaries_t *bound);
 void destroy_points_data(poste_t *points);
 
 
+/**
+ * Modify a poste_t variable to fit a given geodetic system.
+ * \param city the struct to modify
+ * \param type the target geodetic system
+ */
+void point_toGS(poste_t *city, geodetic_system_t type);
+
 #endif
