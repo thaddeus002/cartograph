@@ -357,6 +357,14 @@ coord_plane coordinates_convert(coord_plane pos, geodetic_system_t from, geodeti
         return result;
     }
 
+    coord_plane posl;
+    if(from!=EPSG_4326) {
+        // Lambert data are in hectometers
+        // TODO must find a better way to do this
+        posl.X=pos.X*100;
+        posl.Y=pos.Y*100;
+    }
+
     coord_geo geo0;
     double a0, b0;
     switch(from) {
@@ -366,12 +374,12 @@ coord_plane coordinates_convert(coord_plane pos, geodetic_system_t from, geodeti
         b0 = WGS_B;
         break;
     case EPSG_27572:
-        geo0 = Lambert_to_geographical(pos);
+        geo0 = Lambert_to_geographical(posl);
         a0 = NTF_A;
         b0 = NTF_B;
         break;
     case EPSG_2154:
-        geo0 = Lambert93_to_geographical(pos);
+        geo0 = Lambert93_to_geographical(posl);
         a0 = WGS_A;
         b0 = WGS_B;
         break;
@@ -383,7 +391,7 @@ coord_plane coordinates_convert(coord_plane pos, geodetic_system_t from, geodeti
     if ((from == EPSG_4326 || from == EPSG_2154) && (to == EPSG_27572)) {
         cartesian1 = wgs2ntf(cartesian0);
     } else if ((from == EPSG_27572) && (to == EPSG_4326 || to == EPSG_2154)) {
-        cartesian0 = ntf2wgs(cartesian1);
+        cartesian1 = ntf2wgs(cartesian0);
     }
 
     double a1, b1;
@@ -409,7 +417,7 @@ coord_plane coordinates_convert(coord_plane pos, geodetic_system_t from, geodeti
     coord_geo geo1 = cartesian2geo(cartesian1, a1, b1);
     if(from==EPSG_4326 && to!=EPSG_4326) {
         // to have Lambert data in hectometers
-        // must find a better way to do this
+        // TODO must find a better way to do this
         coord_plane pos1 = proj(geo1);
         pos1.X=pos1.X/100;
         pos1.Y=pos1.Y/100;

@@ -85,6 +85,63 @@ static int draw_european_countries(fenetre fen) {
 }
 
 
+static int draw_departments(fenetre fen, char *data_dir) {
+
+    char filename[1000];
+    int err;
+    sprintf(filename, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
+
+    bln_data_t *departments = bln_read_file(filename, EPSG_27572);
+
+    if(departments == NULL) {
+        return 1;
+    }
+
+    err = bln_show_in_window(departments, fen, 2, ORANGE, 0, 0);
+    bln_destroy(departments);
+
+    return err;
+}
+
+
+static int draw_rivers(fenetre fen, char *data_dir, int fin) {
+
+    char filename[1000];
+    int err;
+    sprintf(filename, "%s/%s", data_dir, RIVIERES_BLN_FILE);
+
+    bln_data_t *rivers = bln_read_file(filename, EPSG_27572);
+
+    if(rivers == NULL) {
+        return 1;
+    }
+
+    err = bln_show_in_window(rivers, fen, 1+fin, BLEU, 0, 0);
+    bln_destroy(rivers);
+
+    return err;
+}
+
+
+static int point_cities(fenetre fen, int fin) {
+
+    char filename[1000];
+    int err;
+    sprintf(filename, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
+
+    poste_t *points = read_points_file(filename, EPSG_27572);
+    if(points == NULL) {
+        return 1;
+    }
+    
+    err = point_data(fen, points, ROND, 4+fin, MARRON_, NOIR);
+    destroy_points_data(points);
+
+    return err;
+}
+
+
+
 int main(int argc, char **argv){
     int i; // counter
     int width, height, depth; // taille de la fenêtre d'affichage et nb de bits pour les couleurs
@@ -176,6 +233,7 @@ int main(int argc, char **argv){
         data_file=(char*)malloc((strlen(data_dir)+200)*sizeof(char));
         strcpy(data_file,file);
     }
+    free(file);
 
     /* open file */
     if(!(fd=fopen(data_file, "r"))) {
@@ -240,25 +298,13 @@ int main(int argc, char **argv){
     destroy_grille(reliefZoneII);
 
     /* departments */
-    sprintf(file, "%s/%s", data_dir, DEPARTEMENTS_BLN_FILE);
-    bln_data_t *departments = bln_read_file(file, EPSG_27572);
-    bln_show_in_window(departments, fen, 2, ORANGE, 0, 0);
-    bln_destroy(departments);
+    draw_departments(fen, data_dir);
 
     /* rivers */
-    sprintf(file, "%s/%s", data_dir, RIVIERES_BLN_FILE);
-    bln_data_t *rivers = bln_read_file(file, EPSG_27572);
-    bln_show_in_window(rivers, fen, 1+fin, BLEU, 0, 0);
-    bln_destroy(rivers);
+    draw_rivers(fen, data_dir, fin);
 
-    /* points cities */
-    sprintf(file, "%s/%s", data_dir, PREFECTURES_CVS_FILE);
-
-    poste_t *points = read_points_file(file, EPSG_27572);
-    if(points != NULL) {
-        point_data(fen, points, ROND, 4+fin, MARRON_, NOIR);
-        destroy_points_data(points);
-    }
+    /* cities */
+    point_cities(fen, fin);
 
 
     /* ECHELLE  */
@@ -279,7 +325,6 @@ int main(int argc, char **argv){
     if(verbose) fprintf(stderr, "\nMaximal altitud : %d, for X=%d, Y=%d\n\n", hmax, xmax, ymax);
 
     /* free memory and close display */
-    free(file);
     fermeture(fen);
     printf("End of program\n");
 

@@ -25,7 +25,7 @@ fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float 
 
     fenetre retour;
     retour.window = create_window_with_background_color(width, height, depth, c);
-    retour.gs = EPSG_2154; //default value
+    retour.gs = EPSG_4326; //default value
     retour.x1=x1; retour.x2=x2; retour.y1=y1; retour.y2=y2;
 
     return(retour);
