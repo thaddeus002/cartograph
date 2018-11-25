@@ -84,6 +84,34 @@ static int draw_european_countries(fenetre fen) {
     return err;
 }
 
+static int draw_relief(fenetre fen, int width, int height, int depth, int hmax) {
+
+    grille_t *reliefEurope; /* relief etopo sur une plus grande zone */
+    grille_t *reliefZoneII; /* the same data in extended Lambert II */
+
+    /* Affichage de la grille de relief */
+    if(verbose) fprintf(stderr, "\nReading data from '%s'\n", data_file);
+    if(verbose) fprintf(stderr, "\nMap %dx%d\n\n",width, height);
+
+    //affiche_grille(fen, "etopo2.gr_1", NULL);
+    //affiche_grille(fen, "../etopo5.alt", NULL);
+    //reliefEurope=lit_grille_entiere("../etopo5.alt");
+    reliefEurope=lit_grille_entiere(/*"../etopo2.gr"*/"../../donnees_Etopo/etopo2v2c_i2_MSB.ALT");
+    //reliefEurope=lit_grille_entiere("../../donnees_Etopo/etopo1_bed_c_i2.GR2");
+
+    reliefEurope->type=EPSG_4326;
+    info_grille(reliefEurope);
+    reliefZoneII=transforme_vers_Lambert(reliefEurope);
+    info_grille(reliefZoneII);
+    if(reliefZoneII==NULL) fprintf(stdout, "Relief not available\n");
+    else affiche_grille(fen, reliefZoneII, NULL, europe_color_scheme, depth, hmax);
+
+    destroy_grille(reliefEurope);
+    destroy_grille(reliefZoneII);
+
+    return 0;
+}
+
 
 static int draw_departments(fenetre fen, char *data_dir) {
 
@@ -149,15 +177,10 @@ int main(int argc, char **argv){
     char *file;
     FILE *fd; // data file
     grille_t *structure; // les valeurs lues dans l'entête
-    /*float*//*int n;*/ //valeur lue dans le fichier
-    //char lu[10]; // lecture d'une chaine
     int hmax, xmax, ymax; //altitude maximale et sa position en coordonnées pixel
     XEvent event; //evenement clavier ou souris
-    //poste prefecture; // lecture du fichier postes
     fenetre fen; // la fenetre d'affichege de la carte
     int fin=0; // affichage haute résolution
-    grille_t *reliefEurope; /* relief etopo sur une plus grande zone */
-    grille_t *reliefZoneII; /* la même en lambert */
 
     /* init */
     verbose=0;
@@ -277,25 +300,8 @@ int main(int argc, char **argv){
         }
     }
 
-    /* Affichage de la grille de relief */
-    if(verbose) fprintf(stderr, "\nReading data from '%s'\n", data_file);
-    if(verbose) fprintf(stderr, "\nMap %dx%d\n\n",width, height);
-
-    //affiche_grille(fen, "etopo2.gr_1", NULL);
-    //affiche_grille(fen, "../etopo5.alt", NULL);
-    //reliefEurope=lit_grille_entiere("../etopo5.alt");
-    reliefEurope=lit_grille_entiere(/*"../etopo2.gr"*/"../../donnees_Etopo/etopo2v2c_i2_MSB.ALT");
-    //reliefEurope=lit_grille_entiere("../../donnees_Etopo/etopo1_bed_c_i2.GR2");
-
-    reliefEurope->type=EPSG_4326;
-    info_grille(reliefEurope);
-    reliefZoneII=transforme_vers_Lambert(reliefEurope);
-    info_grille(reliefZoneII);
-    if(reliefZoneII==NULL) fprintf(stdout, "Relief not available\n");
-    else affiche_grille(fen, reliefZoneII, NULL, europe_color_scheme, depth, hmax);
-
-    destroy_grille(reliefEurope);
-    destroy_grille(reliefZoneII);
+    /* relief */
+    draw_relief(fen, width, height, depth, hmax);
 
     /* departments */
     draw_departments(fen, data_dir);
