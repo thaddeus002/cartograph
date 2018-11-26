@@ -29,42 +29,48 @@
 
 /* tracé d'une forme générique */
 int trace_shape(fenetre f, GenericShape *sh){
-    XPoint *points; /* la forme */
-    int N; /*nb de points*/
-    int Np; /* nb de parties */
-    int i; /* compteur */
 
-    if(sh==NULL) return(1);
+    if(sh==NULL) return 1;
 
     if((sh->shapeType==POLYGON) || (sh->shapeType==POLYLINE)){
+
+        int N; /*nb de points*/
+        int Np; /* nb de parties */
+        int i; /* compteur */
+
         N=sh->numPoints;
-        points=malloc(N*sizeof(XPoint));
-        if(points==NULL){
-            //fprintf(stderr, "Allocation mémoire impossible\n");
-            return(2);
+        
+        float *X = malloc(N*sizeof(float));
+        float *Y = malloc(N*sizeof(float));
+
+        if(X==NULL || Y==NULL) {
+            if(X!=NULL) free(X);
+            if(Y!=NULL) free(Y);
+            return 2;
         }
 
         for(i=0; i<=N-1; i++){
-            points[i].x=xpoint(&f, sh->points[i].x);
-            points[i].y=ypoint(&f, sh->points[i].y);
+            X[i] = sh->points[i].x;
+            Y[i] = sh->points[i].y;
         }
-
 
         Np=sh->numParts;
         for(i=0; i<=Np-2; i++){
-            if(/*(*/sh->shapeType==POLYGON/*)&&(points[sh->parts[i]].x==points[sh->parts[i+1]].x)&&(points[sh->parts[i]].y==points[sh->parts[i+1]].y)*/)
-                remplit(f,points+sh->parts[i],sh->parts[i+1]-sh->parts[i],ROUGE);
-            trace_lignes(f,points+sh->parts[i],sh->parts[i+1]-sh->parts[i],JAUNE,1);
+            int n = sh->parts[i+1]-sh->parts[i];
+            if(sh->shapeType==POLYGON)
+                window_fill_polygon(f, X+sh->parts[i], Y+sh->parts[i], n, ROUGE); 
+            window_draw_lines(f, X+sh->parts[i], Y+sh->parts[i], n, JAUNE, 1);
         }
-        if(/*(*/sh->shapeType==POLYGON/*)&&(points[sh->parts[Np-1]].x==points[N-1].x)&&(points[Np-1].y==points[N-1].y)*/)
-            remplit(f, points+sh->parts[Np-1],N-sh->parts[Np-1],ROUGE);
-        trace_lignes(f, points+sh->parts[Np-1], N-sh->parts[Np-1],JAUNE, 1);
+        int n = N-sh->parts[Np-1];
+        if(sh->shapeType==POLYGON)
+            window_fill_polygon(f, X+sh->parts[Np-1], Y+sh->parts[Np-1], n, ROUGE);
+        window_draw_lines(f, X+sh->parts[Np-1], Y+sh->parts[Np-1], n, JAUNE, 1);
 
-
-        free(points);
+        free(X);
+        free(Y);
     } /*if(sh->shapeType==POLYGON)*/
     else {
-        fprintf(stderr, "Forme non prise en compte : %d\n", sh->shapeType);
+        fprintf(stderr, "Non supported shape : %d\n", sh->shapeType);
     }
 
     return(0);
@@ -99,8 +105,8 @@ int trace_e(Enregistrement *e){
 
     /* Boucle principale*/
     while(1) {
-        XNextEvent(f.dpy, &event);
-        i = manage_event(f, event);
+        XNextEvent(f.window.dpy, &event);
+        i = manage_event(f.window, event);
         if (i==2) break;
     }
 

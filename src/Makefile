@@ -68,8 +68,8 @@ mrproper: clean
 	rm -rf $(PROG) *.a
 
 # ajout des shapes - en test
-lit: lit.c shape_data.o  shape_types.o outils.o fenetre.o
-	gcc -o lit lit.c shape_data.o shape_types.o fenetre.o outils.o -L/usr/X11R6/lib -lX11 -lm
+lit: lit.c shape_data.o shape_types.o outils.o fenetre.o window.o yXinterface.o
+	gcc -o lit lit.c shape_data.o shape_types.o fenetre.o window.o outils.o yXinterface.o -L/usr/X11R6/lib -lX11 -lm -L../lib/yImage -lyImage -lpng
 
 draw_background: draw_background.c libmap.a
 	gcc -o $@ $< -I$(YIMAGE_LOCATION) -L. -lmap -lm -lz -lpng

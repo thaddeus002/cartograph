@@ -40,13 +40,6 @@ fenetre cree_fenetre(int width, int height, int *depth, float x1, float x2, floa
 fenetre cree_fenetre_coloree(int width, int height, int *depth, float x1, float x2, float y1, float y2, couleur c);
 
 
-/** calculate x point from coordinate */
-int xpoint(fenetre *f, float a);
-
-
-/** calculate y point from coordinate */
-int ypoint(fenetre *f, float b);
-
 
 /**
  * Draw lines on a window.
@@ -83,10 +76,31 @@ int pointe(fenetre f, float x, float y, int L, couleur c, forme_t forme);
 
 void trace_echelle(fenetre fen, couleur cdessin, couleur ctexte);
 
+/**
+ * display a text on the map centered on a given point.
+ * \param f where display the text
+ * \param X X plane coordinate
+ * \param Y Y plane coordinate
+ * \param text the text to display
+ * \param c text's color
+ */
+void fenetre_display_centered_text(fenetre f, float X, float Y, char *text, couleur c);
+
+
+/**
+ * display a text to label an object on tha map.
+ * \param f where display the text
+ * \param object the coordinates of the object to label
+ * \param text the text to display
+ * \param c text's color
+ */
+void fenetre_display_label(fenetre f, coord_plane object, char *text, couleur c);
+
 
 /**
  * Closes the displays.
  */
 int fermeture(fenetre fen);
+
 
 #endif

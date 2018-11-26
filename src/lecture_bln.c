@@ -50,7 +50,7 @@ static int bln_show_in_window_lines(bln_data_t *data, fenetre f, int largeur, co
         Xm=0.5*(line->xmin+line->xmax); Ym=0.5*(line->ymin+line->ymax);
 
         if((line->name!=NULL)&&(line->nbPoints>=2)) {
-            display_text(f.window,xpoint(&f, Xm)-(strlen(line->name))*4,ypoint(&f, Ym),line->name,JAUNE);
+            fenetre_display_centered_text(f, Xm, Ym, line->name, JAUNE);
         }
 
         bln_destroy(line);

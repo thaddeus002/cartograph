@@ -1,6 +1,6 @@
 /**
  * \file shape_types.h
- * \brief Types de formes dans les fichiers shapefile
+ * \brief Shape types in shapefile
  * \author Yannick Garcia
  * \since 23 mai 2008
  */
@@ -14,17 +14,17 @@ typedef enum {NULL_SHAPE=0, POINT=1, POLYLINE=3, POLYGON=5, MULTIPOINT=8, POINTZ
 POLYGONZ=15, MULTIPOINTZ=18, POINTM=21, POLYLINEM=23, POLYGONM=25, MULTIPOINTM=28, MULTIPATCH=31} shapetype;
 
 
-/* Entete */
+/* Header */
 typedef struct {
     int fileCode; /* 9994 */
-    int lenght; /* longueur du fichier en demi-octets */
+    int lenght; /* file length in demi-bytes */
     int version; /* 1000 */
     int shapeType;
     double boundarieBox[8];
 } shape_header;
 
 
-/* Types de données */
+/* data types */
 
 typedef struct {
     //int shapeType=0;

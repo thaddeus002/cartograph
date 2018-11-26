@@ -6,13 +6,14 @@
 #include "fenetre.h"
 
 #include <math.h>
+
 /** calculate x point from coordinate */
-int xpoint(fenetre *f, float a) {
+static int xpoint(fenetre *f, float a) {
     return transforme_x(a, f->window.w, f->x1, f->x2);
 }
 
 /** calculate y point from coordinate */
-int ypoint(fenetre *f, float b) {
+static int ypoint(fenetre *f, float b) {
     return transforme_y(b, f->window.h, f->y1, f->y2);
 }
 
@@ -207,3 +208,11 @@ int window_fill_polygon(fenetre f, float *x, float *y, int nb, couleur c) {
     return 0;
 }
 
+
+void fenetre_display_centered_text(fenetre f, float X, float Y, char *text, couleur c) {
+    display_text(f.window, xpoint(&f, X)-(strlen(text))*4, ypoint(&f, Y), text, c);
+}
+
+void fenetre_display_label(fenetre f, coord_plane object, char *text, couleur c) {
+    display_text(f.window, xpoint(&f, object.X)+9, ypoint(&f, object.Y), text, c);
+}
