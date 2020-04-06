@@ -14,7 +14,7 @@ OBJS=window.o fenetre.o affichage.o lecture_csv.o points.o lecture_grille.o lect
 
 PROG=carte trace pointe
 
-CFLAGS=-L/usr/X11R6/lib -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YIMAGE_FLAGS) -lyImage
+CFLAGS=-L/usr/X11R6/lib -lm -lz -lpng -ljpeg -ltiff $(YIMAGE_FLAGS) -lyImage
 
 all: $(PROG)
 
