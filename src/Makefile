@@ -18,8 +18,8 @@ CFLAGS=-L/usr/X11R6/lib -lm -lz -lbz2 -lpng -ljpeg -ltiff $(YIMAGE_FLAGS) -lyIma
 
 all: $(PROG)
 
-libyder:
-	make -C $(YDER_LOCATION)
+$(YDER_LOCATION)/yder.o:
+	make -C $(YDER_LOCATION) yder.o
 
 libyImage:
 	make -C $(YIMAGE_LOCATION)
@@ -28,21 +28,21 @@ carte: carte.c libyImage $(OBJS)
 	@echo "linking in" $@
 	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) -lX11
 
-trace: trace.c libyImage libyder bln.o map.o points.o
+trace: trace.c libyImage bln.o map.o points.o $(YDER_LOCATION)/yder.o
 	@echo "linking in" $@
-	gcc -Wall $< bln.o map.o points.o coordinates.o -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder
+	gcc -Wall -I$(YDER_LOCATION) $< bln.o map.o points.o coordinates.o $(YDER_LOCATION)/yder.o -o $@ $(CFLAGS)
 
-trace_x: trace_x.c libyImage libyder $(OBJS)
+trace_x: trace_x.c libyImage $(OBJS) $(YDER_LOCATION)/yder.o
 	@echo "linking in" $@
-	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder -lX11
+	gcc -Wall -I$(YDER_LOCATION) $< $(OBJS) $(YDER_LOCATION)/yder.o -o $@ $(CFLAGS) -lX11
 
 pointe: pointe.c libyImage bln.o map.o points.o
 	@echo "linking in" $@
 	gcc -Wall $< bln.o map.o points.o coordinates.o -o $@ $(CFLAGS)
 
-pointe_x: pointe_x.c libyImage libyder $(OBJS)
+pointe_x: pointe_x.c libyImage $(OBJS) $(YDER_LOCATION)/yder.o
 	@echo "linking in" $@
-	gcc -Wall $< $(OBJS) -o $@ $(CFLAGS) $(YDER_FLAGS) -lyder -lX11
+	gcc -Wall -I$(YDER_LOCATION) $< $(OBJS) $(YDER_LOCATION)/yder.o -o $@ $(CFLAGS) -lX11
 
 
 %.o: %.c %.h
